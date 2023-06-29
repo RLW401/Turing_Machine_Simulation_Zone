@@ -2,7 +2,7 @@
 from .db import db, environment, SCHEMA, add_prefix_for_prod
 from flask_login import UserMixin
 
-class List(db.Model, UserMixin):
+class Turing_Machine(db.Model, UserMixin):
     __tablename__ = "turing_machines"
 
     if environment == "production":
