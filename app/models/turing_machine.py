@@ -19,7 +19,7 @@ class Turing_Machine(db.Model, UserMixin):
     alphabet = db.Column(db.String(255), nullable=False)
     blank_symbol = db.Column(db.String(1), default='#', nullable=False)
     states = db.Column(db.Text)
-    init_state = db.Column(db.String(31), nullable=False)
+    init_state = db.Column(db.String(31))
     current_state = db.Column(db.String(31))
     halting_state = db.Column(db.String(31))
     head_pos = db.Column(db.Integer)
