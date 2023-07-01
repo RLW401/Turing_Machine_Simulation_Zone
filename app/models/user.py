@@ -18,13 +18,13 @@ class User(db.Model, UserMixin):
     hashed_password = db.Column(db.String(255), nullable=False)
 
     # define relationships
-    initiated_collaborations = db.relationship('Collaboration', foreign_keys='Collaboration.requester_id', backref='requester')
-    received_collaborations = db.relationship('Collaboration', foreign_keys='Collaboration.addressee_id', backref='addressee')
+    initiated_collaborations = db.relationship('Collaboration', foreign_keys='Collaboration.requester_id', back_populates='requester')
+    received_collaborations = db.relationship('Collaboration', foreign_keys='Collaboration.addressee_id', back_populates='addressee')
 
-    comments_posted = db.relationship('Comment', backref='commenter')
+    comments_posted = db.relationship('Comment', back_populates='commenter')
 
-    machines_owned = db.relationship('Turing_Machine', foreign_keys='Turing_Machine.owner_id', backref='owner')
-    machines_collaborating_on = db.relationship('Turing_Machine', foreign_keys='Turing_Machine.collaborator_id', backref='collaborator')
+    machines_owned = db.relationship('Turing_Machine', foreign_keys='Turing_Machine.owner_id', back_populates='owner')
+    machines_collaborating_on = db.relationship('Turing_Machine', foreign_keys='Turing_Machine.collaborator_id', back_populates='collaborator')
 
 
     @property

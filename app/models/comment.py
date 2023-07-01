@@ -15,8 +15,8 @@ class Comment(db.Model, UserMixin):
     content = db.Column(db.Text, nullable=False)
 
     # define relationships
-    commenter = db.relationship('User', backref='comments_posted')
-    machine = db.relationship('Turing_Machine', backref='comments_received')
+    commenter = db.relationship('User', back_populates='comments_posted')
+    machine = db.relationship('Turing_Machine', back_populates='comments_received')
 
     def to_dict(self):
         return {
