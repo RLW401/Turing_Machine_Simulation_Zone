@@ -16,6 +16,9 @@ class Machine_Instruction(db.Model, UserMixin):
     print_symbol = db.Column(db.String(1), nullable=False)
     head_move = db.Column(db.Integer, nullable=False)
 
+    # define relationships
+    machine = db.relationship('Turing_Machine', backref='instructions')
+
     def to_dict(self):
         return {
             'id': self.id,
