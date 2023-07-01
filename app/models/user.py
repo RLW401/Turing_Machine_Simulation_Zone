@@ -17,6 +17,16 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(255), nullable=False, unique=True)
     hashed_password = db.Column(db.String(255), nullable=False)
 
+    # define relationships
+    initiated_collaborations = db.relationship('Collaboration', foreign_keys='Collaboration.requester_id', backref='requester')
+    received_collaborations = db.relationship('Collaboration', foreign_keys='Collaboration.addressee_id', backref='addressee')
+
+    comments_posted = db.relationship('Comment', backref='commenter')
+
+    machines_owned = db.relationship('Turing_Machine', foreign_keys='Turing_Machine.owner_id', backref='owner')
+    machines_collaborating_on = db.relationship('Turing_Machine', foreign_keys='Turing_Machine.collaborator_id', backref='collaborator')
+
+
     @property
     def password(self):
         return self.hashed_password

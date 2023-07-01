@@ -13,6 +13,11 @@ class Collaboration(db.Model, UserMixin):
     addressee_id = db.Column(db.Integer, db.ForeignKey(add_prefix_for_prod("users.id"), ondelete="CASCADE"), nullable=False)
     accepted = db.Column(db.Boolean, default=False, nullable=False)
 
+    # define relationships
+    requester = db.relationship('User', foreign_keys=[requester_id], backref='initiated_collaborations', lazy='joined')
+    addressee = db.relationship('User', foreign_keys=[addressee_id], backref='received_collaborations', lazy='joined')
+
+
     def to_dict(self):
         return {
             'id': self.id,

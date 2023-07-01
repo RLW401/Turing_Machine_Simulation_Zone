@@ -24,6 +24,14 @@ class Turing_Machine(db.Model, UserMixin):
     halting_state = db.Column(db.String(31))
     head_pos = db.Column(db.Integer)
 
+    # define relationships
+    comments_received = db.relationship('Comment', backref='machine')
+
+    owner = db.relationship('User', foreign_keys=[owner_id], backref='machines_owned')
+    collaborator = db.relationship('User', foreign_keys=[collaborator_id], backref='machines_collaborating_on')
+
+    instructions = db.relationship('Machine_Instruction', backref='machine', lazy='joined')
+
     def to_dict(self):
         return {
             'id': self.id,
