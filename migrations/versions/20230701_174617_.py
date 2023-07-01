@@ -83,9 +83,10 @@ def upgrade():
     sa.ForeignKeyConstraint(['machine_id'], ['turing_machines.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    # ### end Alembic commands ###
     if environment == "production":
         op.execute(f"ALTER TABLE users SET SCHEMA {SCHEMA};")
+    # ### end Alembic commands ###
+
 
 
 def downgrade():
