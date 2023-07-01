@@ -14,8 +14,8 @@ class Collaboration(db.Model, UserMixin):
     accepted = db.Column(db.Boolean, default=False, nullable=False)
 
     # define relationships
-    requester = db.relationship('User', foreign_keys=[requester_id], backref='initiated_collaborations', lazy='joined')
-    addressee = db.relationship('User', foreign_keys=[addressee_id], backref='received_collaborations', lazy='joined')
+    requester = db.relationship('User', foreign_keys=[requester_id], back_populates='initiated_collaborations', lazy='joined')
+    addressee = db.relationship('User', foreign_keys=[addressee_id], back_populates='received_collaborations', lazy='joined')
 
 
     def to_dict(self):

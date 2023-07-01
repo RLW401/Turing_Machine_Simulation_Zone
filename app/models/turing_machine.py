@@ -25,12 +25,12 @@ class Turing_Machine(db.Model, UserMixin):
     head_pos = db.Column(db.Integer)
 
     # define relationships
-    comments_received = db.relationship('Comment', backref='machine')
+    comments_received = db.relationship('Comment', back_populates='machine')
 
-    owner = db.relationship('User', foreign_keys=[owner_id], backref='machines_owned')
-    collaborator = db.relationship('User', foreign_keys=[collaborator_id], backref='machines_collaborating_on')
+    owner = db.relationship('User', foreign_keys=[owner_id], back_populates='machines_owned')
+    collaborator = db.relationship('User', foreign_keys=[collaborator_id], back_populates='machines_collaborating_on')
 
-    instructions = db.relationship('Machine_Instruction', backref='machine', lazy='joined')
+    instructions = db.relationship('Machine_Instruction', back_populates='machine', lazy='joined')
 
     def to_dict(self):
         return {

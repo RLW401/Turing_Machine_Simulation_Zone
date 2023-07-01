@@ -17,7 +17,7 @@ class Machine_Instruction(db.Model, UserMixin):
     head_move = db.Column(db.Integer, nullable=False)
 
     # define relationships
-    machine = db.relationship('Turing_Machine', backref='instructions')
+    machine = db.relationship('Turing_Machine', back_populates='instructions')
 
     def to_dict(self):
         return {
