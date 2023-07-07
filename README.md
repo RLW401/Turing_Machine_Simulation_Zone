@@ -1,148 +1,38 @@
-# Flask React Project
+# Turing Machine Simulation Zone features
 
-This is the starter for the Flask React project.
+## Turing Machines
+### A user can create a Turing machine by specifying the following properties
+- name: A descriptive name for the machine (e.g. "binary adder"). A user cannot own more than one machine with the same name.
+- blank_symbol: The symbol used to represent a blank square on the machine's tape. Users will select from a dropdown including '#', ' ', and '0'. The default value will be '#'.
+- alphabet: The set of non-blank symbols the machine can read and write. Must contain at least one character and cannot contain the symbol chosen as the blank.
+- init_tape: the string of symbols initially on the tape of the machine, from the leftmost non-blank symbol to the rightmost non-blank symbol. The symbols may be interspaced with blanks and the string may be empty, in which case the tape is blank. The read/write head of a newly initialized machine with a non-blank tape will always start scanning the leftmost non-blank symbol.
+### A user can edit a Turing machine by
+- changing any of the above properties
+- adding various internal states to the machine.
+ - The states can be given short codenames (e.g. q0, q1, q2, etc.) or descriptive names (for example, a binary adder might have an internal state called "carry"). Users can also edit the machine by specifying the initial state (required before machine instructions can be created) and the halting state (not required, but if specified it must not be the initial state).
+### Users can also delete any Turing machines they have created.
 
-## Getting started
-1. Clone this repository (only this branch)
+## Machine Instructions
+### Once a user has created a Turing machine and specified its initial state, machine instructions can be created by specifying the following five properties:
+- current_state: the state of the machine in which the instruction will be triggered if the appropriate symbol is scanned
+- scanned_symbol: the symbol that will trigger the instruction if the machine's state is the one specified in current_state
+-- together current_state and scanned_symbol specify a unique state-symbol pair which determines the machine instruction to be executed at any given step.
 
-2. Install dependencies
+- next_state: the state into which the machine will transition on the next step of its computation
+- print_symbol: the symbol to be printed on the scanned square. Must be either an element of the machine alphabet or the blank symbol.
+- head_move: an integer -1 <= head_move <= 1. determines whether the head will end up scanning the square immediately to its left (-1), immediately to its right (1), or remain on the current square (0) in the next step of the computation. The value 0 is permitted only when next_state is the halting state.
 
-      ```bash
-      pipenv install -r requirements.txt
-      ```
+### Users can update machine instructions by editing any of the above properties
+### Users can delete any machine instruction associated with a machine they own
 
-3. Create a **.env** file based on the example with proper settings for your
-   development environment
+## Collaborations
+### A user can invite another user to become a collaborator by way of their user_id or email.
+- Once a request is made, the collaboration will have a status of "pending"
+- A user who has been invited to collaborate can accept the invitation, in which case the status is changed to "accepted", or they can reject the invitation, in which case the collaboration will be deleted.
+- Once two users are collaborators, either can give the other edit privileges on one or more of their Turing machines.
+- either party to a collaboration can dissolve it at any time.
 
-4. Make sure the SQLite3 database connection URL is in the **.env** file
-
-5. This starter organizes all tables inside the `flask_schema` schema, defined
-   by the `SCHEMA` environment variable.  Replace the value for
-   `SCHEMA` with a unique name, **making sure you use the snake_case
-   convention**.
-
-6. Get into your pipenv, migrate your database, seed your database, and run your Flask app
-
-   ```bash
-   pipenv shell
-   ```
-
-   ```bash
-   flask db upgrade
-   ```
-
-   ```bash
-   flask seed all
-   ```
-
-   ```bash
-   flask run
-   ```
-
-7. To run the React App in development, checkout the [README](./react-app/README.md) inside the `react-app` directory.
-
-
-## Deployment through Render.com
-
-First, refer to your Render.com deployment articles for more detailed
-instructions about getting started with [Render.com], creating a production
-database, and deployment debugging tips.
-
-From the [Dashboard], click on the "New +" button in the navigation bar, and
-click on "Web Service" to create the application that will be deployed.
-
-Look for the name of the application you want to deploy, and click the "Connect"
-button to the right of the name.
-
-Now, fill out the form to configure the build and start commands, as well as add
-the environment variables to properly deploy the application.
-
-### Part A: Configure the Start and Build Commands
-
-Start by giving your application a name.
-
-Leave the root directory field blank. By default, Render will run commands from
-the root directory.
-
-Make sure the Environment field is set set to "Python 3", the Region is set to
-the location closest to you, and the Branch is set to "main".
-
-Next, add your Build command. This is a script that should include everything
-that needs to happen _before_ starting the server.
-
-For your Flask project, enter the following command into the Build field, all in
-one line:
-
-```shell
-# build command - enter all in one line
-npm install --prefix react-app &&
-npm run build --prefix react-app &&
-pip install -r requirements.txt &&
-pip install psycopg2 &&
-flask db upgrade &&
-flask seed all
-```
-
-This script will install dependencies for the frontend, and run the build
-command in the __package.json__ file for the frontend, which builds the React
-application. Then, it will install the dependencies needed for the Python
-backend, and run the migration and seed files.
-
-Now, add your start command in the Start field:
-
-```shell
-# start script
-gunicorn app:app
-```
-
-_If you are using websockets, use the following start command instead for increased performance:_
-
-`gunicorn --worker-class eventlet -w 1 app:app`
-
-### Part B: Add the Environment Variables
-
-Click on the "Advanced" button at the bottom of the form to configure the
-environment variables your application needs to access to run properly. In the
-development environment, you have been securing these variables in the __.env__
-file, which has been removed from source control. In this step, you will need to
-input the keys and values for the environment variables you need for production
-into the Render GUI.
-
-Click on "Add Environment Variable" to start adding all of the variables you
-need for the production environment.
-
-Add the following keys and values in the Render GUI form:
-
-- SECRET_KEY (click "Generate" to generate a secure secret for production)
-- FLASK_ENV production
-- FLASK_APP app
-- SCHEMA (your unique schema name, in snake_case)
-- REACT_APP_BASE_URL (use render.com url, located at top of page, similar to
-  https://this-application-name.onrender.com)
-
-In a new tab, navigate to your dashboard and click on your Postgres database
-instance.
-
-Add the following keys and values:
-
-- DATABASE_URL (copy value from Internal Database URL field)
-
-_Note: Add any other keys and values that may be present in your local __.env__
-file. As you work to further develop your project, you may need to add more
-environment variables to your local __.env__ file. Make sure you add these
-environment variables to the Render GUI as well for the next deployment._
-
-Next, choose "Yes" for the Auto-Deploy field. This will re-deploy your
-application every time you push to main.
-
-Now, you are finally ready to deploy! Click "Create Web Service" to deploy your
-project. The deployment process will likely take about 10-15 minutes if
-everything works as expected. You can monitor the logs to see your build and
-start commands being executed, and see any errors in the build process.
-
-When deployment is complete, open your deployed site and check to see if you
-successfully deployed your Flask application to Render! You can find the URL for
-your site just below the name of the Web Service at the top of the page.
-
-[Render.com]: https://render.com/
-[Dashboard]: https://dashboard.render.com/
+## Comments
+### A user that is collaborating on a Turing machine (whether as an owner or not) can add comments to the machine
+- Comments can be edited by the user that posted them.
+- Comments can be deleted by either the user that posted them or the machine owner.
