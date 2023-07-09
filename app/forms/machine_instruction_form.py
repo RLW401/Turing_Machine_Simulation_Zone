@@ -6,4 +6,9 @@ from wtforms.validators import DataRequired, ValidationError
 from app.models import Machine_Instruction
 
 class MachineInstructionForm(FlaskForm):
-    pass
+    machineId = IntegerField('machineId', validators=[DataRequired()])
+    currentState = StringField('currentState', validators=[DataRequired()])
+    scannedSymbol = StringField('scannedSymbol', validators=[DataRequired()])
+    nextState = StringField('nextState', validators=[DataRequired()])
+    printSymbol = StringField('printSymbol', validators=[DataRequired()])
+    headMove = IntegerField('headMove', validators=[DataRequired()])
