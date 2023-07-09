@@ -1,1 +1,21 @@
 /* TODO Add site wide styles */
+
+* {
+    /* font-family: 'Inter', sans-serif; */
+    font-family: 'IM Fell English', serif;
+    /* font-style: italic; */
+}
+
+button {
+    border-radius: 16px;
+    cursor: pointer;
+    color: #fff;
+    fill: #fff;
+    padding: 8px 16px;
+    background-color: #9D9B9B;
+    border-color: #9D9B9B;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+}
