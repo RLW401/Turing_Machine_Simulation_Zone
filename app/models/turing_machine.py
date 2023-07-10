@@ -49,4 +49,5 @@ class Turing_Machine(db.Model, UserMixin):
             'currentState': self.current_state,
             'haltingState': self.halting_state,
             'headPos': self.head_pos,
+            'instructions': [instruction.to_dict() for instruction in self.instructions],
         }

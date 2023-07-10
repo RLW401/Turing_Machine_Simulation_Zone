@@ -1,3 +1,4 @@
+// root/react-app/src/context/Modal.js
 import React, { useRef, useState, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import './Modal.css';
