@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { login } from "../../store/session";
 import { useDispatch } from "react-redux";
-import { Modal, useModal } from "../../context/Modal";
+import { useModal } from "../../context/Modal";
 import "./LoginForm.css";
 
 function LoginFormModal() {
@@ -73,8 +73,10 @@ function LoginFormModal() {
     setModalContent(loginForm);
   };
 
-  const loginButton = (<button className='log-in'
-  onClick={handleOpenModal} >Log In</button>);
+  const loginButton = (
+    <button className='login'
+    onClick={handleOpenModal} >Log In</button>
+  );
 
   return (
     <>
