@@ -7,18 +7,14 @@ import "./LoginForm.css";
 
 function LoginFormModal() {
   const dispatch = useDispatch();
-  const [showModal, setShowModal] = useState(false)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
-  const { closeModal } = useModal();
+  const { closeModal, setModalContent } = useModal();
   const demoEmail = "demo@aa.io";
   const demoPassword = "password";
 
-  const loginButton = (<button className='log-in'
-      onClick={() =>{
-      setShowModal(true);
-    }}>Log In</button>);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -73,15 +69,16 @@ function LoginFormModal() {
   </form>
   );
 
+  const handleOpenModal = () => {
+    setModalContent(loginForm);
+  };
+
+  const loginButton = (<button className='log-in'
+  onClick={handleOpenModal} >Log In</button>);
+
   return (
     <>
       {loginButton}
-      {showModal && (
-      <Modal>
-        {loginForm}
-      </Modal>
-    )}
-
     </>
   );
 }
