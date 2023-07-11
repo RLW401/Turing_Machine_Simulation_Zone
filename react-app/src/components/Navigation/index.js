@@ -17,9 +17,12 @@ function Navigation({ isLoaded }){
 	// };
 
 	const homeLink = (
-		<NavLink exact to="/">
-			<h2 id="zone-heading">Turing Machine Simulation Zone</h2>
-		</NavLink>
+
+		<div className="home-link">
+			<NavLink exact to="/" >
+				<h2 id="zone-heading">Turing Machine Simulation Zone</h2>
+			</NavLink>
+	  	</div>
 	  );
 
 	  let sessionLinks;
@@ -57,9 +60,22 @@ function Navigation({ isLoaded }){
 		</div>
 	  );
 
+	  const sideBar = (
+		<div className='side-bar'>
+		  <p>about</p>
+		  <p>sample machines</p>
+		  <p>my machines</p>
+		</div>
+	  );
+
 	  return (
 		<>
-		  {(isLoaded && topBar)}
+		  {(isLoaded && (
+			<>
+				{topBar}
+				{sideBar}
+			</>
+			))}
 		</>
 	  );
 

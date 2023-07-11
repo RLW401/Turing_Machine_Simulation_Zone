@@ -1,3 +1,5 @@
+/* root/react-app/src/components/Navigation/Navigation.css */
+
 /* .profile-dropdown {
   position: absolute;
 }
@@ -22,17 +24,51 @@
 }
 
 .top-bar {
+  background-color: #4A6897;
   display: flex;
-  flex-direction: row;
+  /* flex-direction: row; */
+  /* justify-content: center; */
   align-items: center;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  height: 20vh;
+  position: relative;
+  z-index: 1;
+}
+
+.home-link > a {
+  text-decoration: none;
+}
+
+.home-link {
+  flex-grow: 1;
+  text-align: center;
+}
+
+#zone-heading {
+  color: whitesmoke;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* Left sidebar */
+.side-bar {
+  background-color: #BAB3B3;
+  position: fixed;
+  top: 20vh; /* Adjust the top position to match the height of the top bar */
+  bottom: 0;
+  width: 15%; /* Adjust the width as needed */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
 .session-links {
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin: 32px;
+  margin-right: 32px;
   /* justify-content: space-between; */
 }
 
