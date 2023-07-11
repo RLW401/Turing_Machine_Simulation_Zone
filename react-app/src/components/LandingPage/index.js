@@ -10,10 +10,20 @@ const LandingPage = () => {
     const history = useHistory();
 
     const [currentUser, setCurrentUser] = useState({});
+    const [machines, setMachines] = useState({});
+
+    const loadCurrentUser = useSelector((state) =>{
+        return state.session.user;
+    });
 
     useEffect(() => {
+        setCurrentUser(loadCurrentUser)
         dispatch(getAuthorizedTMs());
-    }, [dispatch]);
+    }, [loadCurrentUser, dispatch]);
+
+    // useEffect(() => {
+    //     dispatch(getAuthorizedTMs());
+    // }, [dispatch]);
 
     return <h2>Placeholder</h2>
 
