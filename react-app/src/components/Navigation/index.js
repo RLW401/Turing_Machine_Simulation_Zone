@@ -29,11 +29,9 @@ function Navigation({ isLoaded }){
 	  if (sessionUser) {
 		sessionLinks = (
 		  <div className='session-links'>
+			<NavLink className='create-tm' to="/turing-machines/new">Create a new Turing Machine</NavLink>
 			<div className='profile-button'>
-			<ProfileButton user={sessionUser} />
-			</div>
-			<div className='start-group link top-link'>
-			  <NavLink to="/groups/new">Start a new group</NavLink>
+				<ProfileButton user={sessionUser} />
 			</div>
 		  </div>
 		);
