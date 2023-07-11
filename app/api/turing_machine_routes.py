@@ -27,7 +27,7 @@ def edit_or_delete_instruction(machine_id, instruction_id):
 
 # returns all Turing machines that are either public, owned by the current user,
 # or that the current user is a collaborator on.
-@turing_machine_routes.route('/')
+@turing_machine_routes.route('/authorized')
 def get_authorized_turing_machines():
     turing_machines = []
 
