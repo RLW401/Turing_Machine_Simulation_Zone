@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 // import { Modal, useModal } from "../../context/Modal";
 import { signUp } from "../../store/session";
-import SignupFormPage from "../SignupFormPage";
 import "./SignupForm.css";
 
 function SignupFormModal({closeModal}) {
@@ -15,7 +14,6 @@ function SignupFormModal({closeModal}) {
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [errors, setErrors] = useState([]);
-	// const { closeModal, setModalContent } = useModal();
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
