@@ -1,11 +1,11 @@
-import { csrfFetch } from "./csrf";
+// root/react-app/src/store/turingMachines.js
 import { normalizeAll } from "../utils/normalization";
 
 const prefix = "turingMachines/"
 export const LOAD_MACHINES = prefix + "LOAD_MACHINES";
 
 const loadMachines = (turingMachines) => ({
-    type: LOAD,
+    type: LOAD_MACHINES,
     payload: turingMachines
 });
 
@@ -33,7 +33,8 @@ const machineReducer = (state=initialState, action) => {
     switch (action.type) {
         case LOAD_MACHINES:
             return { ...state, ...action.payload }
-
+        default:
+            return state;
     }
 };
 
