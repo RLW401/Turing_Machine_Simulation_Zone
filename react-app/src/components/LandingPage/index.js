@@ -21,11 +21,7 @@ const LandingPage = () => {
         dispatch(getAuthorizedTMs());
     }, [loadCurrentUser, dispatch]);
 
-    // useEffect(() => {
-    //     dispatch(getAuthorizedTMs());
-    // }, [dispatch]);
-
-    return <h2>Placeholder</h2>
+    return (<h2>Placeholder</h2>);
 
 };
 

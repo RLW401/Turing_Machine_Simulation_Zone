@@ -32,11 +32,13 @@ const initialState = {
 };
 
 const machineReducer = (state=initialState, action) => {
-    let newSate = {};
+    let newState = {};
 
     switch (action.type) {
         case LOAD_MACHINES:
-            return { ...state, ...action.payload }
+            newState.byId = { ...state.byId, ...action.payload.byId };
+            newState.allIds = action.payload.allIds;
+            return newState
         default:
             return state;
     }
