@@ -1,12 +1,12 @@
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import session from './session'
-import machineReducer from './turingMachines';
+import turingMachines from './turingMachines';
 
 
 const rootReducer = combineReducers({
   session,
-  machines: machineReducer,
+  turingMachines,
 });
 
 

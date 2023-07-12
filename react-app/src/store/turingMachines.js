@@ -17,15 +17,19 @@ export const getAuthorizedTMs = () => async (dispatch) => {
 
         if (response.ok) {
             const turingMachines = await response.json();
-            dispatch(loadMachines(turingMachines));
-            return turingMachines;
+            const normalizedMachines = normalizeAll(turingMachines);
+            dispatch(loadMachines(normalizedMachines));
+            return normalizedMachines;
         }
     } catch (error) {
         throw error;
     }
 };
 
-const initialState = {};
+const initialState = {
+    byId: {},
+    allIds: []
+};
 
 const machineReducer = (state=initialState, action) => {
     let newSate = {};
