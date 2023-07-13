@@ -11,19 +11,47 @@ const LandingPage = () => {
 
     const [currentUser, setCurrentUser] = useState({});
     const [machines, setMachines] = useState({});
+    const [instructions, setInstructions] = useState({});
 
-    const loadCurrentUser = useSelector((state) =>{
+    const loadCurrentUser = useSelector((state) => {
         return state.session.user;
     });
 
+    const loadMachines = useSelector((state) => {
+        return state.turingMachines;
+    });
+
+    const loadInstructions = useSelector((state) => {
+        return state.machineInstructions;
+    });
+
     useEffect(() => {
-        setCurrentUser(loadCurrentUser)
-        dispatch(getAuthorizedTMs());
+        const fetchTMs = async () => {
+            await dispatch(getAuthorizedTMs());
+        }
+
+        fetchTMs();
+        setCurrentUser(loadCurrentUser);
     }, [loadCurrentUser, dispatch]);
+
+    useEffect(() => {
+        setMachines(loadMachines);
+        setInstructions(loadInstructions);
+    }, [loadMachines, loadInstructions]);
+
+    let machineNames = <li key={0}>no machines</li>
+    if (machines.allIds) {
+        machineNames = machines.allIds.map((mId) => {
+            const mName = machines.byId[mId].name;
+            return <li key={mId}>{mName}</li>
+        });
+    }
+
 
     return (
         <div className="landing-page">
             <h2>Placeholder</h2>
+            {machineNames}
         </div>
     );
 
