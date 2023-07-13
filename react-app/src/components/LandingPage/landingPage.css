@@ -1,1 +1,17 @@
 /* root/react-app/src/components/LandingPage/landingPage.css */
+
+.landing-page {
+    border: solid;
+    border-width: 4px;
+    border-color: blueviolet;
+    margin-top: 20vh; /* Adjust the top margin to match the height of the top bar */
+    height: calc(100vh - 20vh);
+    /* overflow-y: auto;  */
+    padding-top: 40px;
+    margin-left: 15%; /* Adjust the left margin to match the width of the side bar */
+    padding: 16px;
+  }
+
+h2 {
+    font-size: 48px;
+}

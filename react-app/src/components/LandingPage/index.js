@@ -21,7 +21,11 @@ const LandingPage = () => {
         dispatch(getAuthorizedTMs());
     }, [loadCurrentUser, dispatch]);
 
-    return (<h2>Placeholder</h2>);
+    return (
+        <div className="landing-page">
+            <h2>Placeholder</h2>
+        </div>
+    );
 
 };
 
