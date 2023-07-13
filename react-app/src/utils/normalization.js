@@ -14,9 +14,9 @@
 // objects. If the optional "includeSubObj" parameter is
 // true, then the returned object will have a "subObjects"
 // key with arrays of normalized subObjects.
-export const normalizeAll = (obj, { includeSubObj = false } = {}) => {
+export const normalizeAll = (obj, { includeSubObj = true } = {}) => {
     obj = { ...obj };
-    const normalized = { byId: {} };
+    const normalized = { byId: {}, subObjects: {} };
 
     if (Object.keys(obj).length !== 1) {
         console.log(obj);
@@ -41,16 +41,50 @@ export const normalizeAll = (obj, { includeSubObj = false } = {}) => {
 
                 // normalize sub-objects and add to result
                 if (includeSubObj && subObjArr.length) {
-                    normalized.subObjects = {};
-                    const normSubObj = {};
-                    normSubObj[key] = subObjArr;
-                    normalized.subObjects[key] = normalizeAll(normSubObj, { includeSubObj: includeSubObj });
+                    const normSubObj = normalizeAll({ [key]: subObjArr }, { includeSubObj: true });
+
+                    // check to see if sub-objects of the current type have
+                    // already been added
+                    if (!normalized.subObjects[key]) {
+                        normalized.subObjects[key] = { allIds: [], byId: {} };
+                        console.log(normalized)
+                    }
+
+                    // add objects by id
+                    normalized.subObjects[key].byId = {
+                        ...normalized.subObjects[key].byId,
+                        ...normSubObj.byId
+                    };
+
+                    // combine ids while omitting duplicates
+                    const combinedIds = mergeWithoutDuplicates(
+                        normalized.subObjects[key].allIds,
+                        normSubObj.allIds
+                    );
+
+                    normalized.subObjects[key].allIds = combinedIds;
+
+                    // check to see if there are sub-sub-objects
+                    if (normSubObj.subObjects) {
+                        // check to see if subObject key already exists
+                        if (!normalized.subObjects[key].subObjects) normalized.subObjects[key].subObjects = {};
+                        // add sub-sub-objects
+                        normalized.subObjects[key].subObjects = {
+                            ...normalized.subObjects[key].subObjects,
+                            ...normSubObj.subObjects
+                        };
+                    }
+
                 }
             }
         });
         normalized.byId[obj.id] = {...obj};
     });
     normalized.allIds = idList;
+
+    if (!Object.keys(normalized.subObjects).length) {
+        delete normalized.subObjects;
+    }
 
     return normalized;
 };
@@ -67,4 +101,44 @@ const makeIdList = (objArr) => {
     });
     const idList = objArr.map((obj) => obj.id);
     return idList;
+};
+
+// Merges two arrays of integers and sorts them in ascending
+// order while omitting duplicate values. The arrays are
+// assumed to contain no duplicates and be sorted in
+// ascending order themselves.
+const mergeWithoutDuplicates = (left, right) => {
+    const merged = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+
+    while ((leftIndex < left.length) && (rightIndex < right.length)) {
+        const lVal = left[leftIndex];
+        const rVal = right[rightIndex];
+
+        if (lVal < rVal) {
+            merged.push(lVal);
+            leftIndex++;
+        } else if (lVal > rVal) {
+            merged.push(rVal);
+            rightIndex++;
+        } else {
+            merged.push(lVal);
+            leftIndex++;
+            rightIndex++;
+        }
+    }
+
+    // if the left array is exhausted, replace it with the right
+    if (leftIndex === left.length) {
+        left = right;
+        leftIndex = rightIndex;
+    }
+
+    // add the remaining numbers, if any
+    for (let i = leftIndex; i < left.length; i++) {
+        merged.push(left[i]);
+    }
+
+    return merged;
 };
