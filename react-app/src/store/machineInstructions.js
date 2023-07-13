@@ -13,8 +13,9 @@ const instructionReducer = (state=initialState, action) => {
     switch (action.type) {
         case LOAD_MACHINES:
             const instructions = { ...action.payload.subObjects.instructions };
-            // return instructions;
-            return { ...action.payload }
+            newState.byId = { ...state.byId, ...instructions.byId };
+            newState.allIds = instructions.allIds;
+            return newState;
         default:
             return state;
     }

@@ -47,7 +47,6 @@ export const normalizeAll = (obj, { includeSubObj = true } = {}) => {
                     // already been added
                     if (!normalized.subObjects[key]) {
                         normalized.subObjects[key] = { allIds: [], byId: {} };
-                        console.log(normalized)
                     }
 
                     // add objects by id

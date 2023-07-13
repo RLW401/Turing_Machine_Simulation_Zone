@@ -33,13 +33,13 @@ function ProfileButton({ user }) {
     return () => document.removeEventListener("click", closeMenu);
   }, [showMenu]);
 
-  const handleLogout = (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
-    dispatch(logout());
+    await dispatch(logout());
 
     history.push("/");
     // trigger hard reload after logout to clear redux store
-    window.location.reload(true);
+    window.location.reload();
   };
 
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
