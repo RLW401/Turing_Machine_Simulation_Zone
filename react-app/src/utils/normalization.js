@@ -111,7 +111,17 @@ const mergeWithoutDuplicates = (left, right) => {
     let leftIndex = 0;
     let rightIndex = 0;
 
-    while ((leftIndex < left.length) && (rightIndex < right.length)) {
+    if (!left.length) return right;
+    if (!right.length) return left;
+
+    // ensure that the highest value is in the left array
+    if (left[left.length - 1] < right[right.length - 1]) {
+        [left, right] = [right, left];
+    }
+
+    // while there are still unchecked values in the right array
+    while (rightIndex < right.length) {
+
         const lVal = left[leftIndex];
         const rVal = right[rightIndex];
 
@@ -126,12 +136,6 @@ const mergeWithoutDuplicates = (left, right) => {
             leftIndex++;
             rightIndex++;
         }
-    }
-
-    // if the left array is exhausted, replace it with the right
-    if (leftIndex === left.length) {
-        left = right;
-        leftIndex = rightIndex;
     }
 
     // add the remaining numbers, if any
