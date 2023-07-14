@@ -11,13 +11,88 @@ const TuringMachinePage = () => {
     const machineId = Number(useParams().machineId);
 
     const [currentUser, setCurrentUser] = useState({});
+    const [machines, setMachines] = useState({});
+    const [instructions, setInstructions] = useState({});
+    const [currentMachine, setCurrentMachine] = useState(null);
+
+    const loadCurrentUser = useSelector((state) => {
+        return state.session.user;
+    });
+
+    const loadMachines = useSelector((state) => {
+        return state.turingMachines;
+    });
+
+    const loadInstructions = useSelector((state) => {
+        return state.machineInstructions;
+    });
 
     useEffect(() => {
-        dispatch(getAuthorizedTMs());
-    }, [dispatch]);
+        const fetchTMs = async () => {
+            await dispatch(getAuthorizedTMs());
+        }
 
-    return <h2>Placeholder</h2>
+        fetchTMs();
+        setCurrentUser(loadCurrentUser);
+    }, [loadCurrentUser, dispatch]);
 
+    useEffect(() => {
+        setMachines(loadMachines);
+        setInstructions(loadInstructions);
+    }, [loadMachines, loadInstructions]);
+
+    useEffect(() => {
+        if (machines.allIds && (machines.allIds.includes(machineId))) {
+            setCurrentMachine(machines.byId[machineId]);
+        }
+    }, [machines.allIds, machines.byId, machineId]);
+
+    let machineNames = <li key={0}>no machines</li>
+    if (machines.allIds) {
+        machineNames = machines.allIds.map((mId) => {
+            const mName = machines.byId[mId].name;
+            return <li key={mId}>{mName}</li>
+        });
+    }
+
+    let machinePage = (
+        <div className="machine-page">
+            <h2>Machine Not Found</h2>
+        </div>
+    );
+
+    if (currentMachine) {
+        machinePage = (
+            <div className="machine-page">
+                <div className="description">
+                    <h2>{currentMachine.name}</h2>
+                    <p>{currentMachine.notes}</p>
+                </div>
+                <div className="basics-and-instructions">
+                    <div className="machine-basics">
+                        <h3>Machine Basics</h3>
+                        <p>Alphabet: {`{${currentMachine.alphabet.split('').join(', ')}}`}</p>
+                        <p>Blank Symbol: &lsquo;{currentMachine.blankSymbol}&rsquo;</p>
+                        <p>Initial Tape: {currentMachine.initTape}</p>
+                        <p>States: {`{${currentMachine.states.split('|').join(', ')}}`}</p>
+                        <p>Initial State: {currentMachine.initState}</p>
+                        <p>Halting State: {currentMachine.haltingState}</p>
+                        <p>Current Tape: {currentMachine.currentTape}</p>
+                    </div>
+                    <div className="machine-instructions">
+                    <h3>Machine Instructions</h3>
+                    </div>
+                </div>
+            </div>
+        );
+
+    }
+
+    return (
+        <>
+            {machinePage}
+        </>
+    );
 };
 
 export default TuringMachinePage;
