@@ -13,7 +13,14 @@ const TuringMachinePage = () => {
     const [currentUser, setCurrentUser] = useState({});
     const [machines, setMachines] = useState({});
     const [instructions, setInstructions] = useState({});
+    const [formattedInstructions, setFormattedInstructions] = useState('');
     const [currentMachine, setCurrentMachine] = useState(null);
+    const [currentTape, setCurrentTape] = useState('');
+    const [currentSymbol, setCurrentSymbol] = useState('');
+    const [headPos, setHeadPos] = useState(0);
+    const [activeInstruction, setActiveInstruction] = useState(null);
+
+
 
     const loadCurrentUser = useSelector((state) => {
         return state.session.user;
