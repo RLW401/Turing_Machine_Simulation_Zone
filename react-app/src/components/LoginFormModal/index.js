@@ -2,15 +2,15 @@
 import React, { useState } from "react";
 import { login } from "../../store/session";
 import { useDispatch } from "react-redux";
-import { useModal } from "../../context/Modal";
+// import { useModal } from "../../context/Modal";
 import "./LoginForm.css";
 
-function LoginFormModal() {
+function LoginFormModal({closeModal}) {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
-  const { closeModal, setModalContent } = useModal();
+  // const { closeModal, setModalContent } = useModal();
   const demoEmail = "demo@aa.io";
   const demoPassword = "password";
 
@@ -67,20 +67,22 @@ function LoginFormModal() {
     onClick={loginDemo}
     >Demo User</button>
   </form>
+
   );
 
-  const handleOpenModal = () => {
-    setModalContent(loginForm);
-  };
+  // const handleOpenModal = () => {
+  //   setModalContent(loginForm);
+  // };
 
-  const loginButton = (
-    <button className='login'
-    onClick={handleOpenModal} >Log In</button>
-  );
+  // const loginButton = (
+  //   <button className='login'
+  //   onClick={handleOpenModal} >Log In</button>
+  // );
 
   return (
     <>
-      {loginButton}
+      {/* {loginButton} */}
+      {loginForm}
     </>
   );
 }

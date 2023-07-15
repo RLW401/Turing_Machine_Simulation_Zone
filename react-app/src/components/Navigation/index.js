@@ -39,9 +39,13 @@ function Navigation({ isLoaded }){
 		sessionLinks = (
 		  <div className='session-links'>
 
-			<LoginFormModal />
+			{/* <LoginFormModal /> */}
 			{/* <SignupFormModal /> */}
 
+			<button className="login" onClick={(e) => {
+				if (onModalClose) setOnModalClose(onModalClose)
+				setModalContent(<LoginFormModal closeModal={closeModal}/>)}}
+			>Log In</button>
 
 		<button className="signup" onClick={(e) => {
 			if (onModalClose) setOnModalClose(onModalClose)
