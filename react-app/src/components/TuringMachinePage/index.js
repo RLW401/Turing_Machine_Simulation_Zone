@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavLink, useHistory, useParams } from "react-router-dom";
 import { getAuthorizedTMs } from "../../store/turingMachines";
 import renderTape from "../RenderTape/renderTape";
+import { genTapeStr } from "../RenderTape/renderTape";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
@@ -24,6 +25,7 @@ const TuringMachinePage = () => {
     const [activeInstruction, setActiveInstruction] = useState(null);
     const [numSquares, setNumSquares] = useState(11); // Number of squares of tape to be displayed
     // const [centralSquareIndex, setCentralSquareIndex] = useState(Math.floor(numSquares / 2));
+    const [tapeStr, setTapeStr] = useState(null);
     const [renderedTape, setRenderedTape] = useState(null);
 
 
@@ -93,17 +95,21 @@ const TuringMachinePage = () => {
     // });
       }, [currentMachine]);
 
-      // render tape
+      // set tape symbols to be rendered
       useEffect(() => {
-        if (currentMachine && currentTape && blankSymbol) {
-            setRenderedTape(renderTape({
-                numSquares,
-                headPos,
-                blankSymbol,
-                currentTape
-            }));
+        if (currentMachine && blankSymbol) {
+            setTapeStr(genTapeStr(
+                numSquares, headPos, blankSymbol, currentTape
+                ));
         }
-      }, [currentMachine, currentTape, numSquares]);
+      }, [currentMachine, currentTape, numSquares, blankSymbol, headPos]);
+
+      // render tape whenever string of symbols or head position changes
+      useEffect(() => {
+        if (tapeStr) {
+            setRenderedTape(renderTape({tapeStr}));
+        }
+      }, [tapeStr, headPos]);
 
     if (currentMachine) {
         machinePage = (
