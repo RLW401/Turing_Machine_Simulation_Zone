@@ -29,10 +29,6 @@ const TuringMachinePage = () => {
     const [renderedTape, setRenderedTape] = useState(null);
 
 
-
-
-
-
     const loadCurrentUser = useSelector((state) => {
         return state.session.user;
     });
@@ -61,12 +57,8 @@ const TuringMachinePage = () => {
 
     useEffect(() => {
         if (machines.allIds && (machines.allIds.includes(machineId))) {
-
             setCurrentMachine(machines.byId[machineId]);
-            // console.log("machines.byId[machineId]: ", machines.byId[machineId])
-            // console.log("currentMachine: ", currentMachine)
         }
-    // }, [machines.allIds, machines.byId, machineId]);
     }, [machines, machineId]);
 
 
@@ -91,6 +83,8 @@ const TuringMachinePage = () => {
         if (currentMachine) {
             currentMachine.currentTape ? setCurrentTape(currentMachine.currentTape) : setCurrentTape(currentMachine.initTape);
             setBlankSymbol(currentMachine.blankSymbol);
+            // console.log("instructions: ", instructions);
+            // console.log("currentMachine: ", currentMachine);
         }
     // });
       }, [currentMachine]);
