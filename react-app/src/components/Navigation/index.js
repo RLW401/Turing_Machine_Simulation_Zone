@@ -2,7 +2,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { Modal, useModal } from "../../context/Modal";
+import { useModal } from "../../context/Modal";
 import ProfileButton from './ProfileButton';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
@@ -11,10 +11,6 @@ import './Navigation.css';
 function Navigation({ isLoaded }){
 	const { closeModal, setModalContent, onModalClose, setOnModalClose } = useModal();
 	const sessionUser = useSelector(state => state.session.user);
-
-	// const handleOpenModal = () => {
-	// 	setModalContent(SignupFormModal)
-	// };
 
 	const homeLink = (
 
@@ -38,9 +34,6 @@ function Navigation({ isLoaded }){
 	  } else {
 		sessionLinks = (
 		  <div className='session-links'>
-
-			{/* <LoginFormModal /> */}
-			{/* <SignupFormModal /> */}
 
 			<button className="login" onClick={(e) => {
 				if (onModalClose) setOnModalClose(onModalClose)
@@ -81,18 +74,6 @@ function Navigation({ isLoaded }){
 		</>
 	  );
 
-	// return (
-	// 	<ul>
-	// 		<li>
-	// 			<NavLink exact to="/">Home</NavLink>
-	// 		</li>
-	// 		{isLoaded && (
-	// 			<li>
-	// 				<ProfileButton user={sessionUser} />
-	// 			</li>
-	// 		)}
-	// 	</ul>
-	// );
 }
 
 export default Navigation;
