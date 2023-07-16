@@ -1,7 +1,6 @@
 // root/react-app/src/components/SignupFormModal/index.js
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-// import { Modal, useModal } from "../../context/Modal";
 import { signUp } from "../../store/session";
 import "./SignupForm.css";
 
@@ -53,11 +52,7 @@ function SignupFormModal({closeModal}) {
 			<input
 				type="text"
 				value={firstName}
-				// onChange={(e) => setFirstName(e.target.value)}
-				onChange={(e) => {
-					setFirstName(e.target.value)
-					console.log("firstName: " + firstName)
-				}}
+				onChange={(e) => setFirstName(e.target.value)}
 				required
 			/>
 		</label>
@@ -100,21 +95,6 @@ function SignupFormModal({closeModal}) {
 		<button type="submit">Sign Up</button>
 	</form>
 	);
-
-	// const handleOpenModal = () => {
-	// 	setModalContent(SignupFormPage)
-	// };
-
-	// const signupButton = (
-	// 	<button className="signup" onClick={handleOpenModal}
-	// 	>Sign Up</button>
-	// );
-
-	// return (
-	// 	<>
-	// 		{signupButton}
-	// 	</>
-	// );
 }
 
 export default SignupFormModal;
