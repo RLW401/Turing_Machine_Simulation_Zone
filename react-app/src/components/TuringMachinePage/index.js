@@ -5,6 +5,7 @@ import { NavLink, useHistory, useParams } from "react-router-dom";
 import { getAuthorizedTMs } from "../../store/turingMachines";
 import renderTape from "../RenderTape/renderTape";
 import { genTapeStr } from "../RenderTape/renderTape";
+import { trimBlanks } from "../../utils/trimBlanks";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
@@ -20,6 +21,7 @@ const TuringMachinePage = () => {
     const [initTape, setInitTape] = useState('');
     const [currentTape, setCurrentTape] = useState('');
     const [currentSymbol, setCurrentSymbol] = useState('');
+    const [currentState, setCurrentState] = useState('');
     const [blankSymbol, setBlankSymbol] = useState('');
     const [headPos, setHeadPos] = useState(0);
     const [activeInstruction, setActiveInstruction] = useState(null);
@@ -81,10 +83,19 @@ const TuringMachinePage = () => {
       // set current tape
       useEffect(() => {
         if (currentMachine) {
-            currentMachine.currentTape ? setCurrentTape(currentMachine.currentTape) : setCurrentTape(currentMachine.initTape);
+            if (currentMachine.currentTape) {
+                setCurrentTape(currentMachine.currentTape);
+            } else if (currentMachine.initTape) {
+                setCurrentTape(currentMachine.initTape);
+            } else {
+                setCurrentTape(currentMachine.blankSymbol);
+            }
+
+            if (currentMachine.headPos) setHeadPos(currentMachine.headPos);
+
             setBlankSymbol(currentMachine.blankSymbol);
-            // console.log("instructions: ", instructions);
-            // console.log("currentMachine: ", currentMachine);
+            console.log("instructions: ", instructions);
+            console.log("currentMachine: ", currentMachine);
         }
     // });
       }, [currentMachine]);
@@ -104,6 +115,15 @@ const TuringMachinePage = () => {
             setRenderedTape(renderTape({tapeStr}));
         }
       }, [tapeStr, headPos]);
+
+      useEffect(() => {
+        if (renderedTape) {
+            const mRes = runMachine(currentMachine, instructions);
+            console.log("mRes: ", mRes);
+            setCurrentTape(mRes[0]);
+            setHeadPos(mRes[1]);
+        }
+      });
 
     if (currentMachine) {
         machinePage = (
@@ -132,6 +152,64 @@ const TuringMachinePage = () => {
         );
 
     }
+
+    const runMachine = (machine, instructions) => {
+        const maxHeadMoves = 9001;
+        const mBlank = machine.blankSymbol;
+        let mTape = machine.blankSymbol;
+        let headPos = 0;
+        let mState = machine.initState;
+        let headMoves = 0;
+
+
+
+        if (machine.currentTape) {
+            mTape = machine.currentTape;
+        } else if (machine.initTape) {
+            mTape = machine.initTape;
+        }
+
+        if (machine.headPos) headPos = machine.headPos;
+        if (machine.currentState) mState = machine.currentState;
+
+        // bugtest
+        // mTape = '000111111111';
+        // bugtest
+
+        while ((mState !== machine.haltingState) && (headMoves <= maxHeadMoves)) {
+            let mInst = null;
+            let scanSymb = mTape[headPos];
+            machine.instructions.forEach((instId) => {
+                const currentInstruction = instructions.byId[instId];
+                if (
+                    (scanSymb === currentInstruction.scannedSymbol)
+                    && (mState === currentInstruction.currentState)
+                    ) {
+                        mInst = currentInstruction;
+                    }
+            });
+            // print symbol
+            mTape = ((mTape.slice(0, headPos) + mInst.printSymbol) + mTape.slice(headPos + 1));
+            // switch state
+            mState = mInst.nextState;
+            // move head
+            headPos += mInst.headMove;
+            // expand tape as necessary
+            if (headPos === -1) {
+                mTape = (mBlank + mTape);
+                headPos = 0;
+            } else if (headPos === mTape.length) {
+                mTape = (mTape + mBlank);
+            }
+            // keep track of number of times head has moved
+            headMoves++;
+            console.log(`mTape at step ${headMoves}: ${mTape}`);
+        }
+        const trimResult = trimBlanks(mTape, mBlank);
+        headPos -= trimResult.leadingBlanks;
+        mTape = trimResult.newString;
+        return [mTape, headPos, headMoves];
+    };
 
     return (
         <>
