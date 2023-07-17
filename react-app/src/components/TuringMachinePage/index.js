@@ -1,9 +1,11 @@
 // root/react-app/src/components/TuringMachinePage/index.js
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+// import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { NavLink, useHistory, useParams } from "react-router-dom";
 import { getAuthorizedTMs } from "../../store/turingMachines";
 import renderTape from "./renderTape";
+import InstructionDisplay from "../InstructionDisplay/instructionDisplay";
 import { genTapeStr } from "./renderTape";
 // import { runMachine } from "./runMachine";
 import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
@@ -12,7 +14,7 @@ import { trimBlanks } from "../../utils/trimBlanks";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
-    const dispatch = useDispatch();
+    // const dispatch = useDispatch();
     const history = useHistory();
     const machineId = Number(useParams().machineId);
     const maxHeadMoves = 9001;
@@ -22,7 +24,7 @@ const TuringMachinePage = () => {
     const [currentUser, setCurrentUser] = useState({});
     const [machines, setMachines] = useState({});
     const [instructions, setInstructions] = useState({});
-    const [formattedInstructions, setFormattedInstructions] = useState('');
+    const [formattedInstructions, setFormattedInstructions] = useState(null);
     const [currentMachine, setCurrentMachine] = useState(null);
     const [defaultInitTape, setDefaultInitTape] = useState('');
     const [initTape, setInitTape] = useState('');
@@ -54,34 +56,38 @@ const TuringMachinePage = () => {
         return state.machineInstructions;
     });
 
-    useEffect(() => {
-        const fetchTMs = async () => {
-            await dispatch(getAuthorizedTMs());
-        }
+    // useEffect(() => {
+    //     const fetchTMs = async () => {
+    //         await dispatch(getAuthorizedTMs());
+    //     }
 
-        fetchTMs();
-        setCurrentUser(loadCurrentUser);
-    }, [loadCurrentUser, dispatch]);
+    //     fetchTMs();
+    //     setCurrentUser(loadCurrentUser);
+    // }, [loadCurrentUser, dispatch]);
 
     useEffect(() => {
         setMachines(loadMachines);
-        setInstructions(loadInstructions);
+        setInstructions(loadInstructions.byId);
     }, [loadMachines, loadInstructions]);
 
     useEffect(() => {
         if (machines.allIds && (machines.allIds.includes(machineId))) {
-            setCurrentMachine(machines.byId[machineId]);
+            const setM = machines.byId[machineId];
+            setCurrentMachine(setM);
+            const fInst = (<InstructionDisplay instructions={instructions} machine={setM} />);
+            setFormattedInstructions(fInst);
+            setFinishedRun(false);
         }
     }, [machines, machineId]);
 
 
-    let machineNames = <li key={0}>no machines</li>
-    if (machines.allIds) {
-        machineNames = machines.allIds.map((mId) => {
-            const mName = machines.byId[mId].name;
-            return <li key={mId}>{mName}</li>
-        });
-    }
+    // let machineNames = <li key={0}>no machines</li>
+    // if (machines.allIds) {
+    //     machineNames = machines.allIds.map((mId) => {
+    //         const mName = machines.byId[mId].name;
+    //         return <li key={mId}>{mName}</li>
+    //     });
+    // }
 
     let machinePage = (
         <div className="machine-page">
@@ -166,19 +172,16 @@ const TuringMachinePage = () => {
         }
 
         let machine = { ...currentMachine };
-        // while ((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) {
-        //     machine = turingStep(machine, instructions.byId, initTape);
-        //     headMoves++;
-        //     setCurrentTape(machine.currentTape);
-        //     setHeadPos(machine.headPos);
-        // }
+        machine.currentTape = initTape;
 
         turingInterval = setInterval(() => {
             if ((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) {
-                machine = turingStep(machine, instructions.byId, initTape);
+                machine = turingStep(machine, instructions);
                 headMoves++;
                 setCurrentTape(machine.currentTape);
                 setHeadPos(machine.headPos);
+                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
+                setFormattedInstructions(fInst);
             } else {
                 clearInterval(turingInterval);
                 const trimResult = trimBlanks(machine.currentTape, machine.blankSymbol);
@@ -199,7 +202,11 @@ const TuringMachinePage = () => {
         // TODO: the clearInterval here isn't working as intended
         clearInterval(turingInterval);
         if (renderedTape) {
-            const resetTape = currentMachine.initTape;
+            const machine = { ...currentMachine };
+            const resetTape = machine.initTape;
+            machine.currentTape = resetTape;
+            const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
+            setFormattedInstructions(fInst);
             setInitTape(resetTape);
             setCurrentTape(resetTape);
             setStartingTape(resetTape);
@@ -239,10 +246,16 @@ const TuringMachinePage = () => {
                             id="initialTape"
                             value={initTape}
                             onChange={(e) => {
-                                setInitTape(e.target.value);
-                                setCurrentTape(e.target.value);
+                                const tape = e.target.value;
+                                const machine = { ...currentMachine };
+                                // machine.currentTape = e.target.value;
+                                machine.currentTape = (tape ? tape : machine.blankSymbol);
+                                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
+                                setFormattedInstructions(fInst);
+                                setInitTape(tape);
+                                setCurrentTape(tape);
                                 setValidTape(stringOnAlphabet(
-                                    e.target.value,
+                                    tape,
                                     (currentMachine.blankSymbol + currentMachine.alphabet)
                                 ));
                             }}
@@ -252,12 +265,12 @@ const TuringMachinePage = () => {
                         <p>States: {`{${currentMachine.states.split('|').join(', ')}}`}</p>
                         <p>Initial State: {currentMachine.initState}</p>
                         <p>Halting State: {currentMachine.haltingState}</p>
-                        {finishedRun && <p>Starting Tape: {startingTape}</p>}
-                        {finishedRun && <p>Halting Tape: {haltingTape}</p>}
+                        {finishedRun && <div className="results-box">
+                            <p>Starting Tape: {startingTape}</p>
+                            <p>Halting Tape: {haltingTape}</p>
+                        </div>}
                     </div>
-                    <div className="machine-instructions">
-                    <h3>Machine Instructions</h3>
-                    </div>
+                    {formattedInstructions}
                 </div>
             </div>
         );

@@ -1,27 +1,37 @@
 // root/react-app/src/components/TuringMachinePage/turingStep.js
 
 //
-export const turingStep = (machine, instructions, tape = null) => {
+export const turingStep = (machine, instructions) => {
     machine = { ...machine };
     instructions = { ...instructions };
 
     const mBlank = machine.blankSymbol;
 
-    if (!tape && (typeof tape === "string")) tape = mBlank;
+    if (!machine.currentTape && (typeof machine.currentTape === "string")) {
+        machine.currentTape = mBlank;
+    }
 
     if (!machine.currentState) {
         machine.currentState = machine.initState;
     }
 
     if (!machine.currentTape) {
-        if (tape) {
-            machine.currentTape = tape;
-        } else if (machine.initTape) {
+        if (machine.initTape) {
             machine.currentTape = machine.initTape;
         } else {
             machine.currentTape = mBlank;
         }
     }
+
+    // if (!machine.currentTape) {
+    //     if (tape) {
+    //         machine.currentTape = tape;
+    //     } else if (machine.initTape) {
+    //         machine.currentTape = machine.initTape;
+    //     } else {
+    //         machine.currentTape = mBlank;
+    //     }
+    // }
 
     if (!machine.headPos) {
         machine.headPos = 0;
