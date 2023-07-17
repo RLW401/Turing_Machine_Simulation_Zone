@@ -107,4 +107,5 @@
 
 .machine-instructions .active {
   color: green;
+  text-decoration: underline;
 }
