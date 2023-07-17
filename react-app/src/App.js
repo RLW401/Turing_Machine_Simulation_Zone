@@ -7,6 +7,7 @@ import { authenticate } from "./store/session";
 import Navigation from "./components/Navigation";
 import LandingPage from "./components/LandingPage";
 import TuringMachinePage from "./components/TuringMachinePage";
+import CreateMachineForm from "./components/TuringMachineForm/CreateMachineForm";
 
 function App() {
   const dispatch = useDispatch();
@@ -28,6 +29,9 @@ function App() {
           </Route> */}
           <Route exact path="/">
             <LandingPage />
+          </Route>
+          <Route path="/turing-machines/new">
+            <CreateMachineForm />
           </Route>
           <Route exact path="/machines/:machineId">
             <TuringMachinePage />
