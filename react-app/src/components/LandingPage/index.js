@@ -6,52 +6,53 @@ import { getAuthorizedTMs } from "../../store/turingMachines";
 import "./landingPage.css"
 
 const LandingPage = () => {
-    const dispatch = useDispatch();
-    const history = useHistory();
+    // const dispatch = useDispatch();
+    // const history = useHistory();
 
-    const [currentUser, setCurrentUser] = useState({});
-    const [machines, setMachines] = useState({});
-    const [instructions, setInstructions] = useState({});
+    // const [currentUser, setCurrentUser] = useState({});
+    // const [machines, setMachines] = useState({});
+    // const [instructions, setInstructions] = useState({});
 
-    const loadCurrentUser = useSelector((state) => {
-        return state.session.user;
-    });
+    // const loadCurrentUser = useSelector((state) => {
+    //     return state.session.user;
+    // });
 
-    const loadMachines = useSelector((state) => {
-        return state.turingMachines;
-    });
+    // const loadMachines = useSelector((state) => {
+    //     return state.turingMachines;
+    // });
 
-    const loadInstructions = useSelector((state) => {
-        return state.machineInstructions;
-    });
+    // const loadInstructions = useSelector((state) => {
+    //     return state.machineInstructions;
+    // });
 
-    useEffect(() => {
-        const fetchTMs = async () => {
-            await dispatch(getAuthorizedTMs());
-        }
+    // useEffect(() => {
+    //     const fetchTMs = async () => {
+    //         await dispatch(getAuthorizedTMs());
+    //     }
 
-        fetchTMs();
-        setCurrentUser(loadCurrentUser);
-    }, [loadCurrentUser, dispatch]);
+    //     fetchTMs();
+    //     setCurrentUser(loadCurrentUser);
+    // }, [loadCurrentUser, dispatch]);
 
-    useEffect(() => {
-        setMachines(loadMachines);
-        setInstructions(loadInstructions);
-    }, [loadMachines, loadInstructions]);
+    // useEffect(() => {
+    //     setMachines(loadMachines);
+    //     setInstructions(loadInstructions);
+    // }, [loadMachines, loadInstructions]);
 
-    let machineNames = <li key={0}>no machines</li>
-    if (machines.allIds) {
-        machineNames = machines.allIds.map((mId) => {
-            const mName = machines.byId[mId].name;
-            return <li key={mId}>{mName}</li>
-        });
-    }
+    // let machineNames = <li key={0}>no machines</li>
+    // if (machines.allIds) {
+    //     machineNames = machines.allIds.map((mId) => {
+    //         const mName = machines.byId[mId].name;
+    //         return <li key={mId}>{mName}</li>
+    //     });
+    // }
 
 
     return (
         <div className="landing-page">
-            <h2>Placeholder</h2>
-            {machineNames}
+            <h2>About this Webzone</h2>
+            <p>Eventually there will be something here.</p>
+            {/* {machineNames} */}
         </div>
     );
 
