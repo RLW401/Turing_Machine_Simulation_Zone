@@ -5,7 +5,7 @@ import { NavLink, useHistory, useParams } from "react-router-dom";
 import { getAuthorizedTMs } from "../../store/turingMachines";
 import renderTape from "./renderTape";
 import { genTapeStr } from "./renderTape";
-import { runMachine } from "./runMachine";
+// import { runMachine } from "./runMachine";
 import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
@@ -188,8 +188,8 @@ const TuringMachinePage = () => {
                 setHeadPos(machine.headPos - trimResult.leadingBlanks);
                 setCurrentTape(trimResult.newString);
                 setHaltingTape(trimResult.newString);
-                setFinishedRun(true);
                 setInitTape(trimResult.newString);
+                setFinishedRun(true);
             }
         }, timeDelay);
 
