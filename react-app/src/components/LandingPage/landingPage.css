@@ -1,9 +1,9 @@
 /* root/react-app/src/components/LandingPage/landingPage.css */
 
 .landing-page {
-    border: solid;
+    /* border: solid;
     border-width: 4px;
-    border-color: blueviolet;
+    border-color: blueviolet; */
     margin-top: 20vh; /* Adjust the top margin to match the height of the top bar */
     height: calc(100vh - 20vh);
     /* overflow-y: auto;  */
