@@ -10,9 +10,10 @@ import "./machineForm.css";
 const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
+    const validBlanks = ["#", " ", "0"];
     const [name, setName] = useState('');
     const [notes, setNotes] = useState('');
-    const [blankSymbol, setBlankSymbol] = useState('');
+    const [blankSymbol, setBlankSymbol] = useState(validBlanks[0]);
     const [alphabet, setAlphabet] = useState('');
     const [initTape, setInitTape] = useState('');
     const [initState, setInitState] = useState('');
@@ -43,9 +44,10 @@ const MachineForm = ({ machine, formType }) => {
                 <h4 className="heading">Blank Symbol</h4>
                 <p className="description">Choose a symbol to represent a blank square of tape.</p>
                 <select name="blankSymbol" value={blankSymbol} onChange={(e) => setBlankSymbol(e.target.value)}>
-                    <option value="#">&lsquo;#&rsquo;</option>
+                    {validBlanks.map((bSymb) => <option value={bSymb}>&lsquo;{bSymb}&rsquo;</option>)}
+                    {/* <option value="#">&lsquo;#&rsquo;</option>
                     <option value=" ">&lsquo; &rsquo;</option>
-                    <option value="0">&lsquo;0&rsquo;</option>
+                    <option value="0">&lsquo;0&rsquo;</option> */}
                 </select>
             </div>
 
