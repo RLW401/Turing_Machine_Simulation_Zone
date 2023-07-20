@@ -19,6 +19,7 @@ const MachineForm = ({ machine, formType }) => {
     const [initState, setInitState] = useState('');
     const [haltingState, setHaltingState] = useState('');
     const [states, setStates] = useState('');
+    const [numStates, setNumStates] = useState(2);
     const [errors, setErrors] = useState({});
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
