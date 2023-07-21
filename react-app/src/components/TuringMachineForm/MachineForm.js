@@ -11,6 +11,8 @@ const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const validBlanks = ["#", " ", "0"];
+    const minNumStates = 2;
+    const maxNumStates = 31;
     const [name, setName] = useState('');
     const [notes, setNotes] = useState('');
     const [blankSymbol, setBlankSymbol] = useState(validBlanks[0]);
@@ -35,42 +37,32 @@ const MachineForm = ({ machine, formType }) => {
 
     }, [numStates]);
 
+    const numStateOptions = [];
+    for (let i = minNumStates; i <= maxNumStates; i++) {
+        numStateOptions.push(
+            <option value={i}>{i}</option>
+        );
+    }
+
     const stateNameInputs = [];
     for (let i = 0; i < numStates; i++) {
+        let description = <p className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
         if (i === 0) {
-            stateNameInputs.push(
-                <div className="form-group">
-                    <p className="description">Pick a name for your machine's initial state.</p>
-                    <input type="text" name="states" value={states[i]} onBlur={(e) => {
-                        const newStates = [ ...states ];
-                        newStates[i] = e.target.value;
-                        setStates(newStates);
-                    }} />
-                </div>
-            );
+            description = <p className="description">Pick a name for your machine's initial state.</p>
         } else if (i === (numStates - 1)) {
-            stateNameInputs.push(
-                <div className="form-group">
-                    <p className="description">Pick a name for your machine's halting state.</p>
-                    <input type="text" name="states" value={states[i]} onBlur={(e) => {
-                        const newStates = [ ...states ];
-                        newStates[i] = e.target.value;
-                        setStates(newStates);
-                    }} />
-                </div>
-            );
-        } else {
-            stateNameInputs.push(
-                <div className="form-group">
-                    <p className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
-                    <input type="text" name="states" value={states[i]} onBlur={(e) => {
-                        const newStates = [ ...states ];
-                        newStates[i] = e.target.value;
-                        setStates(newStates);
-                    }} />
-                </div>
-            );
+            description = <p className="description">Pick a name for your machine's halting state.</p>
         }
+
+        stateNameInputs.push(
+            <div className="form-group">
+                {description}
+                <input type="text" name="states" value={states[i]} onChange={(e) => {
+                    const newStates = [ ...states ];
+                    newStates[i] = e.target.value;
+                    setStates(newStates);
+                }} />
+            </div>
+        );
     }
 
 
@@ -114,10 +106,23 @@ const MachineForm = ({ machine, formType }) => {
                 <input type="text" name="initTape" value={initTape} onChange={(e) => setInitTape(e.target.value)} />
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
                 <h4 className="heading">Internal Machine States</h4>
                 <p className="description">Enter the total number of internal states your machine will have -- this can be edited later. All Turing machines in this webzone must have at least two states: an initial state and a halting state. </p>
-                <input type="text" name="states" value={numStates} onChange={(e) => setStates(Number.parseInt(e.target.value))} />
+                <input type="text" name="states" value={numStates} onChange={(e) => {
+                    const newNumStates = Number.parseInt(e.target.value)
+                    if (newNumStates >= 2) {
+                        setNumStates(newNumStates);
+                    }
+                }} />
+            </div> */}
+
+            <div className="form-group">
+                <h4 className="heading">Internal Machine States</h4>
+                <p className="description">Choose the total number of internal states your machine will have -- this can be edited later. All Turing machines in this webzone must have at least two states: an initial state and a halting state. </p>
+                <select name="numStates" value={numStates} onChange={(e) => setNumStates(e.target.value)}>
+                    {numStateOptions}
+                </select>
             </div>
 
             {stateNameInputs}
