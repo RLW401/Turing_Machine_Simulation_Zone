@@ -56,7 +56,7 @@ const MachineForm = ({ machine, formType }) => {
         stateNameInputs.push(
             <div className="form-group">
                 {description}
-                <input type="text" name="states" defaultValue={states[i]} onBlur={(e) => {
+                <input key={`${i}StateInput`} type="text" name="states" defaultValue={states[i]} onBlur={(e) => {
                     const newStates = [ ...states ];
                     newStates[i] = e.target.value;
                     setStates(newStates);
