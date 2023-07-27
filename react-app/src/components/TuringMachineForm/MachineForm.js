@@ -20,8 +20,9 @@ const MachineForm = ({ machine, formType }) => {
     const [initTape, setInitTape] = useState('');
     const [initState, setInitState] = useState('');
     const [haltingState, setHaltingState] = useState('');
-    const [states, setStates] = useState(["q0", "qh"]);
+    const [states, setStates] = useState([]);
     const [numStates, setNumStates] = useState(2);
+    const [stateNameInputs, setStateNameInputs] = useState([]);
     const [errors, setErrors] = useState([]);
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
@@ -37,16 +38,17 @@ const MachineForm = ({ machine, formType }) => {
         }
       };
 
+    // set states upon change in number of states
     useEffect(() => {
-        let initStateName = "q0";
+        // let initStateName = "q0";
         let haltingStateName = "qh";
         if (states.length >= 2) {
-            initStateName = states[0];
+            // initStateName = states[0];
             haltingStateName = states[states.length - 1];
         }
         const newStates = [];
         for (let i = 0; i < (numStates - 1); i++) {
-            if (i < (states.length - 2)) {
+            if (i < (states.length - 1)) {
                 newStates.push(states[i]);
             } else {
                 newStates.push("q" + i);
@@ -54,9 +56,36 @@ const MachineForm = ({ machine, formType }) => {
         }
         newStates.push(haltingStateName);
         setStates(newStates);
-        // console.log("states: ", states)
-
     }, [numStates]);
+
+    useEffect(() => {
+        const newInputs = [];
+        if (states.length === numStates) {
+            const haltingStateName = states[states.length - 1];
+            for (let i = 0; i < numStates; i++) {
+                let description = <p key={`internalState${i}Name`} className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
+                let defaultValue = states[i];
+                if (i === 0) {
+                    description = <p key={"initStateName"} className="description">Pick a name for your machine's initial state.</p>
+                } else if (i === (numStates - 1)) {
+                    description = <p key={"haltingStateName"} className="description">Pick a name for your machine's halting state.</p>
+                    defaultValue = haltingStateName;
+                }
+
+                newInputs.push(
+                    <div className="form-group">
+                        {description}
+                        <input key={`${i}StateInput`} type="text" name="states" defaultValue={defaultValue} onBlur={(e) => {
+                            const newStates = [ ...states ];
+                            newStates[i] = e.target.value;
+                            setStates(newStates);
+                        }} />
+                    </div>
+                );
+            }
+        }
+        setStateNameInputs(newInputs);
+    }, [states, numStates]);
 
     const numStateOptions = [];
     for (let i = minNumStates; i <= maxNumStates; i++) {
@@ -65,26 +94,26 @@ const MachineForm = ({ machine, formType }) => {
         );
     }
 
-    const stateNameInputs = [];
-    for (let i = 0; i < numStates; i++) {
-        let description = <p key={`internalState${i}Name`} className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
-        if (i === 0) {
-            description = <p key={"initStateName"} className="description">Pick a name for your machine's initial state.</p>
-        } else if (i === (numStates - 1)) {
-            description = <p key={"haltingStateName"} className="description">Pick a name for your machine's halting state.</p>
-        }
+    // const stateNameInputs = [];
+    // for (let i = 0; i < numStates; i++) {
+    //     let description = <p key={`internalState${i}Name`} className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
+    //     if (i === 0) {
+    //         description = <p key={"initStateName"} className="description">Pick a name for your machine's initial state.</p>
+    //     } else if (i === (numStates - 1)) {
+    //         description = <p key={"haltingStateName"} className="description">Pick a name for your machine's halting state.</p>
+    //     }
 
-        stateNameInputs.push(
-            <div className="form-group">
-                {description}
-                <input key={`${i}StateInput`} type="text" name="states" defaultValue={states[i]} onBlur={(e) => {
-                    const newStates = [ ...states ];
-                    newStates[i] = e.target.value;
-                    setStates(newStates);
-                }} />
-            </div>
-        );
-    }
+    //     stateNameInputs.push(
+    //         <div className="form-group">
+    //             {description}
+    //             <input key={`${i}StateInput`} type="text" name="states" defaultValue={states[i]} onBlur={(e) => {
+    //                 const newStates = [ ...states ];
+    //                 newStates[i] = e.target.value;
+    //                 setStates(newStates);
+    //             }} />
+    //         </div>
+    //     );
+    // }
 
 
 
@@ -133,7 +162,7 @@ const MachineForm = ({ machine, formType }) => {
                 <input type="text" name="states" defaultValue={numStates} onKeyDown={handleKeyDown}
                 onBlur={(e) => {
                     const newNumStates = Number.parseInt(e.target.value)
-                    if (newNumStates >= minNumStates && newNumStates < maxNumStates) {
+                    if (newNumStates >= minNumStates && newNumStates <= maxNumStates) {
                         setNumStates(newNumStates);
                     } else {
                         const newErrors = [ ...errors ]
@@ -154,19 +183,19 @@ const MachineForm = ({ machine, formType }) => {
 
             {stateNameInputs}
 
-            <div className="init-and-halting-state-dropdowns">
+            {/* <div className="init-and-halting-state-dropdowns">
                 <div className="form-group">
                     <h4 className="heading">Initial State</h4>
                     <p className="description">In which state does your machine start?</p>
-                    {/* Add dropdown element here */}
+                    Add dropdown element here
                 </div>
 
                 <div className="form-group">
                     <h4 className="heading">Halting State</h4>
                     <p className="description">Is there a state in which your machine will halt? If so, which one?</p>
-                    {/* Add dropdown element here */}
+                    Add dropdown element here
                 </div>
-            </div>
+            </div> */}
 
             <div className="form-group">
                 <button type="submit">Submit</button>
