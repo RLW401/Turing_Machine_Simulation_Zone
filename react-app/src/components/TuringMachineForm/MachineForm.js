@@ -58,24 +58,25 @@ const MachineForm = ({ machine, formType }) => {
         setStates(newStates);
     }, [numStates]);
 
+    // set state name inputs in response to change in states or number of states
     useEffect(() => {
         const newInputs = [];
         if (states.length === numStates) {
             const haltingStateName = states[states.length - 1];
             for (let i = 0; i < numStates; i++) {
-                let description = <p key={`internalState${i}Name`} className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
+                let description = <p className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
                 let defaultValue = states[i];
                 if (i === 0) {
-                    description = <p key={"initStateName"} className="description">Pick a name for your machine's initial state.</p>
+                    description = <p className="description">Pick a name for your machine's initial state.</p>
                 } else if (i === (numStates - 1)) {
-                    description = <p key={"haltingStateName"} className="description">Pick a name for your machine's halting state.</p>
+                    description = <p className="description">Pick a name for your machine's halting state.</p>
                     defaultValue = haltingStateName;
                 }
 
                 newInputs.push(
-                    <div className="form-group">
+                    <div key={`${i}StateInput`} className="form-group">
                         {description}
-                        <input key={`${i}StateInput`} type="text" name="states" defaultValue={defaultValue} onBlur={(e) => {
+                        <input type="text" name="states" defaultValue={defaultValue} onBlur={(e) => {
                             const newStates = [ ...states ];
                             newStates[i] = e.target.value;
                             setStates(newStates);
