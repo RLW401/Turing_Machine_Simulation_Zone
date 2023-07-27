@@ -20,20 +20,41 @@ const MachineForm = ({ machine, formType }) => {
     const [initTape, setInitTape] = useState('');
     const [initState, setInitState] = useState('');
     const [haltingState, setHaltingState] = useState('');
-    const [states, setStates] = useState([]);
+    const [states, setStates] = useState(["q0", "qh"]);
     const [numStates, setNumStates] = useState(2);
     const [errors, setErrors] = useState([]);
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
-    const handleSubmit = () => null;
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        return null;
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          e.target.blur(); // Trigger onBlur event
+        }
+      };
 
     useEffect(() => {
+        let initStateName = "q0";
+        let haltingStateName = "qh";
+        if (states.length >= 2) {
+            initStateName = states[0];
+            haltingStateName = states[states.length - 1];
+        }
         const newStates = [];
         for (let i = 0; i < (numStates - 1); i++) {
-            newStates.push("q" + i);
+            if (i < (states.length - 2)) {
+                newStates.push(states[i]);
+            } else {
+                newStates.push("q" + i);
+            }
         }
-        newStates.push("qh");
+        newStates.push(haltingStateName);
         setStates(newStates);
+        // console.log("states: ", states)
 
     }, [numStates]);
 
@@ -109,7 +130,8 @@ const MachineForm = ({ machine, formType }) => {
             <div className="form-group">
                 <h4 className="heading">Internal Machine States</h4>
                 <p className="description">Enter the total number of internal states your machine will have -- this can be edited later. All Turing machines in this webzone must have at least two states: an initial state and a halting state. </p>
-                <input type="text" name="states" defaultValue={numStates} onBlur={(e) => {
+                <input type="text" name="states" defaultValue={numStates} onKeyDown={handleKeyDown}
+                onBlur={(e) => {
                     const newNumStates = Number.parseInt(e.target.value)
                     if (newNumStates >= minNumStates && newNumStates < maxNumStates) {
                         setNumStates(newNumStates);
