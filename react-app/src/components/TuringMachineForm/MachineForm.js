@@ -11,6 +11,8 @@ const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const validBlanks = ["#", " ", "0"];
+    const invalidStateNameChars = [',', '|'];
+    const minStateNameLen = 2;
     const minNumStates = 2;
     const maxNumStates = 32;
     const [name, setName] = useState('');
@@ -23,11 +25,16 @@ const MachineForm = ({ machine, formType }) => {
     const [states, setStates] = useState([]);
     const [numStates, setNumStates] = useState(2);
     const [stateNameInputs, setStateNameInputs] = useState([]);
+    const [stateNameErrors, setStateNameErrors] = useState([]);
     const [errors, setErrors] = useState([]);
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setSubmissionAttempt(true);
+
+        if (errors.length) return;
+        setSubmissionAttempt(false);
         return null;
     };
 
@@ -64,14 +71,19 @@ const MachineForm = ({ machine, formType }) => {
         if (states.length === numStates) {
             const haltingStateName = states[states.length - 1];
             for (let i = 0; i < numStates; i++) {
+                let errType = `The name of internal state ${i}`;
                 let description = <p className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
                 let defaultValue = states[i];
                 if (i === 0) {
                     description = <p className="description">Pick a name for your machine's initial state.</p>
+                    errType = `The initial state name`;
                 } else if (i === (numStates - 1)) {
                     description = <p className="description">Pick a name for your machine's halting state.</p>
                     defaultValue = haltingStateName;
+                    errType = `The halting state name`;
                 }
+
+                const stateNameInputError = `${errType} must be at least ${minStateNameLen} characters long and must not include any of the following characters: ${invalidStateNameChars}.`
 
                 newInputs.push(
                     <div key={`${i}StateInput`} className="form-group">
