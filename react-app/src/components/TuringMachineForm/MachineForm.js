@@ -11,7 +11,7 @@ const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const validBlanks = ["#", " ", "0"];
-    const invalidStateNameChars = [',', '|'];
+    const invalidStateNameChars = [',', '|', '<', '>', '{', '}'];
     const minStateNameLen = 2;
     const minNumStates = 2;
     const maxNumStates = 32;
@@ -22,18 +22,18 @@ const MachineForm = ({ machine, formType }) => {
     const [initTape, setInitTape] = useState('');
     const [initState, setInitState] = useState('');
     const [haltingState, setHaltingState] = useState('');
-    const [states, setStates] = useState([]);
+    const [states, setStates] = useState(["q0", "qh"]);
     const [numStates, setNumStates] = useState(2);
     const [stateNameInputs, setStateNameInputs] = useState([]);
-    const [stateNameErrors, setStateNameErrors] = useState([]);
-    const [errors, setErrors] = useState([]);
+    // const [stateNameErrors, setStateNameErrors] = useState([]);
+    const [errors, setErrors] = useState({});
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         setSubmissionAttempt(true);
 
-        if (errors.length) return;
+        if (errors.keys.length) return;
         setSubmissionAttempt(false);
         return null;
     };
@@ -47,30 +47,29 @@ const MachineForm = ({ machine, formType }) => {
 
     // set states upon change in number of states
     useEffect(() => {
-        // let initStateName = "q0";
-        let haltingStateName = "qh";
-        if (states.length >= 2) {
-            // initStateName = states[0];
-            haltingStateName = states[states.length - 1];
-        }
-        const newStates = [];
-        for (let i = 0; i < (numStates - 1); i++) {
-            if (i < (states.length - 1)) {
-                newStates.push(states[i]);
-            } else {
-                newStates.push("q" + i);
+        if (states.length !== numStates) {
+            const haltingStateName = states[states.length - 1];
+            const newStates = [];
+            for (let i = 0; i < (numStates - 1); i++) {
+                if (i < (states.length - 1)) {
+                    newStates.push(states[i]);
+                } else {
+                    newStates.push("q" + i);
+                }
             }
+            newStates.push(haltingStateName);
+            setStates(newStates);
         }
-        newStates.push(haltingStateName);
-        setStates(newStates);
-    }, [numStates]);
+    }, [numStates, states]);
 
     // set state name inputs in response to change in states or number of states
     useEffect(() => {
         const newInputs = [];
+        const newErrors = { ...errors };
         if (states.length === numStates) {
             const haltingStateName = states[states.length - 1];
             for (let i = 0; i < numStates; i++) {
+                const errKey = `stateName${i}`;
                 let errType = `The name of internal state ${i}`;
                 let description = <p className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
                 let defaultValue = states[i];
@@ -89,23 +88,27 @@ const MachineForm = ({ machine, formType }) => {
                     <div key={`${i}StateInput`} className="form-group">
                         {description}
                         <input type="text" name="states" defaultValue={defaultValue} onBlur={(e) => {
-                            const newStates = [ ...states ];
-                            newStates[i] = e.target.value;
-                            setStates(newStates);
+                            const goodChars = invalidStateNameChars.every((char) => (!e.target.value.includes(char)));
+                            if ((e.target.value.length >= 2) && goodChars) {
+                                delete newErrors[errKey];
+                                // setErrors(newErrors);
+                                const newStates = [ ...states ];
+                                newStates[i] = e.target.value;
+                                // setStates(newStates);
+                            } else {
+                                newErrors[errKey] = [stateNameInputError];
+                                // setErrors(newErrors);
+                            }
                         }} />
+                        {(errors[errKey]) && <span className="error-message">{errors[errKey]}</span>}
+
                     </div>
                 );
             }
+            setStateNameInputs(newInputs);
         }
-        setStateNameInputs(newInputs);
-    }, [states, numStates]);
-
-    const numStateOptions = [];
-    for (let i = minNumStates; i <= maxNumStates; i++) {
-        numStateOptions.push(
-            <option key={i} value={i}>{i}</option>
-        );
-    }
+        // setStateNameInputs(newInputs);
+    }, [states, numStates, invalidStateNameChars, errors]);
 
     // const stateNameInputs = [];
     // for (let i = 0; i < numStates; i++) {
@@ -175,15 +178,18 @@ const MachineForm = ({ machine, formType }) => {
                 <input type="text" name="states" defaultValue={numStates} onKeyDown={handleKeyDown}
                 onBlur={(e) => {
                     const newNumStates = Number.parseInt(e.target.value)
+                    const newErrors = { ...errors }
                     if (newNumStates >= minNumStates && newNumStates <= maxNumStates) {
+                        delete newErrors.numStates;
+                        setErrors(newErrors);
                         setNumStates(newNumStates);
                     } else {
-                        const newErrors = [ ...errors ]
-                        newErrors.push(`Number of states must be an integer between ${minNumStates} and ${maxNumStates}, inclusive.`)
+                        newErrors.numStates = [`Number of states must be an integer between ${minNumStates} and ${maxNumStates}, inclusive.`];
                         setErrors(newErrors);
-                        // console.log(newErrors);
                     }
                 }} />
+                {(errors.numStates && errors.numStates.length) && <span className="error-message">{errors.numStates}</span>}
+
             </div>
 
             {/* <div className="form-group">
