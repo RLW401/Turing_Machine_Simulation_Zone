@@ -134,15 +134,14 @@ const MachineForm = ({ machine, formType }) => {
 
     // handle errors for inputs unrelated to machine states
     useEffect(() => {
-        const valSymb = (blankSymbol + alphabet);
-
+        const valSymb = (blankSymbol + alphabet).split("");
         const newErrors = { ...errors };
         // handle name errors
         newErrors.name = [];
         if ((name.length < minNameLen) || (name.length > maxNameLen)) {
             newErrors.name.push("")
         }
-    }, [name, alphabet, initTape, errors]);
+    }, [blankSymbol, name, alphabet, initTape, errors]);
 
 
     return (
