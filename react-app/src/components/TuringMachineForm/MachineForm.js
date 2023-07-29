@@ -12,15 +12,20 @@ const MachineForm = ({ machine, formType }) => {
     const dispatch = useDispatch();
     const validBlanks = ["#", " ", "0"];
     const minStateNameLen = 2;
+    const maxStateNameLen = 31;
     const minNumStates = 2;
     const maxNumStates = 32;
+    const minNameLen = 2;
+    const maxNameLen = 255;
+    const minAlphaLen = 1;
+    const maxAlphaLen = 127;
     const [name, setName] = useState('');
     const [notes, setNotes] = useState('');
     const [blankSymbol, setBlankSymbol] = useState(validBlanks[0]);
     const [alphabet, setAlphabet] = useState('');
     const [initTape, setInitTape] = useState('');
-    const [initState, setInitState] = useState('');
-    const [haltingState, setHaltingState] = useState('');
+    // const [initState, setInitState] = useState('');
+    // const [haltingState, setHaltingState] = useState('');
     const [states, setStates] = useState(["q0", "qh"]);
     const [numStates, setNumStates] = useState(2);
     const [stateNameInputs, setStateNameInputs] = useState([]);
@@ -98,18 +103,19 @@ const MachineForm = ({ machine, formType }) => {
                     errType = `The halting state name`;
                 }
 
-                const stateNameInputError = `${errType} must be at least ${minStateNameLen} characters long and must not include any of the following characters: ${badCharStr}.`
+                const stateNameInputError = `${errType} must be at least ${minStateNameLen} and at most ${maxStateNameLen} characters long, and must not include any of the following characters: ${badCharStr}.`
 
                 newInputs.push(
                     <div key={`${i}StateInput`} className="form-group">
                         {description}
                         <input type="text" name="states" defaultValue={defaultValue} onKeyDown={handleKeyDown} onBlur={(e) => {
-                            const goodChars = invalidStateNameChars.every((char) => (!e.target.value.includes(char)));
-                            if ((e.target.value.length >= 2) && goodChars) {
+                            const stateName = e.target.value;
+                            const goodChars = invalidStateNameChars.every((char) => (!stateName.includes(char)));
+                            if (((stateName.length >= minStateNameLen) && (stateName.length <= maxStateNameLen)) && goodChars) {
                                 delete newErrors[errKey];
                                 setErrors(newErrors);
                                 const newStates = [ ...states ];
-                                newStates[i] = e.target.value;
+                                newStates[i] = stateName;
                                 setStates(newStates);
                             } else {
                                 newErrors[errKey] = [stateNameInputError];
@@ -121,11 +127,22 @@ const MachineForm = ({ machine, formType }) => {
                     </div>
                 );
             }
-
         }
         setStateNameInputs(newInputs);
     }, [states, numStates, errors]);
 
+
+    // handle errors for inputs unrelated to machine states
+    useEffect(() => {
+        const valSymb = (blankSymbol + alphabet);
+
+        const newErrors = { ...errors };
+        // handle name errors
+        newErrors.name = [];
+        if ((name.length < minNameLen) || (name.length > maxNameLen)) {
+            newErrors.name.push("")
+        }
+    }, [name, alphabet, initTape, errors]);
 
 
     return (
