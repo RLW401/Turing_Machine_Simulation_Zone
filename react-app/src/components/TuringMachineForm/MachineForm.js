@@ -11,7 +11,6 @@ const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const validBlanks = ["#", " ", "0"];
-    const invalidStateNameChars = [',', '|', '<', '>', '{', '}'];
     const minStateNameLen = 2;
     const minNumStates = 2;
     const maxNumStates = 32;
@@ -33,7 +32,7 @@ const MachineForm = ({ machine, formType }) => {
         e.preventDefault();
         setSubmissionAttempt(true);
 
-        if (errors.keys.length) return;
+        if (Object.keys(errors).length) return;
         setSubmissionAttempt(false);
         return null;
     };
@@ -58,14 +57,31 @@ const MachineForm = ({ machine, formType }) => {
                 }
             }
             newStates.push(haltingStateName);
+            // erase errors for deleted states, if any
+            let errorsErased = false;
+            const newErrors = { ...errors };
+            for (let i = (numStates - 1); i < states.length; i++) {
+                const errKey = `stateName${i}`;
+                if (errors[errKey]) {
+                    delete newErrors[errKey];
+                    errorsErased = true;
+                }
+            }
+            if (errorsErased) setErrors(newErrors);
             setStates(newStates);
         }
-    }, [numStates, states]);
+
+    }, [numStates, states, errors]);
 
     // set state name inputs in response to change in states or number of states
     useEffect(() => {
+        const invalidStateNameChars = [',', '|', '<', '>', '{', '}'];
+        let badCharStr = "";
         const newInputs = [];
         const newErrors = { ...errors };
+        invalidStateNameChars.forEach((char) => {
+            badCharStr += char;
+        });
         if (states.length === numStates) {
             const haltingStateName = states[states.length - 1];
             for (let i = 0; i < numStates; i++) {
@@ -82,22 +98,22 @@ const MachineForm = ({ machine, formType }) => {
                     errType = `The halting state name`;
                 }
 
-                const stateNameInputError = `${errType} must be at least ${minStateNameLen} characters long and must not include any of the following characters: ${invalidStateNameChars}.`
+                const stateNameInputError = `${errType} must be at least ${minStateNameLen} characters long and must not include any of the following characters: ${badCharStr}.`
 
                 newInputs.push(
                     <div key={`${i}StateInput`} className="form-group">
                         {description}
-                        <input type="text" name="states" defaultValue={defaultValue} onBlur={(e) => {
+                        <input type="text" name="states" defaultValue={defaultValue} onKeyDown={handleKeyDown} onBlur={(e) => {
                             const goodChars = invalidStateNameChars.every((char) => (!e.target.value.includes(char)));
                             if ((e.target.value.length >= 2) && goodChars) {
                                 delete newErrors[errKey];
-                                // setErrors(newErrors);
+                                setErrors(newErrors);
                                 const newStates = [ ...states ];
                                 newStates[i] = e.target.value;
-                                // setStates(newStates);
+                                setStates(newStates);
                             } else {
                                 newErrors[errKey] = [stateNameInputError];
-                                // setErrors(newErrors);
+                                setErrors(newErrors);
                             }
                         }} />
                         {(errors[errKey]) && <span className="error-message">{errors[errKey]}</span>}
@@ -105,31 +121,10 @@ const MachineForm = ({ machine, formType }) => {
                     </div>
                 );
             }
-            setStateNameInputs(newInputs);
+
         }
-        // setStateNameInputs(newInputs);
-    }, [states, numStates, invalidStateNameChars, errors]);
-
-    // const stateNameInputs = [];
-    // for (let i = 0; i < numStates; i++) {
-    //     let description = <p key={`internalState${i}Name`} className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
-    //     if (i === 0) {
-    //         description = <p key={"initStateName"} className="description">Pick a name for your machine's initial state.</p>
-    //     } else if (i === (numStates - 1)) {
-    //         description = <p key={"haltingStateName"} className="description">Pick a name for your machine's halting state.</p>
-    //     }
-
-    //     stateNameInputs.push(
-    //         <div className="form-group">
-    //             {description}
-    //             <input key={`${i}StateInput`} type="text" name="states" defaultValue={states[i]} onBlur={(e) => {
-    //                 const newStates = [ ...states ];
-    //                 newStates[i] = e.target.value;
-    //                 setStates(newStates);
-    //             }} />
-    //         </div>
-    //     );
-    // }
+        setStateNameInputs(newInputs);
+    }, [states, numStates, errors]);
 
 
 
@@ -154,9 +149,6 @@ const MachineForm = ({ machine, formType }) => {
                 <p className="description">Choose a symbol to represent a blank square of tape.</p>
                 <select name="blankSymbol" value={blankSymbol} onChange={(e) => setBlankSymbol(e.target.value)}>
                     {validBlanks.map((bSymb) => <option key={bSymb} value={bSymb}>&lsquo;{bSymb}&rsquo;</option>)}
-                    {/* <option value="#">&lsquo;#&rsquo;</option>
-                    <option value=" ">&lsquo; &rsquo;</option>
-                    <option value="0">&lsquo;0&rsquo;</option> */}
                 </select>
             </div>
 
@@ -192,29 +184,7 @@ const MachineForm = ({ machine, formType }) => {
 
             </div>
 
-            {/* <div className="form-group">
-                <h4 className="heading">Internal Machine States</h4>
-                <p className="description">Choose the total number of internal states your machine will have -- this can be edited later. All Turing machines in this webzone must have at least two states: an initial state and a halting state. </p>
-                <select name="numStates" value={numStates} onChange={(e) => setNumStates(e.target.value)}>
-                    {numStateOptions}
-                </select>
-            </div> */}
-
             {stateNameInputs}
-
-            {/* <div className="init-and-halting-state-dropdowns">
-                <div className="form-group">
-                    <h4 className="heading">Initial State</h4>
-                    <p className="description">In which state does your machine start?</p>
-                    Add dropdown element here
-                </div>
-
-                <div className="form-group">
-                    <h4 className="heading">Halting State</h4>
-                    <p className="description">Is there a state in which your machine will halt? If so, which one?</p>
-                    Add dropdown element here
-                </div>
-            </div> */}
 
             <div className="form-group">
                 <button type="submit">Submit</button>
