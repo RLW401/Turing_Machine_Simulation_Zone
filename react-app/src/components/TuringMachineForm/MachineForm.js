@@ -54,7 +54,16 @@ const MachineForm = ({ machine, formType }) => {
         if (states.length !== numStates) {
             const haltingStateName = states[states.length - 1];
             const newStates = [];
+            const newErrors = { ...errors };
+            let errorsErased = false;
             for (let i = 0; i < (numStates - 1); i++) {
+                const errKey = `stateName${i}`;
+                // since state names that fail validation revert to the last valid name, errors can be safely cleared.
+                if (errors[errKey]) {
+                    delete newErrors[errKey];
+                    errorsErased = true;
+                }
+
                 if (i < (states.length - 1)) {
                     newStates.push(states[i]);
                 } else {
@@ -62,9 +71,8 @@ const MachineForm = ({ machine, formType }) => {
                 }
             }
             newStates.push(haltingStateName);
+
             // erase errors for deleted states, if any
-            let errorsErased = false;
-            const newErrors = { ...errors };
             for (let i = (numStates - 1); i < states.length; i++) {
                 const errKey = `stateName${i}`;
                 if (errors[errKey]) {
