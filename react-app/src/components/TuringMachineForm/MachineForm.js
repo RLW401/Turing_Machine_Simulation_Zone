@@ -33,6 +33,10 @@ const MachineForm = ({ machine, formType }) => {
     const [errors, setErrors] = useState({});
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
+    const loadMachines = useSelector((state) => {
+		return state.turingMachines;
+	});
+
     const handleSubmit = (e) => {
         e.preventDefault();
         setSubmissionAttempt(true);
@@ -65,7 +69,6 @@ const MachineForm = ({ machine, formType }) => {
                     delete newErrors[errKey];
                     errorsErased = true;
                 }
-
 
                 if (i < numStates) {
                     if (i === (numStates - 1)) {
@@ -148,7 +151,7 @@ const MachineForm = ({ machine, formType }) => {
         // handle name errors
         newErrors.name = [];
         if ((name.length < minNameLen) || (name.length > maxNameLen)) {
-            newErrors.name.push("")
+            newErrors.name.push(`Machine name must be `)
         }
     }, [blankSymbol, name, alphabet, initTape, errors]);
 
