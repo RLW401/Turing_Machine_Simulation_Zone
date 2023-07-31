@@ -4,12 +4,15 @@ import { useState, useEffect, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { createMachine } from '../../store/turingMachines';
 import { findErr } from '../../utils/errorHandling';
 import "./machineForm.css";
 
 const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
+    const createGroup = "Create Turing Machine";
+    const updateGroup = "Update Turing Machine";
     const validBlanks = ["#", " ", "0"];
     const minStateNameLen = 2;
     const maxStateNameLen = 31;
@@ -29,21 +32,38 @@ const MachineForm = ({ machine, formType }) => {
     const [states, setStates] = useState(["q0", "qh"]);
     const [numStates, setNumStates] = useState(2);
     const [stateNameInputs, setStateNameInputs] = useState([]);
-    // const [stateNameErrors, setStateNameErrors] = useState([]);
+    const [stateNameErrors, setStateNameErrors] = useState({});
     const [errors, setErrors] = useState({});
+    const [otherErrors, setOtherErrors] = useState({});
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
     const loadMachines = useSelector((state) => {
 		return state.turingMachines;
 	});
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmissionAttempt(true);
+        // console.log("formType: ", formType);
 
-        if (Object.keys(errors).length) return;
+        const errTypes = Object.keys(errors);
+        for (let i = 0; i < errTypes.length; i++) {
+            if (errors[errTypes[i]].length) return;
+        }
+
+        machine = {
+            ...machine, name, notes, blankSymbol, alphabet,
+            initTape, states: states.join('|'),
+            initState: states[0], haltingState: states[states.length - 1],
+        };
+        // console.log("errors: ", errors);
+
+
+
         setSubmissionAttempt(false);
-        return null;
+        if (formType === createGroup) {
+
+        }
     };
 
     const handleKeyDown = (e) => {
@@ -53,19 +73,24 @@ const MachineForm = ({ machine, formType }) => {
         }
       };
 
+    // consolidate errors
+    useEffect(()=> {
+        setErrors({ ...stateNameErrors, ...otherErrors });
+    }, [stateNameErrors, otherErrors]);
+
     // set state names upon change in number of states
     useEffect(() => {
         if (states.length !== numStates) {
             const haltingStateName = states[states.length - 1];
             const newStates = [];
-            const newErrors = { ...errors };
+            const newErrors = { ...stateNameErrors };
             const maxIndex = ((numStates > states.length) ? (numStates - 1) : (states.length - 1));
             let errorsErased = false;
 
             for (let i = 0; i <= maxIndex; i++) {
                 const errKey = `stateName${i}`;
                 // since state names that fail validation revert to the last valid name, errors can be safely cleared.
-                if (errors[errKey]) {
+                if (newErrors[errKey]) {
                     delete newErrors[errKey];
                     errorsErased = true;
                 }
@@ -84,18 +109,18 @@ const MachineForm = ({ machine, formType }) => {
                 }
             }
 
-            if (errorsErased) setErrors(newErrors);
+            if (errorsErased) setStateNameErrors(newErrors);
             setStates(newStates);
         }
 
-    }, [numStates, states, errors]);
+    }, [numStates, states, stateNameErrors]);
 
     // set state name inputs in response to change in states or number of states
     useEffect(() => {
         const invalidStateNameChars = [',', '|', '<', '>', '{', '}'];
         let badCharStr = "";
         const newInputs = [];
-        const newErrors = { ...errors };
+        const newErrors = { ...stateNameErrors };
         invalidStateNameChars.forEach((char) => {
             badCharStr += char;
         });
@@ -115,7 +140,7 @@ const MachineForm = ({ machine, formType }) => {
                     errType = `The halting state name`;
                 }
 
-                const stateNameInputError = `${errType} must be at least ${minStateNameLen} and at most ${maxStateNameLen} characters long, and must not include any of the following characters: ${badCharStr}.`
+                const stateNameInputError = ` ${errType} must be at least ${minStateNameLen} and at most ${maxStateNameLen} characters long, and must not include any of the following characters: ${badCharStr}. `
 
                 newInputs.push(
                     <div key={`${i}StateInput`} className="form-group">
@@ -125,35 +150,58 @@ const MachineForm = ({ machine, formType }) => {
                             const goodChars = invalidStateNameChars.every((char) => (!stateName.includes(char)));
                             if (((stateName.length >= minStateNameLen) && (stateName.length <= maxStateNameLen)) && goodChars) {
                                 delete newErrors[errKey];
-                                setErrors(newErrors);
+                                setStateNameErrors(newErrors);
                                 const newStates = [ ...states ];
                                 newStates[i] = stateName;
                                 setStates(newStates);
                             } else {
                                 newErrors[errKey] = [stateNameInputError];
-                                setErrors(newErrors);
+                                setStateNameErrors(newErrors);
                             }
                         }} />
-                        {(errors[errKey]) && <span className="error-message">{errors[errKey]}</span>}
+                        {(stateNameErrors[errKey]) && <span className="error-message">{stateNameErrors[errKey]}</span>}
 
                     </div>
                 );
             }
         }
         setStateNameInputs(newInputs);
-    }, [states, numStates, errors]);
+    }, [states, numStates, stateNameErrors]);
 
 
     // handle errors for inputs unrelated to machine states
     useEffect(() => {
-        const valSymb = (blankSymbol + alphabet).split("");
-        const newErrors = { ...errors };
+        const valSymb = (blankSymbol + alphabet);
+        const newErrors = { name: [], alphabet: [], initTape: []};
         // handle name errors
-        newErrors.name = [];
         if ((name.length < minNameLen) || (name.length > maxNameLen)) {
-            newErrors.name.push(`Machine name must be `)
+            newErrors.name.push(` Machine name must be between ${minNameLen} and ${maxNameLen} characters, inclusive. `)
         }
-    }, [blankSymbol, name, alphabet, initTape, errors]);
+        loadMachines.allIds.forEach((mId) => {
+            const mName = loadMachines.byId[mId].name;
+            if ((name === mName) && ((formType === createGroup) || (mId !== machine.id))) {
+                newErrors.name.push(` You already have another machine called ${name}, please choose a different name for this machine. `);
+            }
+        });
+
+        // handle alphabet errors
+        if ((alphabet.length < minAlphaLen) || (alphabet.length > maxAlphaLen)) {
+            newErrors.alphabet.push(` Machine alphabet must be between ${minAlphaLen} and ${maxAlphaLen} characters, inclusive. `)
+        }
+
+        if (alphabet.includes(' ') || alphabet.includes(blankSymbol)) {
+            newErrors.alphabet.push(` The machine alphabet cannot contain whitespace or the symbol you have chosen as the blank (${blankSymbol}). `)
+        }
+
+        // handle initial tape errors
+        const tapeGood = initTape.split("").every((char) => valSymb.includes(char));
+
+        if (!tapeGood) {
+            newErrors.initTape.push(` The initial tape may only contain the blank and symbols from the alphabet (${valSymb}). `);
+        }
+
+        setOtherErrors(newErrors);
+    }, [blankSymbol, name, alphabet, initTape, loadMachines, formType, machine.id]);
 
 
     return (
@@ -184,12 +232,14 @@ const MachineForm = ({ machine, formType }) => {
                 <h4 className="heading">Alphabet</h4>
                 <p className="description">The set of non-blank symbols recognized by the machine. Enter as a string of symbols without spaces.</p>
                 <input type="text" name="alphabet" value={alphabet} onChange={(e) => setAlphabet(e.target.value)} />
+                {submissionAttempt && errors.alphabet && <span className="error-message">{errors.alphabet}</span>}
             </div>
 
             <div className="form-group">
                 <h4 className="heading">Initial Tape</h4>
                 <p className="description">The initial contents of the tape from the leftmost to the rightmost non-blank symbol. May be interspaced with blanks.</p>
                 <input type="text" name="initTape" value={initTape} onChange={(e) => setInitTape(e.target.value)} />
+                {submissionAttempt && errors.initTape && <span className="error-message">{errors.initTape}</span>}
             </div>
 
             <div className="form-group">
@@ -198,14 +248,14 @@ const MachineForm = ({ machine, formType }) => {
                 <input type="text" name="states" defaultValue={numStates} onKeyDown={handleKeyDown}
                 onBlur={(e) => {
                     const newNumStates = Number.parseInt(e.target.value)
-                    const newErrors = { ...errors }
+                    const newErrors = { ...stateNameErrors }
                     if (newNumStates >= minNumStates && newNumStates <= maxNumStates) {
                         delete newErrors.numStates;
-                        setErrors(newErrors);
+                        setStateNameErrors(newErrors);
                         setNumStates(newNumStates);
                     } else {
                         newErrors.numStates = [`Number of states must be an integer between ${minNumStates} and ${maxNumStates}, inclusive.`];
-                        setErrors(newErrors);
+                        setStateNameErrors(newErrors);
                     }
                 }} />
                 {(errors.numStates && errors.numStates.length) && <span className="error-message">{errors.numStates}</span>}
