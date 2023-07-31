@@ -11,8 +11,8 @@ import "./machineForm.css";
 const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
-    const createGroup = "Create Turing Machine";
-    const updateGroup = "Update Turing Machine";
+    const create = "Create Turing Machine";
+    const update = "Update Turing Machine";
     const validBlanks = ["#", " ", "0"];
     const minStateNameLen = 2;
     const maxStateNameLen = 31;
@@ -45,6 +45,8 @@ const MachineForm = ({ machine, formType }) => {
         e.preventDefault();
         setSubmissionAttempt(true);
         // console.log("formType: ", formType);
+        // if the initial tape is blank, use the blank symbol for the tape
+        const iTape = (initTape.length ? initTape : blankSymbol);
 
         const errTypes = Object.keys(errors);
         for (let i = 0; i < errTypes.length; i++) {
@@ -53,7 +55,7 @@ const MachineForm = ({ machine, formType }) => {
 
         machine = {
             ...machine, name, notes, blankSymbol, alphabet,
-            initTape, states: states.join('|'),
+            initTape: iTape, states: states.join('|'),
             initState: states[0], haltingState: states[states.length - 1],
         };
         // console.log("errors: ", errors);
@@ -61,8 +63,10 @@ const MachineForm = ({ machine, formType }) => {
 
 
         setSubmissionAttempt(false);
-        if (formType === createGroup) {
-
+        if (formType === create) {
+            const newMachine = await dispatch(createMachine(machine));
+            // console.log("newMachine: ", newMachine);
+            history.push(`/machines/${newMachine.id}`);
         }
     };
 
@@ -179,7 +183,7 @@ const MachineForm = ({ machine, formType }) => {
         }
         loadMachines.allIds.forEach((mId) => {
             const mName = loadMachines.byId[mId].name;
-            if ((name === mName) && ((formType === createGroup) || (mId !== machine.id))) {
+            if ((name === mName) && ((formType === create) || (mId !== machine.id))) {
                 newErrors.name.push(` You already have another machine called ${name}, please choose a different name for this machine. `);
             }
         });

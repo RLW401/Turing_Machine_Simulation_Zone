@@ -44,7 +44,8 @@ export const createMachine = (machineData) => async (dispatch) => {
             const turingMachine = await response.json();
             const normalizedMachine = normalizeAll({ Turing_Machine: [turingMachine] });
             await dispatch(addMachine(normalizedMachine));
-            return normalizedMachine;
+            // return normalizedMachine;
+            return turingMachine;
         } else {
             const error = await response.text();
             let errorJSON;
