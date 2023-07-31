@@ -49,14 +49,16 @@ const MachineForm = ({ machine, formType }) => {
         }
       };
 
-    // set states upon change in number of states
+    // set state names upon change in number of states
     useEffect(() => {
         if (states.length !== numStates) {
             const haltingStateName = states[states.length - 1];
             const newStates = [];
             const newErrors = { ...errors };
+            const maxIndex = ((numStates > states.length) ? (numStates - 1) : (states.length - 1));
             let errorsErased = false;
-            for (let i = 0; i < (numStates - 1); i++) {
+
+            for (let i = 0; i <= maxIndex; i++) {
                 const errKey = `stateName${i}`;
                 // since state names that fail validation revert to the last valid name, errors can be safely cleared.
                 if (errors[errKey]) {
@@ -64,22 +66,21 @@ const MachineForm = ({ machine, formType }) => {
                     errorsErased = true;
                 }
 
-                if (i < (states.length - 1)) {
-                    newStates.push(states[i]);
-                } else {
-                    newStates.push("q" + i);
-                }
-            }
-            newStates.push(haltingStateName);
 
-            // erase errors for deleted states, if any
-            for (let i = (numStates - 1); i < states.length; i++) {
-                const errKey = `stateName${i}`;
-                if (errors[errKey]) {
-                    delete newErrors[errKey];
-                    errorsErased = true;
+                if (i < numStates) {
+                    if (i === (numStates - 1)) {
+                        // add halting state name last
+                        newStates.push(haltingStateName);
+                    } else if (i < (states.length - 1)) {
+                            // before the halting state name, add previously set custom state names
+                            newStates.push(states[i]);
+                    } else {
+                            // if numStates has been increased, fill in remaining state names before the halting state with default values.
+                            newStates.push(`q${i}`);
+                    }
                 }
             }
+
             if (errorsErased) setErrors(newErrors);
             setStates(newStates);
         }
