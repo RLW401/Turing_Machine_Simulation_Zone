@@ -8,6 +8,9 @@ import { createMachine } from '../../store/turingMachines';
 import { findErr } from '../../utils/errorHandling';
 import "./machineForm.css";
 
+
+// TODO: check to make sure non-blank tapes begin with a non-blank character
+// TODO: Different headers for create and update form types
 const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
