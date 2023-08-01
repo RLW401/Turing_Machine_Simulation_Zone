@@ -234,8 +234,12 @@ const MachineForm = ({ machine, formType }) => {
 
             <div className="form-group">
                 <h4 className="heading">Alphabet</h4>
-                <p className="description">The set of non-blank symbols recognized by the machine. Enter as a string of symbols without spaces.</p>
-                <input type="text" name="alphabet" value={alphabet} onChange={(e) => setAlphabet(e.target.value)} />
+                <p className="description">The set of non-blank symbols recognized by the machine. Enter as a string of symbols without spaces. Duplicate characters will be automatically removed. </p>
+                <input type="text" name="alphabet" value={alphabet} onChange={(e) => {
+                    const alphaSet = new Set(e.target.value);
+                    const alphaStr = Array.from(alphaSet).join("");
+                    setAlphabet(alphaStr);
+                    }} />
                 {submissionAttempt && errors.alphabet && <span className="error-message">{errors.alphabet}</span>}
             </div>
 
