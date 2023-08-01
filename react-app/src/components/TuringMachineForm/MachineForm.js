@@ -26,7 +26,7 @@ const MachineForm = ({ machine, formType }) => {
     const [notes, setNotes] = useState('');
     const [blankSymbol, setBlankSymbol] = useState(validBlanks[0]);
     const [alphabet, setAlphabet] = useState('');
-    const [initTape, setInitTape] = useState('');
+    const [initTape, setInitTape] = useState(blankSymbol);
     // const [initState, setInitState] = useState('');
     // const [haltingState, setHaltingState] = useState('');
     const [states, setStates] = useState(["q0", "qh"]);
@@ -237,7 +237,7 @@ const MachineForm = ({ machine, formType }) => {
                 <p className="description">The set of non-blank symbols recognized by the machine. Enter as a string of symbols without spaces. Duplicate characters will be automatically removed. </p>
                 <input type="text" name="alphabet" value={alphabet} onChange={(e) => {
                     const alphaSet = new Set(e.target.value);
-                    const alphaStr = Array.from(alphaSet).join("");
+                    const alphaStr = Array.from(alphaSet).sort().join("");
                     setAlphabet(alphaStr);
                     }} />
                 {submissionAttempt && errors.alphabet && <span className="error-message">{errors.alphabet}</span>}
