@@ -11,6 +11,7 @@ import { genTapeStr } from "./renderTape";
 import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
+import DeleteMachineModal from "../DeleteMachine";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
@@ -219,6 +220,11 @@ const TuringMachinePage = () => {
         }
       };
 
+    const deleteMachineButton = (
+        ((loadCurrentUser.id && currentMachine) && (loadCurrentUser.id === currentMachine.ownerId))
+        ? <DeleteMachineModal /> : null
+    );
+
     if (currentMachine) {
         machinePage = (
             <div className="machine-page">
@@ -226,6 +232,7 @@ const TuringMachinePage = () => {
                     <h2>{currentMachine.name}</h2>
                     <p>{currentMachine.notes}</p>
                 </div>
+                {deleteMachineButton}
                 {renderedTape}
                 <div className="machine-controls">
                     <button className="run-machine" onClick={handleRunMachine}>Run Machine</button>

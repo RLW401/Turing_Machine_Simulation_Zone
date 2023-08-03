@@ -1,0 +1,5 @@
+ /* root/react-app/src/components/DeleteMachine/deleteMachine.css */
+ .delete-options button.delete.confirm {
+    background-color: red;
+    color: white;
+}

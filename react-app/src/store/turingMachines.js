@@ -4,6 +4,7 @@ import { normalizeAll } from "../utils/normalization";
 const prefix = "turingMachines/"
 export const LOAD_MACHINES = (prefix + "LOAD_MACHINES");
 const ADD_MACHINE = (prefix + "ADD_MACHINE");
+export const REMOVE_MACHINE = (prefix + "REMOVE_MACHINE");
 
 const loadMachines = (turingMachines) => ({
     type: LOAD_MACHINES,
@@ -13,6 +14,11 @@ const loadMachines = (turingMachines) => ({
 const addMachine = (turingMachine) => ({
     type: ADD_MACHINE,
     payload: turingMachine
+});
+
+const removeMachine = (machineId) => ({
+    type: REMOVE_MACHINE,
+    payload: machineId
 });
 
 export const getAuthorizedTMs = () => async (dispatch) => {
@@ -63,6 +69,34 @@ export const createMachine = (machineData) => async (dispatch) => {
     }
 };
 
+export const deleteMachine = (machineId) => async (dispatch) => {
+    try {
+        const response = await fetch(`/api/turing-machines/${machineId}`, {
+            method: 'delete',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            const error = await response.text();
+            let errorJSON;
+            try {
+                // check to see if error is JSON
+                errorJSON = JSON.parse(error);
+            } catch {
+                // error was not from server
+                throw new Error(error);
+            }
+            throw new Error(`${errorJSON.title}: ${errorJSON.message}`);
+        }
+        const deleteMessage = await response.json();
+        dispatch(removeMachine(machineId));
+        return deleteMessage;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const initialState = {
     byId: {},
     allIds: []
@@ -73,12 +107,22 @@ const machineReducer = (state=initialState, action) => {
 
     switch (action.type) {
         case LOAD_MACHINES:
-            newState.byId = { ...state.byId, ...action.payload.byId };
             newState.allIds = action.payload.allIds;
+            newState.byId = { ...state.byId, ...action.payload.byId };
             return newState
         case ADD_MACHINE:
-            newState.byId = { ...state.byId, ...action.payload.byId };
             newState.allIds = [ ...state.allIds, ...action.payload.allIds ];
+            newState.byId = { ...state.byId, ...action.payload.byId };
+            return newState;
+        case REMOVE_MACHINE:
+            const machineId = action.payload;
+            const allIds = state.allIds.filter((mId) => mId !== machineId);
+            const byId = {};
+            allIds.forEach((mId) => {
+                byId[mId] = { ...state.byId[mId] }
+            });
+            newState.allIds = allIds;
+            newState.byId = byId;
             return newState;
         default:
             return state;
