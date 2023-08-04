@@ -4,6 +4,7 @@ import { normalizeAll } from "../utils/normalization";
 const prefix = "turingMachines/"
 export const LOAD_MACHINES = (prefix + "LOAD_MACHINES");
 const ADD_MACHINE = (prefix + "ADD_MACHINE");
+const UPDATE_MACHINE = (prefix + "UPDATE_MACHINE");
 export const REMOVE_MACHINE = (prefix + "REMOVE_MACHINE");
 
 const loadMachines = (turingMachines) => ({
@@ -13,6 +14,11 @@ const loadMachines = (turingMachines) => ({
 
 const addMachine = (turingMachine) => ({
     type: ADD_MACHINE,
+    payload: turingMachine
+});
+
+const updateMachine = (turingMachine) => ({
+    type: UPDATE_MACHINE,
     payload: turingMachine
 });
 
@@ -52,6 +58,38 @@ export const createMachine = (machineData) => async (dispatch) => {
             await dispatch(addMachine(normalizedMachine));
             // return normalizedMachine;
             return turingMachine;
+        } else {
+            const error = await response.text();
+            let errorJSON;
+            try {
+                // check to see if error is JSON
+                errorJSON = JSON.parse(error);
+            } catch {
+                // error was not from server
+                throw new Error(error);
+            }
+            throw new Error(`${errorJSON.title}: ${errorJSON.message}`);
+        }
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const editMachine = (machineData) => async (dispatch) => {
+    try {
+        const machineId = machineData.id;
+        const response = await fetch(`/api/turing-machines/${machineId}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(machineData)
+        });
+
+        if (response.ok) {
+            const turingMachine = await response.json();
+            const normalizedMachine = normalizeAll({ Turing_Machine: [turingMachine] });
+            await dispatch(addMachine(normalizedMachine));
+            // return normalizedMachine;
+            return normalizedMachine.byId[machineId];
         } else {
             const error = await response.text();
             let errorJSON;
@@ -114,9 +152,15 @@ const machineReducer = (state=initialState, action) => {
             newState.allIds = [ ...state.allIds, ...action.payload.allIds ];
             newState.byId = { ...state.byId, ...action.payload.byId };
             return newState;
+        case UPDATE_MACHINE:
+            const updatedMachineId = action.payload.allIds[0];
+            newState.allIds = [ ...state.allIds, updatedMachineId ];
+            newState.byId = { ...state.byId, ...action.payload.byId };
+            newState.byId[updatedMachineId] = { ...action.payload.byId[updatedMachineId] };
+            return newState;
         case REMOVE_MACHINE:
-            const machineId = action.payload;
-            const allIds = state.allIds.filter((mId) => mId !== machineId);
+            const deletedMachineId = action.payload;
+            const allIds = state.allIds.filter((mId) => mId !== deletedMachineId);
             const byId = {};
             allIds.forEach((mId) => {
                 byId[mId] = { ...state.byId[mId] }
