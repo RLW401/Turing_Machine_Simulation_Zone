@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createMachine } from '../../store/turingMachines';
 import { findErr } from '../../utils/errorHandling';
+import { stateSeparator, validBlanks } from '../../constants/constants';
 import "./machineForm.css";
 
 
@@ -16,7 +17,7 @@ const MachineForm = ({ machine, formType }) => {
     const dispatch = useDispatch();
     const create = "Create Turing Machine";
     const update = "Update Turing Machine";
-    const validBlanks = ["#", " ", "0"];
+    // const validBlanks = ["#", " ", "0"];
     const minStateNameLen = 2;
     const maxStateNameLen = 31;
     const minNumStates = 2;
@@ -25,15 +26,15 @@ const MachineForm = ({ machine, formType }) => {
     const maxNameLen = 255;
     const minAlphaLen = 1;
     const maxAlphaLen = 127;
-    const [name, setName] = useState('');
-    const [notes, setNotes] = useState('');
-    const [blankSymbol, setBlankSymbol] = useState(validBlanks[0]);
-    const [alphabet, setAlphabet] = useState('');
-    const [initTape, setInitTape] = useState(blankSymbol);
+    const [name, setName] = useState(machine.name);
+    const [notes, setNotes] = useState(machine.notes);
+    const [blankSymbol, setBlankSymbol] = useState(machine.blankSymbol);
+    const [alphabet, setAlphabet] = useState(machine.alphabet);
+    const [initTape, setInitTape] = useState(machine.initTape);
     // const [initState, setInitState] = useState('');
     // const [haltingState, setHaltingState] = useState('');
-    const [states, setStates] = useState(["q0", "qh"]);
-    const [numStates, setNumStates] = useState(2);
+    const [states, setStates] = useState(machine.states.split(stateSeparator));
+    const [numStates, setNumStates] = useState(machine.states.split(stateSeparator).length);
     const [stateNameInputs, setStateNameInputs] = useState([]);
     const [stateNameErrors, setStateNameErrors] = useState({});
     const [errors, setErrors] = useState({});
