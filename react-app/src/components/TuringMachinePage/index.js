@@ -220,8 +220,9 @@ const TuringMachinePage = () => {
         }
       };
 
+    // display delete machine button iff user owns the current machine
     const deleteMachineButton = (
-        ((loadCurrentUser.id && currentMachine) && (loadCurrentUser.id === currentMachine.ownerId))
+        ((loadCurrentUser && (loadCurrentUser.id && currentMachine)) && (loadCurrentUser.id === currentMachine.ownerId))
         ? <DeleteMachineModal /> : null
     );
 
