@@ -9,6 +9,10 @@
     padding: 16px;
   }
 
+  .machine-form h2 {
+    text-align: center;
+  }
+
   /* Styling for the form headings */
   .heading {
     font-size: 24px;

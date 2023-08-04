@@ -1,9 +1,9 @@
 // root/react-app/src/components/TuringMachineForm/CreateMachineForm.js
 
 import MachineForm from "./MachineForm";
-import { defaultStates, stateSeparator, validBlanks } from "../../constants/constants";
+import { createTM, defaultStates, stateSeparator, validBlanks } from "../../constants/constants";
 
-const formType = "Create Turing Machine";
+const formType = createTM;
 const testStates = `start${stateSeparator}first${stateSeparator}second${stateSeparator}third${stateSeparator}halt`
 const stateArr = defaultStates.split(stateSeparator);
 const testStateArr = testStates.split(stateSeparator);

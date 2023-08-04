@@ -6,18 +6,16 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { createMachine } from '../../store/turingMachines';
 import { findErr } from '../../utils/errorHandling';
-import { stateSeparator, validBlanks } from '../../constants/constants';
+import { createTM, stateSeparator, updateTM, validBlanks } from '../../constants/constants';
 import "./machineForm.css";
 
 
 // TODO: check to make sure non-blank tapes begin with a non-blank character
-// TODO: Different headers for create and update form types
 const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const create = "Create Turing Machine";
     const update = "Update Turing Machine";
-    // const validBlanks = ["#", " ", "0"];
     const minStateNameLen = 2;
     const maxStateNameLen = 31;
     const minNumStates = 2;
@@ -31,8 +29,6 @@ const MachineForm = ({ machine, formType }) => {
     const [blankSymbol, setBlankSymbol] = useState(machine.blankSymbol);
     const [alphabet, setAlphabet] = useState(machine.alphabet);
     const [initTape, setInitTape] = useState(machine.initTape);
-    // const [initState, setInitState] = useState('');
-    // const [haltingState, setHaltingState] = useState('');
     const [states, setStates] = useState(machine.states.split(stateSeparator));
     const [numStates, setNumStates] = useState(machine.states.split(stateSeparator).length);
     const [stateNameInputs, setStateNameInputs] = useState([]);
@@ -48,7 +44,7 @@ const MachineForm = ({ machine, formType }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmissionAttempt(true);
-        // console.log("formType: ", formType);
+
         // if the initial tape is blank, use the blank symbol for the tape
         const iTape = (initTape.length ? initTape : blankSymbol);
 
@@ -79,7 +75,7 @@ const MachineForm = ({ machine, formType }) => {
           e.preventDefault();
           e.target.blur(); // Trigger onBlur event
         }
-      };
+    };
 
     // consolidate errors
     useEffect(()=> {
@@ -214,6 +210,7 @@ const MachineForm = ({ machine, formType }) => {
 
     return (
         <form className="machine-form" onSubmit={handleSubmit}>
+            <h2>{formType}</h2>
             <div className="form-group">
                 <h4 className="heading">Name</h4>
                 <p className="description">Give your machine a descriptive name.</p>
