@@ -3,7 +3,6 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
-# from app.models import Machine_Instruction
 
 def validate_head_move(form, field):
     head_move = int(field.data)
