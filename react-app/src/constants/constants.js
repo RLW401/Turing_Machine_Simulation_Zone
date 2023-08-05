@@ -9,4 +9,7 @@ export const createTM = "Add a new machine";
 export const updateTM = "Update a machine";
 
 // url segments
-export const machineUpdatePath = "/turing-machines/:machineId/update";
+// export const machineUpdatePath = "/turing-machines/:machineId/update";
+export const genMachUpdatePath = (machineId = ":machineId") => (
+    `/turing-machines/${machineId}/update`
+);

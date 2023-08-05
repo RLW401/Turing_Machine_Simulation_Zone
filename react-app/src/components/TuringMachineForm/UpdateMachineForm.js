@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import MachineForm from "./MachineForm";
 import { updateTM } from "../../constants/constants";
+import "./machineForm.css";
 
 const UpdateMachineForm = () => {
     const formType = updateTM;
@@ -39,9 +40,9 @@ const UpdateMachineForm = () => {
     if (currentMachine && userAuth) {
         return (<MachineForm machine={currentMachine} formType={formType} />);
     } else if (!currentMachine) {
-        return (<h2>Machine not found</h2>);
+        return (<h2 className="error-heading">Machine not found</h2>);
     } else {
-        return (<h2>User not authorized to edit machine</h2>);
+        return (<h2 className="error-heading">User not authorized to edit machine</h2>);
     }
 
 };

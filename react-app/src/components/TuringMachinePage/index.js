@@ -12,6 +12,8 @@ import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
 import DeleteMachineModal from "../DeleteMachine";
+import { genMachUpdatePath } from "../../constants/constants";
+// import { machineUpdatePath } from "../../constants/constants";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
@@ -218,12 +220,27 @@ const TuringMachinePage = () => {
                 (currentMachine.blankSymbol + currentMachine.alphabet)
             ));
         }
-      };
+    };
+
+    // display update machine button iff user is logged in and either owns or is a collaborator on the current machine
+    const updateMachineButton = (
+        ((loadCurrentUser && (loadCurrentUser.id && currentMachine)) && ((loadCurrentUser.id === currentMachine.ownerId) || (loadCurrentUser.id === currentMachine.collaboratorId)))
+        ? <button className="update-machine" onClick={
+            () => history.push(genMachUpdatePath(machineId))
+        } >Update Machine</button> : null
+    );
 
     // display delete machine button iff user is logged in and owns the current machine
     const deleteMachineButton = (
         ((loadCurrentUser && (loadCurrentUser.id && currentMachine)) && (loadCurrentUser.id === currentMachine.ownerId))
         ? <DeleteMachineModal /> : null
+    );
+
+    const mChangeButtons = (
+        <div className="m-change">
+            {updateMachineButton}
+            {deleteMachineButton}
+        </div>
     );
 
     if (currentMachine) {
@@ -233,7 +250,7 @@ const TuringMachinePage = () => {
                     <h2>{currentMachine.name}</h2>
                     <p>{currentMachine.notes}</p>
                 </div>
-                {deleteMachineButton}
+                {mChangeButtons}
                 {renderedTape}
                 <div className="machine-controls">
                     <button className="run-machine" onClick={handleRunMachine}>Run Machine</button>

@@ -10,7 +10,8 @@ import TuringMachinePage from "./components/TuringMachinePage";
 import CreateMachineForm from "./components/TuringMachineForm/CreateMachineForm";
 import UpdateMachineForm from "./components/TuringMachineForm/UpdateMachineForm";
 
-import { machineUpdatePath } from "./constants/constants";
+import { genMachUpdatePath } from "./constants/constants";
+// import { machineUpdatePath } from "./constants/constants";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ function App() {
           <Route exact path="/machines/:machineId">
             <TuringMachinePage />
           </Route>
-          <Route path={machineUpdatePath}>
+          <Route path={genMachUpdatePath()}>
             <UpdateMachineForm />
           </Route>
         </Switch>
