@@ -79,7 +79,7 @@ const TuringMachinePage = () => {
             setFormattedInstructions(fInst);
             setFinishedRun(false);
         }
-    }, [machines, machineId]);
+    }, [machines, machineId, instructions]);
 
 
     // let machineNames = <li key={0}>no machines</li>

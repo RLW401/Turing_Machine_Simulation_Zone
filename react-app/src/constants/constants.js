@@ -7,3 +7,6 @@ export const defaultStates = `q0${stateSeparator}qh`;
 // formTypes for TuringMachineForm
 export const createTM = "Add a new machine";
 export const updateTM = "Update a machine";
+
+// url segments
+export const machineUpdatePath = "/turing-machines/:machineId/update";

@@ -8,6 +8,9 @@ import Navigation from "./components/Navigation";
 import LandingPage from "./components/LandingPage";
 import TuringMachinePage from "./components/TuringMachinePage";
 import CreateMachineForm from "./components/TuringMachineForm/CreateMachineForm";
+import UpdateMachineForm from "./components/TuringMachineForm/UpdateMachineForm";
+
+import { machineUpdatePath } from "./constants/constants";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +38,9 @@ function App() {
           </Route>
           <Route exact path="/machines/:machineId">
             <TuringMachinePage />
+          </Route>
+          <Route path={machineUpdatePath}>
+            <UpdateMachineForm />
           </Route>
         </Switch>
       )}

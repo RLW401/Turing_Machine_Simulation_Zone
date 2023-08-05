@@ -3,7 +3,6 @@
 import MachineForm from "./MachineForm";
 import { createTM, defaultStates, stateSeparator, validBlanks } from "../../constants/constants";
 
-const formType = createTM;
 const testStates = `start${stateSeparator}first${stateSeparator}second${stateSeparator}third${stateSeparator}halt`
 const stateArr = defaultStates.split(stateSeparator);
 const testStateArr = testStates.split(stateSeparator);
@@ -26,13 +25,14 @@ const productionMachine = {
     notes: "",
     blankSymbol: validBlanks[0],
     alphabet: "",
-    initTape: validBlanks[0],
+    initTape: "",
     initState: stateArr[0],
     haltingState: stateArr[stateArr.length - 1],
     states: defaultStates,
 };
 
 const CreateMachineForm = () => {
+    const formType = createTM;
     const machine = (dev ? devMachine : productionMachine);
     return <MachineForm machine={machine} formType={formType} />
 };

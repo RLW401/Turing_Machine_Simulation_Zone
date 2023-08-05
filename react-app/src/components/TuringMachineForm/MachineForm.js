@@ -4,7 +4,7 @@ import { useState, useEffect, Fragment } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { createMachine } from '../../store/turingMachines';
+import { createMachine, editMachine } from '../../store/turingMachines';
 import { findErr } from '../../utils/errorHandling';
 import { createTM, stateSeparator, updateTM, validBlanks } from '../../constants/constants';
 import "./machineForm.css";
@@ -14,8 +14,6 @@ import "./machineForm.css";
 const MachineForm = ({ machine, formType }) => {
     const history = useHistory();
     const dispatch = useDispatch();
-    const create = "Create Turing Machine";
-    const update = "Update Turing Machine";
     const minStateNameLen = 2;
     const maxStateNameLen = 31;
     const minNumStates = 2;
@@ -63,10 +61,14 @@ const MachineForm = ({ machine, formType }) => {
 
 
         setSubmissionAttempt(false);
-        if (formType === create) {
+        if (formType === createTM) {
             const newMachine = await dispatch(createMachine(machine));
             // console.log("newMachine: ", newMachine);
             history.push(`/machines/${newMachine.id}`);
+        } else if (formType === updateTM) {
+            const updatedMachine = await dispatch(editMachine(machine));
+            console.log("updatedMachine: ", updatedMachine);
+            history.push(`/machines/${updatedMachine.id}`);
         }
     };
 
@@ -183,7 +185,7 @@ const MachineForm = ({ machine, formType }) => {
         }
         loadMachines.allIds.forEach((mId) => {
             const mName = loadMachines.byId[mId].name;
-            if ((name === mName) && ((formType === create) || (mId !== machine.id))) {
+            if ((name === mName) && ((formType === createTM) || (mId !== machine.id))) {
                 newErrors.name.push(` You already have another machine called ${name}, please choose a different name for this machine. `);
             }
         });
