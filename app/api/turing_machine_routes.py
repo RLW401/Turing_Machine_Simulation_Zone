@@ -173,14 +173,14 @@ def update_or_delete_turing_machine(machine_id):
             turing_machine.notes = form.data['notes']
             turing_machine.public = form.data['public']
             turing_machine.init_tape = form.data['initTape']
-            turing_machine.current_tape = form.data['currentTape']
+            # turing_machine.current_tape = form.data['currentTape']
             turing_machine.alphabet = form.data['alphabet']
             turing_machine.blank_symbol = form.data['blankSymbol']
             turing_machine.states = form.data['states']
             turing_machine.init_state = form.data['initState']
-            turing_machine.current_state = form.data['currentState']
+            # turing_machine.current_state = form.data['currentState']
             turing_machine.halting_state = form.data['haltingState']
-            turing_machine.head_pos = form.data['headPos']
+            # turing_machine.head_pos = form.data['headPos']
 
             db.session.commit()
 
@@ -215,14 +215,14 @@ def create_turing_machine():
             notes=form.data['notes'],
             public=form.data['public'],
             init_tape=form.data['initTape'],
-            current_tape=form.data['currentTape'],
+            # current_tape=form.data['currentTape'],
             alphabet=form.data['alphabet'],
             blank_symbol=form.data['blankSymbol'],
             states=form.data['states'],
             init_state=form.data['initState'],
-            current_state=form.data['currentState'],
+            # current_state=form.data['currentState'],
             halting_state=form.data['haltingState'],
-            head_pos=form.data['headPos']
+            # head_pos=form.data['headPos']
         )
 
         db.session.add(turing_machine)

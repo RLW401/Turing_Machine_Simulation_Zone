@@ -1,20 +1,16 @@
-"""empty message
+"""Initial migration
 
-Revision ID: 70e46222745e
-Revises:
-Create Date: 2023-07-01 17:46:17.016573
+Revision ID: 525cb7080f97
+Revises: 
+Create Date: 2023-08-05 17:32:56.490585
 
 """
 from alembic import op
 import sqlalchemy as sa
 
-import os
-environment = os.getenv("FLASK_ENV")
-SCHEMA = os.environ.get("SCHEMA")
-
 
 # revision identifiers, used by Alembic.
-revision = '70e46222745e'
+revision = '525cb7080f97'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -50,14 +46,11 @@ def upgrade():
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('public', sa.Boolean(), nullable=True),
     sa.Column('init_tape', sa.Text(), nullable=True),
-    sa.Column('current_tape', sa.Text(), nullable=True),
     sa.Column('alphabet', sa.String(length=255), nullable=False),
     sa.Column('blank_symbol', sa.String(length=1), nullable=False),
     sa.Column('states', sa.Text(), nullable=True),
     sa.Column('init_state', sa.String(length=31), nullable=True),
-    sa.Column('current_state', sa.String(length=31), nullable=True),
     sa.Column('halting_state', sa.String(length=31), nullable=True),
-    sa.Column('head_pos', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['collaborator_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -83,15 +76,7 @@ def upgrade():
     sa.ForeignKeyConstraint(['machine_id'], ['turing_machines.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    if environment == "production":
-        op.execute(f"ALTER TABLE users SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE collaborations SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE comments SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE turing_machines SET SCHEMA {SCHEMA};")
-        op.execute(f"ALTER TABLE machine_instructions SET SCHEMA {SCHEMA};")
-
     # ### end Alembic commands ###
-
 
 
 def downgrade():

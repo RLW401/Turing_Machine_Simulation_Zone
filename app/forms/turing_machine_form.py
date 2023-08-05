@@ -1,7 +1,7 @@
 # root/app/forms/turing_machine_form.py
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, BooleanField, TextAreaField, IntegerField
+from wtforms import StringField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, AnyOf
 
 class TuringMachineForm(FlaskForm):
