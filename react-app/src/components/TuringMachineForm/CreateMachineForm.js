@@ -32,9 +32,8 @@ const productionMachine = {
 };
 
 const CreateMachineForm = () => {
-    const formType = createTM;
     const machine = (dev ? devMachine : productionMachine);
-    return <MachineForm machine={machine} formType={formType} />
+    return <MachineForm machine={machine} formType={createTM} />
 };
 
 export default CreateMachineForm;
