@@ -1,13 +1,16 @@
 """Initial migration
 
 Revision ID: 91fe4c23ee8d
-Revises: 
+Revises:
 Create Date: 2023-08-05 17:48:37.494304
 
 """
 from alembic import op
 import sqlalchemy as sa
 
+import os
+environment = os.getenv("FLASK_ENV")
+SCHEMA = os.environ.get("SCHEMA")
 
 # revision identifiers, used by Alembic.
 revision = '91fe4c23ee8d'
