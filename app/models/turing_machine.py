@@ -25,7 +25,12 @@ class Turing_Machine(db.Model, UserMixin):
     # head_pos = db.Column(db.Integer)
 
     # define relationships
-    comments_received = db.relationship('Comment', back_populates='machine')
+    comments_received = db.relationship(
+        'Comment',
+        back_populates='machine',
+        cascade="all, delete",
+        passive_deletes=True,
+        )
 
     owner = db.relationship('User', foreign_keys=[owner_id], back_populates='machines_owned')
     collaborator = db.relationship('User', foreign_keys=[collaborator_id], back_populates='machines_collaborating_on')
