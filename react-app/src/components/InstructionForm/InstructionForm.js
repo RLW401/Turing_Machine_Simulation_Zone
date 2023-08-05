@@ -24,7 +24,7 @@ const InstructionForm = ({ instruction, formType }) => {
     const [userAuth, setUserAuth] = useState(false);
     const [errors, setErrors] = useState({});
 
-    const formHeader = (currentMachine ? <h2>{`${formType} for ${currentMachine.name}`}</h2>
+    const formHeader = ((currentMachine && userAuth) ? <h2>{`${formType} for ${currentMachine.name}`}</h2>
         : <h2>Machine not found</h2>
     );
 
