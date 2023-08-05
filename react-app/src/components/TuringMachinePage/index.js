@@ -12,8 +12,7 @@ import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
 import DeleteMachineModal from "../DeleteMachine";
-import { genMachUpdatePath } from "../../constants/constants";
-// import { machineUpdatePath } from "../../constants/constants";
+import { genMachUpdatePath, genAddInstPath, genUpdateInstPath } from "../../constants/constants";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
@@ -45,6 +44,9 @@ const TuringMachinePage = () => {
     const [renderedTape, setRenderedTape] = useState(null);
     const [finishedRun, setFinishedRun] = useState(false);
     const [validTape, setValidTape] = useState(true);
+    const [deleteAuth, setDeleteAuth] = useState(false);
+    const [editAuth, setEditAuth] = useState(false);
+
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -83,14 +85,14 @@ const TuringMachinePage = () => {
         }
     }, [machines, machineId, instructions]);
 
+    useEffect(() => {
+        const loggedAndLoaded = (loadCurrentUser && (loadCurrentUser.id && currentMachine));
+        const owner = (loggedAndLoaded && (loadCurrentUser.id === currentMachine.ownerId));
+        const collaborator = (loggedAndLoaded && (loadCurrentUser.id === currentMachine.collaboratorId));
 
-    // let machineNames = <li key={0}>no machines</li>
-    // if (machines.allIds) {
-    //     machineNames = machines.allIds.map((mId) => {
-    //         const mName = machines.byId[mId].name;
-    //         return <li key={mId}>{mName}</li>
-    //     });
-    // }
+        setDeleteAuth(owner);
+        setEditAuth(owner || collaborator);
+    }, [loadCurrentUser, currentMachine]);
 
     let machinePage = (
         <div className="machine-page">
@@ -224,17 +226,15 @@ const TuringMachinePage = () => {
 
     // display update machine button iff user is logged in and either owns or is a collaborator on the current machine
     const updateMachineButton = (
-        ((loadCurrentUser && (loadCurrentUser.id && currentMachine)) && ((loadCurrentUser.id === currentMachine.ownerId) || (loadCurrentUser.id === currentMachine.collaboratorId)))
+        editAuth
         ? <button className="update" onClick={
             () => history.push(genMachUpdatePath(machineId))
-        } >Update Machine</button> : null
+        } >Update Machine</button>
+        : null
     );
 
     // display delete machine button iff user is logged in and owns the current machine
-    const deleteMachineButton = (
-        ((loadCurrentUser && (loadCurrentUser.id && currentMachine)) && (loadCurrentUser.id === currentMachine.ownerId))
-        ? <DeleteMachineModal /> : null
-    );
+    const deleteMachineButton = (deleteAuth ? <DeleteMachineModal /> : null);
 
     const mChangeButtons = (
         <div className="m-change">
@@ -242,6 +242,15 @@ const TuringMachinePage = () => {
             {deleteMachineButton}
         </div>
     );
+
+    // button for adding lines of instructions
+    const addInstructionButton = (
+        editAuth
+        ? <button className="add-instruction" onClick={
+            () => history.push(genAddInstPath(machineId))
+        }>+ Add Instruction</button>
+        : null
+        );
 
     if (currentMachine) {
         machinePage = (
@@ -296,6 +305,7 @@ const TuringMachinePage = () => {
                         </div>}
                     </div>
                     {formattedInstructions}
+                    {addInstructionButton}
                 </div>
             </div>
         );
