@@ -13,12 +13,36 @@
 
   .machine-page .description h2 {
     font-size: 48px;
+    color: black;
     margin: 0;
     text-align: center;
   }
 .machine-page .description p {
   font-size: 16px;
   margin-top: 0px;
+}
+
+/* styling for update and delete machine buttons */
+
+.m-change {
+  display: flex;
+  /* border: solid green; */
+  justify-content: center;
+}
+
+.m-change button {
+  color: whitesmoke;
+  /* margin: 16px; */
+  cursor: pointer;
+  border: none;
+}
+
+.m-change button.delete {
+  background-color: red;
+}
+
+.m-change button.update {
+  background-color: #007bff;
 }
 
 .basics-and-instructions {

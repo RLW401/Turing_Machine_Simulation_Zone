@@ -225,7 +225,7 @@ const TuringMachinePage = () => {
     // display update machine button iff user is logged in and either owns or is a collaborator on the current machine
     const updateMachineButton = (
         ((loadCurrentUser && (loadCurrentUser.id && currentMachine)) && ((loadCurrentUser.id === currentMachine.ownerId) || (loadCurrentUser.id === currentMachine.collaboratorId)))
-        ? <button className="update-machine" onClick={
+        ? <button className="update" onClick={
             () => history.push(genMachUpdatePath(machineId))
         } >Update Machine</button> : null
     );
