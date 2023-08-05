@@ -87,7 +87,7 @@ export const editMachine = (machineData) => async (dispatch) => {
         if (response.ok) {
             const turingMachine = await response.json();
             const normalizedMachine = normalizeAll({ Turing_Machine: [turingMachine] });
-            await dispatch(addMachine(normalizedMachine));
+            await dispatch(updateMachine(normalizedMachine));
             // return normalizedMachine;
             return normalizedMachine.byId[machineId];
         } else {
@@ -154,7 +154,7 @@ const machineReducer = (state=initialState, action) => {
             return newState;
         case UPDATE_MACHINE:
             const updatedMachineId = action.payload.allIds[0];
-            newState.allIds = [ ...state.allIds, updatedMachineId ];
+            newState.allIds = [ ...state.allIds ];
             newState.byId = { ...state.byId, ...action.payload.byId };
             newState.byId[updatedMachineId] = { ...action.payload.byId[updatedMachineId] };
             return newState;

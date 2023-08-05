@@ -56,6 +56,9 @@ const MachineForm = ({ machine, formType }) => {
             initTape: iTape, states: states.join('|'),
             initState: states[0], haltingState: states[states.length - 1],
         };
+
+        // temp fix for headPos backend validation error
+        if (!machine.headPos) delete machine.headPos;
         // console.log("errors: ", errors);
 
 
@@ -67,7 +70,7 @@ const MachineForm = ({ machine, formType }) => {
             history.push(`/machines/${newMachine.id}`);
         } else if (formType === updateTM) {
             const updatedMachine = await dispatch(editMachine(machine));
-            console.log("updatedMachine: ", updatedMachine);
+            // console.log("updatedMachine: ", updatedMachine);
             history.push(`/machines/${updatedMachine.id}`);
         }
     };
