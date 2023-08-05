@@ -15,14 +15,14 @@ class Turing_Machine(db.Model, UserMixin):
     notes = db.Column(db.Text)
     public = db.Column(db.Boolean, default=False)
     init_tape = db.Column(db.Text)
-    current_tape = db.Column(db.Text)
+    # current_tape = db.Column(db.Text)
     alphabet = db.Column(db.String(255), nullable=False)
     blank_symbol = db.Column(db.String(1), default='#', nullable=False)
     states = db.Column(db.Text)
     init_state = db.Column(db.String(31))
-    current_state = db.Column(db.String(31))
+    # current_state = db.Column(db.String(31))
     halting_state = db.Column(db.String(31))
-    head_pos = db.Column(db.Integer)
+    # head_pos = db.Column(db.Integer)
 
     # define relationships
     comments_received = db.relationship('Comment', back_populates='machine')
@@ -30,7 +30,13 @@ class Turing_Machine(db.Model, UserMixin):
     owner = db.relationship('User', foreign_keys=[owner_id], back_populates='machines_owned')
     collaborator = db.relationship('User', foreign_keys=[collaborator_id], back_populates='machines_collaborating_on')
 
-    instructions = db.relationship('Machine_Instruction', back_populates='machine', lazy='joined')
+    instructions = db.relationship(
+        'Machine_Instruction',
+        back_populates='machine',
+        lazy='joined',
+        cascade="all, delete",
+        passive_deletes=True,
+        )
 
     def to_dict(self):
         return {
