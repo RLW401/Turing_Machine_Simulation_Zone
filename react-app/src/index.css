@@ -20,7 +20,15 @@ button {
     margin: auto;
 }
 
-form:not(.ls-form, .login-form) {
+.page {
+    margin-top: 20vh; /* Adjust the top margin to match the height of the top bar */
+    height: calc(100vh - 20vh);
+    padding-top: 40px;
+    margin-left: 15%; /* Adjust the left margin to match the width of the side bar */
+    padding: 16px;
+  }
+
+form:not(.ls-form, .login-form, .instruction-form) {
     margin-top: 20vh; /* Adjust the top margin to match the height of the top bar */
     height: calc(100vh - 20vh);
     padding-top: 40px;

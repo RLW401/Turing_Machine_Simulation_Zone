@@ -1,5 +1,18 @@
  /* root/react-app/src/components/InstructionForm/instructionForm.css */
 
+.page {
+    display: flex; /* Use flexbox to create a horizontal layout */
+}
+
+.instruction-form {
+    flex: 2; /* Take up two-thirds of the available width */
+    padding-right: 16px; /* Add some spacing between 'body' and 'info' */
+}
+
+.info {
+    flex: 1; /* Take up one-third of the available width */
+    padding-left: 16px; /* Add some spacing between 'info' and 'body' */
+}
 .body h3 {
     font-size: 32px;
 }

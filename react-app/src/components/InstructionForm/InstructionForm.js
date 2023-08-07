@@ -75,6 +75,9 @@ const InstructionForm = ({ instruction, formType }) => {
         }
     }, [currentUser, machineInstructions]);
 
+    // error handling
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSubmissionAttempt(true);
@@ -95,61 +98,63 @@ const InstructionForm = ({ instruction, formType }) => {
     };
 
     return (
-        (symbols && states) && <form className='instruction-form' onSubmit={handleSubmit}>
-            {formHeader}
-            <div className='body'>
-                <div className='execution-conditions'>
-                    <h3>Instruction Execution Conditions</h3>
-                    <p className='description'>{instExConDesc}</p>
-                    <div className='form-group'>
-                        <h4 className='heading'>Current State</h4>
-                        <p className='description'>{currentStateDescription}</p>
-                        <select name="currentState" value={currentState} onChange={(e) => setCurrentState(e.target.value)}>
-                            {states.map((state) => <option key={state} value={state}>{state}</option>)}
-                        </select>
-                    </div>
-                    <div className='form-group'>
-                        <h4 className='heading'>Scanned Symbol</h4>
-                        <p className='description'>{scannedSymbolDescription}</p>
-                        <select name="scannedSymbol" value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
-                            {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
-                        </select>
-                    </div>
+        (symbols && states) && <div className='page'>
+            <form className='instruction-form' onSubmit={handleSubmit}>
+                {formHeader}
+                <div className='body'>
+                    <div className='execution-conditions'>
+                        <h3>Instruction Execution Conditions</h3>
+                        <p className='description'>{instExConDesc}</p>
+                        <div className='form-group'>
+                            <h4 className='heading'>Current State</h4>
+                            <p className='description'>{currentStateDescription}</p>
+                            <select name="currentState" value={currentState} onChange={(e) => setCurrentState(e.target.value)}>
+                                {states.map((state) => <option key={state} value={state}>{state}</option>)}
+                            </select>
+                        </div>
+                        <div className='form-group'>
+                            <h4 className='heading'>Scanned Symbol</h4>
+                            <p className='description'>{scannedSymbolDescription}</p>
+                            <select name="scannedSymbol" value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
+                                {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
+                            </select>
+                        </div>
 
-                </div>
-                <div className='machine-operations'>
-                    <h3>Machine Operations</h3>
-                    <p className='description'>{machOpDesc}</p>
-                    <div className='form-group'>
-                        <h4 className='heading'>Next State</h4>
-                        <p className='description'>{nextStateDescription}</p>
-                        <select name="nextState" value={nextState} onChange={(e) => setNextState(e.target.value)}>
-                            {states.map((state) => <option key={state} value={state}>{state}</option>)}
-                        </select>
                     </div>
-                    <div className='form-group'>
-                        <h4 className='heading'>Print Symbol</h4>
-                        <p className='description'>{printSymbolDescription}</p>
-                        <select name="printSymbol" value={printSymbol} onChange={(e) => setPrintSymbol(e.target.value)}>
-                            {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
-                        </select>
+                    <div className='machine-operations'>
+                        <h3>Machine Operations</h3>
+                        <p className='description'>{machOpDesc}</p>
+                        <div className='form-group'>
+                            <h4 className='heading'>Next State</h4>
+                            <p className='description'>{nextStateDescription}</p>
+                            <select name="nextState" value={nextState} onChange={(e) => setNextState(e.target.value)}>
+                                {states.map((state) => <option key={state} value={state}>{state}</option>)}
+                            </select>
+                        </div>
+                        <div className='form-group'>
+                            <h4 className='heading'>Print Symbol</h4>
+                            <p className='description'>{printSymbolDescription}</p>
+                            <select name="printSymbol" value={printSymbol} onChange={(e) => setPrintSymbol(e.target.value)}>
+                                {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
+                            </select>
+                        </div>
+                        <div className='form-group'>
+                            <h4 className='heading'>Head Move</h4>
+                            <p className='description'>{headMoveDescription}</p>
+                            <select name="headMove" value={headMove} onChange={(e) => setHeadMove(e.target.value)}>
+                                {headMoves.map((move) => <option key={move} value={move}>{move}</option>)}
+                            </select>
+                        </div>
                     </div>
-                    <div className='form-group'>
-                        <h4 className='heading'>Head Move</h4>
-                        <p className='description'>{headMoveDescription}</p>
-                        <select name="headMove" value={headMove} onChange={(e) => setHeadMove(e.target.value)}>
-                            {headMoves.map((move) => <option key={move} value={move}>{move}</option>)}
-                        </select>
+                    <div className="form-group">
+                        <button type="submit">Submit</button>
                     </div>
                 </div>
-                <div className="form-group">
-                    <button type="submit">Submit</button>
-                </div>
-            </div>
+            </form>
             <div className='info'>
                 {(currentMachine && machineInstructions) ? <InstructionDisplay instructions={machineInstructions} machine={currentMachine} /> : null}
             </div>
-        </form>
+        </div>
     );
 };
 
