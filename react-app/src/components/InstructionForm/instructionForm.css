@@ -1,1 +1,9 @@
  /* root/react-app/src/components/InstructionForm/instructionForm.css */
+
+.body h3 {
+    font-size: 32px;
+}
+
+h3 + .description {
+    font-size: 20px;
+}

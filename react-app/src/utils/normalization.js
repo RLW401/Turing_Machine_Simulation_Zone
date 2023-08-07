@@ -9,7 +9,7 @@
 // keys are the integers from allIds and whose values are
 // the corresponding objects. If some of those objects have
 // keys whose values are arrays containing more objects
-// with their own ids, these array are replaced with
+// with their own ids, these arrays are replaced with
 // arrays of integers containing only the ids of the
 // objects. If the optional "includeSubObj" parameter is
 // true, then the returned object will have a "subObjects"
