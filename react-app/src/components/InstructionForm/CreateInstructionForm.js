@@ -4,7 +4,7 @@ import InstructionForm from "./InstructionForm";
 import { createInst } from "../../constants/constants";
 
 // const dev = false;
-const dev = true;
+const dev = false;
 
 const devInstruction = {
     currentState: "First State",
@@ -19,7 +19,7 @@ const productionInstruction = {
     scannedSymbol: "",
     nextState: "",
     printSymbol: "",
-    headMove: -1,
+    headMove: null,
 };
 
 const CreateInstructionForm = () => {

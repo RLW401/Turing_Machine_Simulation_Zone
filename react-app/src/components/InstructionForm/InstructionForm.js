@@ -76,6 +76,58 @@ const InstructionForm = ({ instruction, formType }) => {
     }, [currentUser, machineInstructions]);
 
     // error handling
+    useEffect(() => {
+        const validationErrors = {
+            currentState: [], scannedSymbol: [],
+            nextState: [], printSymbol: [], headMove: [],
+        };
+
+        if ((machineInstructions && currentMachine) && states) {
+            Object.keys(machineInstructions).forEach((instId) => {
+                const currentInstruction = machineInstructions[instId];
+                if ((currentInstruction.currentState === currentState) && (currentInstruction.scannedSymbol === scannedSymbol)) {
+                    if ((formType === createInst) || (instruction.id !== currentInstruction.id)) {
+                        const dupExConErr = `The machine ${currentMachine.name} already has a line of instructions with execution conditions (${currentState + ", " + scannedSymbol}). Each line of machine instructions must have unique execution conditions`;
+                        validationErrors.currentState.push(dupExConErr);
+                        validationErrors.scannedSymbol.push(dupExConErr);
+                    }
+                }
+            });
+
+            // if headMove is set to Stop and nextState is not the halting state
+            if ((headMove === 0) && (nextState !== states[states.length - 1])) {
+                const prematureStop = `The head move option "Stop" can be selected only if the next state is the halting state`;
+                validationErrors.nextState.push(prematureStop);
+                validationErrors.headMove.push(prematureStop);
+            }
+
+            if (!(currentState && states.includes(currentState))) {
+                validationErrors.currentState.push(`Current state must be one of the following states: ${states}.`);
+            }
+            if (!(scannedSymbol && symbols.includes(scannedSymbol))) {
+                validationErrors.scannedSymbol.push(`Scanned symbol must be one of the following symbols: ${symbols}.`);
+            }
+            if (!(nextState && states.includes(nextState))) {
+                validationErrors.nextState.push(`Next state must be one of the following states: ${states}.`);
+            }
+            if (!(printSymbol && symbols.includes(printSymbol))) {
+                validationErrors.printSymbol.push(`Print symbol must be one of the following symbols: ${symbols}.`);
+            }
+            if (!Number.isInteger(headMove) || (Math.abs(headMove) > 1)) {
+                const badHeadMove = `Head move must be an integer between -1 and 1, inclusive.`
+                validationErrors.headMove.push(badHeadMove);
+            }
+
+        } else {
+            validationErrors.notLoaded = [`not loaded`];
+        }
+        setErrors(validationErrors);
+    }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states]);
+
+    // head move debugging
+    useEffect(() => {
+        console.log("headMove: ", headMove);
+    }, [headMove]);
 
 
     const handleSubmit = async (e) => {
@@ -98,7 +150,7 @@ const InstructionForm = ({ instruction, formType }) => {
     };
 
     return (
-        (symbols && states) && <div className='page'>
+        ((symbols && states) && (currentMachine && machineInstructions)) && <div className='page'>
             <form className='instruction-form' onSubmit={handleSubmit}>
                 {formHeader}
                 <div className='body'>
@@ -111,6 +163,7 @@ const InstructionForm = ({ instruction, formType }) => {
                             <select name="currentState" value={currentState} onChange={(e) => setCurrentState(e.target.value)}>
                                 {states.map((state) => <option key={state} value={state}>{state}</option>)}
                             </select>
+                            {(submissionAttempt && !!(errors.currentState && errors.currentState.length)) && <span className='error-message'>{errors.currentState}</span>}
                         </div>
                         <div className='form-group'>
                             <h4 className='heading'>Scanned Symbol</h4>
@@ -118,6 +171,7 @@ const InstructionForm = ({ instruction, formType }) => {
                             <select name="scannedSymbol" value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
                                 {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
                             </select>
+                            {(submissionAttempt && !!(errors.scannedSymbol && errors.scannedSymbol.length)) && <span className='error-message'>{errors.scannedSymbol}</span>}
                         </div>
 
                     </div>
@@ -127,9 +181,16 @@ const InstructionForm = ({ instruction, formType }) => {
                         <div className='form-group'>
                             <h4 className='heading'>Next State</h4>
                             <p className='description'>{nextStateDescription}</p>
-                            <select name="nextState" value={nextState} onChange={(e) => setNextState(e.target.value)}>
+                            <select name="nextState" value={nextState} onChange={(e) => {
+                                // if headMove is set to Stop and nextState is not the halting state, set headMove to null.
+                                if ((headMove === 0) && (e.target.value !== states[states.length - 1])) {
+                                    setHeadMove(null);
+                                }
+                                setNextState(e.target.value)
+                                }}>
                                 {states.map((state) => <option key={state} value={state}>{state}</option>)}
                             </select>
+                            {(submissionAttempt && !!(errors.nextState && errors.nextState.length)) && <span className='error-message'>{errors.nextState}</span>}
                         </div>
                         <div className='form-group'>
                             <h4 className='heading'>Print Symbol</h4>
@@ -137,13 +198,26 @@ const InstructionForm = ({ instruction, formType }) => {
                             <select name="printSymbol" value={printSymbol} onChange={(e) => setPrintSymbol(e.target.value)}>
                                 {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
                             </select>
+                            {(submissionAttempt && !!(errors.printSymbol && errors.printSymbol.length)) && <span className='error-message'>{errors.printSymbol}</span>}
                         </div>
                         <div className='form-group'>
                             <h4 className='heading'>Head Move</h4>
                             <p className='description'>{headMoveDescription}</p>
-                            <select name="headMove" value={headMove} onChange={(e) => setHeadMove(e.target.value)}>
-                                {headMoves.map((move) => <option key={move} value={move}>{move}</option>)}
-                            </select>
+                            {headMoves.map((move) => {
+                                if ((move !== headMoves[1]) || (nextState === states[states.length - 1])) {
+                                    return <label key={move}>
+                                        <input
+                                            type="radio"
+                                            name="headMove"
+                                            value={move}
+                                            checked={(headMove !== null) && (headMoves[headMove + 1] === move)}
+                                            onChange={(e) => setHeadMove(headMoves.indexOf(e.target.value) - 1)}
+                                        />
+                                        {move}
+                                </label>
+                                }
+                            })}
+                            {(submissionAttempt && !!(errors.headMove && errors.headMove.length)) && <span className='error-message'>{errors.headMove}</span>}
                         </div>
                     </div>
                     <div className="form-group">
@@ -152,7 +226,12 @@ const InstructionForm = ({ instruction, formType }) => {
                 </div>
             </form>
             <div className='info'>
-                {(currentMachine && machineInstructions) ? <InstructionDisplay instructions={machineInstructions} machine={currentMachine} /> : null}
+                {(Object.keys(machineInstructions).length)
+                ? <>
+                    <h3>{currentMachine.name}</h3>
+                    <InstructionDisplay instructions={machineInstructions} machine={currentMachine} />
+                </>
+                : null}
             </div>
         </div>
     );
