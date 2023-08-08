@@ -1,5 +1,6 @@
 // root/react-app/src/store/turingMachines.js
 import { normalizeAll } from "../utils/normalization";
+import { ADD_INSTRUCTION, REMOVE_INSTRUCTION } from "./machineInstructions";
 
 const prefix = "turingMachines/"
 export const LOAD_MACHINES = (prefix + "LOAD_MACHINES");
@@ -141,7 +142,14 @@ const initialState = {
 };
 
 const machineReducer = (state=initialState, action) => {
-    let newState = {};
+    let newState = {
+         byId: { ...state.byId },
+         allIds: { ...state.allIds }
+        };
+
+    let machineId = null;
+    let instructionId = null;
+    let newInstIds = [];
 
     switch (action.type) {
         case LOAD_MACHINES:
@@ -160,13 +168,34 @@ const machineReducer = (state=initialState, action) => {
             return newState;
         case REMOVE_MACHINE:
             const deletedMachineId = action.payload;
-            const allIds = state.allIds.filter((mId) => mId !== deletedMachineId);
-            const byId = {};
-            allIds.forEach((mId) => {
-                byId[mId] = { ...state.byId[mId] }
+            // const allIds = state.allIds.filter((mId) => mId !== deletedMachineId);
+            // const byId = {};
+            // allIds.forEach((mId) => {
+            //     byId[mId] = { ...state.byId[mId] }
+            // });
+            // newState.allIds = allIds;
+            // newState.byId = byId;
+            newState.allIds = state.allIds.filter((mId) => mId !== deletedMachineId);
+            newState.byId = { ...state.byId };
+            delete newState.byId[deletedMachineId];
+            return newState;
+        case ADD_INSTRUCTION:
+            instructionId = action.payload.id;
+            machineId = action.payload.machineId;
+            newInstIds = [ ...state.byId[machineId].instructions ];
+            if (newInstIds.includes(instructionId)) {
+                throw new Error(`Error: Duplicate instruction id (${instructionId})`);
+            }
+            newInstIds.push(instructionId);
+            newState.byId[machineId] = { ...newState.byId[machineId], instructions: newInstIds };
+            return newState;
+        case REMOVE_INSTRUCTION:
+            instructionId = action.payload.id;
+            machineId = action.payload.machineId;
+            newInstIds = state.byId[machineId].instructions.filter((instId) => {
+                return (instId !== instructionId);
             });
-            newState.allIds = allIds;
-            newState.byId = byId;
+            newState.byId[machineId] = { ...newState.byId[machineId], instructions: newInstIds };
             return newState;
         default:
             return state;
