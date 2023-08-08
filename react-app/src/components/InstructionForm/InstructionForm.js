@@ -102,16 +102,16 @@ const InstructionForm = ({ instruction, formType }) => {
             }
 
             if (!(currentState && states.includes(currentState))) {
-                validationErrors.currentState.push(`Current state must be one of the following states: ${states}.`);
+                validationErrors.currentState.push(`Current state must be one of the following states: ${states.slice(0, (states.length - 1)).join(", ")}.`);
             }
             if (!(scannedSymbol && symbols.includes(scannedSymbol))) {
-                validationErrors.scannedSymbol.push(`Scanned symbol must be one of the following symbols: ${symbols}.`);
+                validationErrors.scannedSymbol.push(`Scanned symbol must be one of the following symbols: ${symbols.join(", ")}.`);
             }
             if (!(nextState && states.includes(nextState))) {
-                validationErrors.nextState.push(`Next state must be one of the following states: ${states}.`);
+                validationErrors.nextState.push(`Next state must be one of the following states: ${states.join(", ")}.`);
             }
             if (!(printSymbol && symbols.includes(printSymbol))) {
-                validationErrors.printSymbol.push(`Print symbol must be one of the following symbols: ${symbols}.`);
+                validationErrors.printSymbol.push(`Print symbol must be one of the following symbols: ${symbols.join(", ")}.`);
             }
             if (!Number.isInteger(headMove) || (Math.abs(headMove) > 1)) {
                 const badHeadMove = `Head move must be an integer between -1 and 1, inclusive.`
@@ -124,10 +124,10 @@ const InstructionForm = ({ instruction, formType }) => {
         setErrors(validationErrors);
     }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states]);
 
-    // head move debugging
-    useEffect(() => {
-        console.log("headMove: ", headMove);
-    }, [headMove]);
+    // // head move debugging
+    // useEffect(() => {
+    //     console.log("headMove: ", headMove);
+    // }, [headMove]);
 
 
     const handleSubmit = async (e) => {
@@ -161,7 +161,13 @@ const InstructionForm = ({ instruction, formType }) => {
                             <h4 className='heading'>Current State</h4>
                             <p className='description'>{currentStateDescription}</p>
                             <select name="currentState" value={currentState} onChange={(e) => setCurrentState(e.target.value)}>
-                                {states.map((state) => <option key={state} value={state}>{state}</option>)}
+                                <option value={null} disabled={!!currentState}>Select a state</option>
+                                {states.map((state) => {
+                                    // do not include halting state
+                                    if (state !== states[states.length - 1]) {
+                                        return <option key={state} value={state}>{state}</option>
+                                    }
+                                })}
                             </select>
                             {(submissionAttempt && !!(errors.currentState && errors.currentState.length)) && <span className='error-message'>{errors.currentState}</span>}
                         </div>
@@ -169,6 +175,7 @@ const InstructionForm = ({ instruction, formType }) => {
                             <h4 className='heading'>Scanned Symbol</h4>
                             <p className='description'>{scannedSymbolDescription}</p>
                             <select name="scannedSymbol" value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
+                                <option value={null} disabled={!!scannedSymbol}>Select a symbol</option>
                                 {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
                             </select>
                             {(submissionAttempt && !!(errors.scannedSymbol && errors.scannedSymbol.length)) && <span className='error-message'>{errors.scannedSymbol}</span>}
@@ -188,6 +195,7 @@ const InstructionForm = ({ instruction, formType }) => {
                                 }
                                 setNextState(e.target.value)
                                 }}>
+                                <option value={null} disabled={!!nextState}>Select a state</option>
                                 {states.map((state) => <option key={state} value={state}>{state}</option>)}
                             </select>
                             {(submissionAttempt && !!(errors.nextState && errors.nextState.length)) && <span className='error-message'>{errors.nextState}</span>}
@@ -196,6 +204,7 @@ const InstructionForm = ({ instruction, formType }) => {
                             <h4 className='heading'>Print Symbol</h4>
                             <p className='description'>{printSymbolDescription}</p>
                             <select name="printSymbol" value={printSymbol} onChange={(e) => setPrintSymbol(e.target.value)}>
+                                <option value={null} disabled={!!printSymbol}>Select a symbol</option>
                                 {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
                             </select>
                             {(submissionAttempt && !!(errors.printSymbol && errors.printSymbol.length)) && <span className='error-message'>{errors.printSymbol}</span>}
@@ -214,7 +223,7 @@ const InstructionForm = ({ instruction, formType }) => {
                                             onChange={(e) => setHeadMove(headMoves.indexOf(e.target.value) - 1)}
                                         />
                                         {move}
-                                </label>
+                                    </label>
                                 }
                             })}
                             {(submissionAttempt && !!(errors.headMove && errors.headMove.length)) && <span className='error-message'>{errors.headMove}</span>}
