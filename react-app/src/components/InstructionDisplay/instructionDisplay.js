@@ -1,6 +1,7 @@
 // root/react-app/src/components/InstructionDisplay/instructionDisplay.js
+import { headMoves } from "../../constants/constants";
 
-const InstructionDisplay = ({ instructions, machine }) => {
+const InstructionDisplay = ({ instructions, machine, userId=null, instructionId=null, page="MachinePage" }) => {
     machine = { ...machine };
 
     if (!machine.initTape) machine.initTape = machine.blankSymbol;
@@ -9,28 +10,12 @@ const InstructionDisplay = ({ instructions, machine }) => {
     const headPos = (machine.headPos ? machine.headPos : 0);
     const mState = (machine.currentState ? machine.currentState : machine.initState);
     const mTape = (machine.currentTape ? machine.currentTape : machine.initTape);
-    // if (machine.headPos) headPos = machine.headPos;
-
-    // if (machine.currentState) mState = machine.currentState;
-
-    // if (machine.currentTape) {
-    //     mTape = machine.currentTape;
-    // } else if (machine.initTape) {
-    //     mTape = machine.initTape;
-    // }
 
     const scanSymb = mTape[headPos];
 
     const instList = machine.instructions.map((instId) => {
         const currentInst = instructions[instId];
-        let headMove;
-        if (currentInst.headMove === -1) {
-            headMove = "Left";
-        } else if (currentInst.headMove === 0) {
-            headMove = "Stop";
-        } else if (currentInst.headMove === 1) {
-            headMove = "Right";
-        }
+        const headMove = headMoves[currentInst.headMove + 1];
 
         const properties = [
             currentInst.currentState, currentInst.scannedSymbol,
