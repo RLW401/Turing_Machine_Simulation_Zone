@@ -100,13 +100,18 @@ const initialState = {
 };
 
 const instructionReducer = (state=initialState, action) => {
-    let newState = {};
+    let newState = {
+        byId: { ...state.byId },
+        allIds: [ ...state.allIds ]
+       };
 
     switch (action.type) {
         case LOAD_MACHINES:
-            const instructions = { ...action.payload.subObjects.instructions };
-            newState.allIds = instructions.allIds;
-            newState.byId = { ...state.byId, ...instructions.byId };
+            const instructions = ((action.payload.subObjects && action.payload.subObjects.instructions) ? { ...action.payload.subObjects.instructions } : null )
+            if (instructions) {
+                newState.allIds = instructions.allIds;
+                newState.byId = { ...state.byId, ...instructions.byId };
+            }
             return newState;
         case REMOVE_MACHINE:
             const removedMachineId = action.payload;

@@ -144,7 +144,7 @@ const initialState = {
 const machineReducer = (state=initialState, action) => {
     let newState = {
          byId: { ...state.byId },
-         allIds: { ...state.allIds }
+         allIds: [ ...state.allIds ]
         };
 
     let machineId = null;
