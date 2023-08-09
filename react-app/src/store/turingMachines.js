@@ -167,17 +167,10 @@ const machineReducer = (state=initialState, action) => {
             newState.byId[updatedMachineId] = { ...action.payload.byId[updatedMachineId] };
             return newState;
         case REMOVE_MACHINE:
-            const deletedMachineId = action.payload;
-            // const allIds = state.allIds.filter((mId) => mId !== deletedMachineId);
-            // const byId = {};
-            // allIds.forEach((mId) => {
-            //     byId[mId] = { ...state.byId[mId] }
-            // });
-            // newState.allIds = allIds;
-            // newState.byId = byId;
-            newState.allIds = state.allIds.filter((mId) => mId !== deletedMachineId);
+            machineId = action.payload;
+            newState.allIds = state.allIds.filter((mId) => mId !== machineId);
             newState.byId = { ...state.byId };
-            delete newState.byId[deletedMachineId];
+            delete newState.byId[machineId];
             return newState;
         case ADD_INSTRUCTION:
             instructionId = action.payload.id;

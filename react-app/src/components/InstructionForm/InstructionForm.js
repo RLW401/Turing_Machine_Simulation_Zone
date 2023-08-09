@@ -150,7 +150,7 @@ const InstructionForm = ({ instruction, formType }) => {
     };
 
     return (
-        ((symbols && states) && (currentMachine && machineInstructions)) && <div className='page'>
+        (((symbols && states) && (currentMachine && machineInstructions)) && userAuth) ? <div className='page'>
             <form className='instruction-form' onSubmit={handleSubmit}>
                 {formHeader}
                 <div className='body'>
@@ -235,14 +235,14 @@ const InstructionForm = ({ instruction, formType }) => {
                 </div>
             </form>
             <div className='info'>
-                {(Object.keys(machineInstructions).length)
-                ? <>
+                {!!(Object.keys(machineInstructions).length)
+                && <>
                     <h3>{currentMachine.name}</h3>
                     <InstructionDisplay instructions={machineInstructions} machine={currentMachine} />
-                </>
-                : null}
+                </>}
             </div>
         </div>
+        : <h2 className='page'>Machine not Found or User not Authorized</h2>
     );
 };
 

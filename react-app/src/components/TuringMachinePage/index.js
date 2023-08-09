@@ -79,11 +79,11 @@ const TuringMachinePage = () => {
         if (machines.allIds && (machines.allIds.includes(machineId))) {
             const setM = machines.byId[machineId];
             setCurrentMachine(setM);
-            const fInst = (<InstructionDisplay instructions={instructions} machine={setM} />);
+            const fInst = (<InstructionDisplay instructions={instructions} machine={setM} buttonDisplay={editAuth} />);
             setFormattedInstructions(fInst);
             setFinishedRun(false);
         }
-    }, [machines, machineId, instructions]);
+    }, [machines, machineId, instructions, editAuth]);
 
     useEffect(() => {
         const loggedAndLoaded = (loadCurrentUser && (loadCurrentUser.id && currentMachine));
@@ -210,7 +210,7 @@ const TuringMachinePage = () => {
             const machine = { ...currentMachine };
             const resetTape = machine.initTape;
             machine.currentTape = resetTape;
-            const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
+            const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} />);
             setFormattedInstructions(fInst);
             setInitTape(resetTape);
             setCurrentTape(resetTape);
@@ -243,14 +243,14 @@ const TuringMachinePage = () => {
         </div>
     );
 
-    // button for adding lines of instructions
-    const addInstructionButton = (
-        editAuth
-        ? <button className="add-instruction" onClick={
-            () => history.push(genAddInstPath(machineId))
-        }>+ Add Instruction</button>
-        : null
-        );
+    // // button for adding lines of instructions
+    // const addInstructionButton = (
+    //     editAuth
+    //     ? <button className="add-instruction" onClick={
+    //         () => history.push(genAddInstPath(machineId))
+    //     }>+ Add Instruction</button>
+    //     : null
+    //     );
 
     if (currentMachine) {
         machinePage = (
@@ -284,7 +284,7 @@ const TuringMachinePage = () => {
                                 const machine = { ...currentMachine };
                                 // machine.currentTape = e.target.value;
                                 machine.currentTape = (tape ? tape : machine.blankSymbol);
-                                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
+                                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} />);
                                 setFormattedInstructions(fInst);
                                 setInitTape(tape);
                                 setCurrentTape(tape);
@@ -305,7 +305,7 @@ const TuringMachinePage = () => {
                         </div>}
                     </div>
                     {formattedInstructions}
-                    {addInstructionButton}
+                    {/* {addInstructionButton} */}
                 </div>
             </div>
         );
