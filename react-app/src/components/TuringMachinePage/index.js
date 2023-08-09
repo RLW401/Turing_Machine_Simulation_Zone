@@ -243,14 +243,6 @@ const TuringMachinePage = () => {
         </div>
     );
 
-    // // button for adding lines of instructions
-    // const addInstructionButton = (
-    //     editAuth
-    //     ? <button className="add-instruction" onClick={
-    //         () => history.push(genAddInstPath(machineId))
-    //     }>+ Add Instruction</button>
-    //     : null
-    //     );
 
     if (currentMachine) {
         machinePage = (
@@ -274,7 +266,7 @@ const TuringMachinePage = () => {
                             <p>Alphabet: {`{${currentMachine.alphabet.split('').join(', ')}}`}</p>
                         </div>
                         <div>
-                            <label htmlFor="initialTape">Initial Tape </label>
+                            <label htmlFor="initialTape">Initial Tape: </label>
                             <input
                             type="text"
                             id="initialTape"

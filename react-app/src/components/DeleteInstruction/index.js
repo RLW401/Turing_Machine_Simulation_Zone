@@ -1,40 +1,43 @@
-// root/react-app/src/components/DeleteMachine/index.js
+// root/react-app/src/components/DeleteInstruction/index.js
 
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { useModal } from "../../context/Modal";
-import { deleteMachine } from "../../store/turingMachines";
-import "./deleteMachine.css";
+import { deleteInstruction } from "../../store/machineInstructions";
 
-const DeleteMachineModal = () => {
+const DeleteInstructionModal = ({ machineId, instructionId, instructionStr }) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const { closeModal, setModalContent, onModalClose, setOnModalClose } = useModal();
-    const machineId = Number(useParams().machineId);
+
+    const idData = {
+        machineId: Number(machineId),
+        instructionId: Number(instructionId),
+    };
 
     const deleteClick = async () => {
-        await dispatch(deleteMachine(machineId));
+        await dispatch(deleteInstruction(idData));
         closeModal();
-        history.push("/");
     };
 
     const deleteOptions = (
         <div className="delete-options">
             <h2>Confirm Delete</h2>
-            <h4>Are you sure you want to remove this machine?</h4>
+            <h4>Are you sure you want to remove the following line of instructions?</h4>
+            {instructionStr}
             <div className="delete-buttons">
                 <button
                     className="confirm delete"
                     onClick={deleteClick}
                 >
-                    Yes (Delete Machine)
+                    Yes (Delete Instruction)
                 </button>
                 <button
                     className="abort"
                     onClick={() => closeModal()}
                 >
-                    No (Keep Machine)
+                    No (Keep Instruction)
                 </button>
             </div>
 
@@ -44,13 +47,13 @@ const DeleteMachineModal = () => {
 
     const deleteButton = (
         <button
-            className="delete"
-            title="Permanently delete this Turing machine"
+            className="delete small"
+            title="Permanently delete this line of machine instructions"
             onClick={() => {
                 setModalContent(deleteOptions);
-            }}>Delete Machine</button>);
+            }}>D</button>);
 
     return deleteButton;
 };
 
-export default DeleteMachineModal;
+export default DeleteInstructionModal;
