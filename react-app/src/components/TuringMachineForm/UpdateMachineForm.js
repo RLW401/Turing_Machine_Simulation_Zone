@@ -44,7 +44,6 @@ const UpdateMachineForm = () => {
     } else {
         return (<h2 className="error-heading">User not authorized to edit machine</h2>);
     }
-
 };
 
 export default UpdateMachineForm;

@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import DeleteInstructionModal from "../DeleteInstruction";
 import { genAddInstPath, genUpdateInstPath, headMoves } from "../../constants/constants";
 
-const InstructionDisplay = ({ instructions, machine, buttonDisplay=false, selectedInstructionId=null, page="MachinePage" }) => {
+const InstructionDisplay = ({ instructions, machine, buttonDisplay=false, selectedInstructionId=null }) => {
     const history = useHistory();
     machine = { ...machine };
     machine.instructions = [ ...machine.instructions ];

@@ -15,6 +15,7 @@ const InstructionForm = ({ instruction, formType }) => {
     const machineId = Number(useParams().machineId);
     const history = useHistory();
     const dispatch = useDispatch();
+    const selectedInstructionId = ((formType === updateInst) ? instruction.id : -1);
     const [currentState, setCurrentState] = useState(instruction.currentState);
     const [scannedSymbol, setScannedSymbol] = useState(instruction.scannedSymbol);
     const [nextState, setNextState] = useState(instruction.nextState);
@@ -249,7 +250,7 @@ const InstructionForm = ({ instruction, formType }) => {
                 {!!(Object.keys(machineInstructions).length)
                 && <>
                     <h3>{currentMachine.name}</h3>
-                    <InstructionDisplay instructions={machineInstructions} machine={currentMachine} />
+                    <InstructionDisplay instructions={machineInstructions} machine={currentMachine} selectedInstructionId={selectedInstructionId} />
                 </>}
             </div>
         </div>
