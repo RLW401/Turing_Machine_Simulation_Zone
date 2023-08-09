@@ -143,9 +143,9 @@ const initialState = {
 
 const machineReducer = (state=initialState, action) => {
     let newState = {
-         byId: { ...state.byId },
-         allIds: [ ...state.allIds ]
-        };
+         byId: {},
+         allIds: []
+    };
 
     let machineId = null;
     let instructionId = null;
@@ -175,6 +175,8 @@ const machineReducer = (state=initialState, action) => {
         case ADD_INSTRUCTION:
             instructionId = action.payload.id;
             machineId = action.payload.machineId;
+            newState.byId = { ...state.byId };
+            newState.allIds = [ ...state.allIds ];
             newInstIds = [ ...state.byId[machineId].instructions ];
             if (newInstIds.includes(instructionId)) {
                 throw new Error(`Error: Duplicate instruction id (${instructionId})`);
@@ -185,6 +187,8 @@ const machineReducer = (state=initialState, action) => {
         case REMOVE_INSTRUCTION:
             instructionId = action.payload.id;
             machineId = action.payload.machineId;
+            newState.byId = { ...state.byId };
+            newState.allIds = [ ...state.allIds ];
             newInstIds = state.byId[machineId].instructions.filter((instId) => {
                 return (instId !== instructionId);
             });

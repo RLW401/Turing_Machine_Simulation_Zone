@@ -101,9 +101,13 @@ const initialState = {
 
 const instructionReducer = (state=initialState, action) => {
     let newState = {
-        byId: { ...state.byId },
-        allIds: [ ...state.allIds ]
-       };
+        byId: {},
+        allIds: []
+    };
+    let machineId = null;
+    let instructionId = null;
+
+
 
     switch (action.type) {
         case LOAD_MACHINES:
@@ -114,12 +118,12 @@ const instructionReducer = (state=initialState, action) => {
             }
             return newState;
         case REMOVE_MACHINE:
-            const removedMachineId = action.payload;
+            machineId = action.payload;
             const remainingIds = [];
             const remainingInstructions = {};
             state.allIds.forEach((instId) => {
                 const currentInstruction = { ...state.byId[instId] };
-                if (currentInstruction.machineId !== removedMachineId) {
+                if (currentInstruction.machineId !== machineId) {
                     remainingIds.push(instId);
                     remainingInstructions[instId] = currentInstruction;
                 }
@@ -128,26 +132,28 @@ const instructionReducer = (state=initialState, action) => {
             newState.byId = remainingInstructions;
             return newState;
         case ADD_INSTRUCTION:
-            const newId = action.payload.id;
+            instructionId = action.payload.id;
             newState.allIds = [ ...state.allIds ];
-            newState.byId = { ...state.byId };
-            if (newState.allIds.includes(newId)) {
-                throw new Error(`Error: Duplicate instruction id (${newId})`);
+            // newState.byId = { ...state.byId };
+            if (newState.allIds.includes(instructionId)) {
+                throw new Error(`Error: Duplicate instruction id (${instructionId})`);
             }
-            newState.allIds.push(newId);
-            newState.byId[newId] = action.payload;
+            newState.allIds.push(instructionId);
+            // newState.byId[instructionId] = action.payload;
+            newState.byId = { ...state.byId, [instructionId]: action.payload };
             return newState;
         case UPDATE_INSTRUCTION:
-            const instructionId = action.payload.id;
+            instructionId = action.payload.id;
             newState.allIds = [ ...state.allIds ];
-            newState.byId = { ...state.byId };
-            newState.byId[instructionId] = action.payload;
+            // newState.byId = { ...state.byId };
+            // newState.byId[instructionId] = action.payload;
+            newState.byId = { ...state.byId, [instructionId]: action.payload };
             return newState;
         case REMOVE_INSTRUCTION:
-            const deletedInstructionId = action.payload.instructionId;
-            newState.allIds = state.allIds.filter((instId) => instId !== deletedInstructionId);
+            instructionId = action.payload.instructionId;
+            newState.allIds = state.allIds.filter((instId) => instId !== instructionId);
             newState.byId = { ...state.byId };
-            delete newState.byId[deletedInstructionId];
+            delete newState.byId[instructionId];
             return newState;
         default:
             return state;
