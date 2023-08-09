@@ -4,6 +4,8 @@ import { useState, useEffect, Fragment } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { createOrEditInstruction } from '../../store/machineInstructions';
+
 import { createInst, updateInst, stateSeparator, headMoves, instExConDesc, currentStateDescription, scannedSymbolDescription, machOpDesc, nextStateDescription, printSymbolDescription, headMoveDescription } from '../../constants/constants';
 import InstructionDisplay from '../InstructionDisplay/instructionDisplay';
 
@@ -139,12 +141,21 @@ const InstructionForm = ({ instruction, formType }) => {
             if (errors[errTypes[i]].length) return;
         }
 
+        instruction = {
+            ...instruction, machineId, currentState, scannedSymbol,
+            nextState, printSymbol, headMove,
+        };
+
 
         setSubmissionAttempt(false);
         if (formType === createInst) {
-
+            const newInstruction = await dispatch(createOrEditInstruction(instruction));
+            console.log("newInstruction: ", newInstruction);
+            history.push(`/machines/${newInstruction.machineId}`);
         } else if (formType === updateInst) {
-
+            const updatedInstruction = await dispatch(createOrEditInstruction(instruction, "edit"));
+            console.log("updatedInstruction ", updatedInstruction);
+            history.push(`/machines/${updatedInstruction.machineId}`);
         }
         return;
     };

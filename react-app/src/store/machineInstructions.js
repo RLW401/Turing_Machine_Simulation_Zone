@@ -25,6 +25,7 @@ const removeInstruction = (idData) => ({
 
 export const createOrEditInstruction = (instructionData, edit=false) => async (dispatch) => {
     try {
+        edit = !!edit;
         const machineId = instructionData.machineId;
         const instructionId = instructionData.id;
         const createURL = `/api/turing-machines/${machineId}/machine-instructions/`;
