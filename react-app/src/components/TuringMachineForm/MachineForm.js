@@ -126,6 +126,8 @@ const MachineForm = ({ machine, formType }) => {
 
     // set state name inputs in response to change in states or number of states
     useEffect(() => {
+        // TODO: refactor state name errors to check for duplicate state names.
+        // TODO: add radio buttons to set any state as the initial or halting state.
         const invalidStateNameChars = [',', '|', '<', '>', '{', '}'];
         let badCharStr = "";
         const newInputs = [];
