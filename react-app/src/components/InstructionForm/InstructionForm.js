@@ -154,8 +154,8 @@ const InstructionForm = ({ instruction, formType }) => {
             console.log("newInstruction: ", newInstruction);
             history.push(`/machines/${newInstruction.machineId}`);
         } else if (formType === updateInst) {
+            // console.log("instruction data from update form: ", instruction);
             const updatedInstruction = await dispatch(createOrEditInstruction(instruction, "edit"));
-            console.log("updatedInstruction ", updatedInstruction);
             history.push(`/machines/${updatedInstruction.machineId}`);
         }
         return;

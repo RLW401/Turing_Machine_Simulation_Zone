@@ -41,11 +41,11 @@ def edit_or_delete_instruction(machine_id, instruction_id):
 
 
         if form.validate_on_submit():
-            machine_instruction.currentState = form.data['currentState']
-            machine_instruction.scannedSymbol = form.data['scannedSymbol']
-            machine_instruction.nextState = form.data['nextState']
-            machine_instruction.printSymbol = form.data['printSymbol']
-            machine_instruction.headMove = form.data['headMove']
+            machine_instruction.current_state = form.data['currentState']
+            machine_instruction.scanned_symbol = form.data['scannedSymbol']
+            machine_instruction.next_state = form.data['nextState']
+            machine_instruction.print_symbol = form.data['printSymbol']
+            machine_instruction.head_move = form.data['headMove']
 
             db.session.commit()
 

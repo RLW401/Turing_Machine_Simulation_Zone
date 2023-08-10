@@ -5,8 +5,8 @@ from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired, ValidationError
 
 def validate_head_move(form, field):
-    head_move = int(field.data)
-    if head_move < -1 or head_move > 1:
+    head_move = field.data
+    if (not isinstance(head_move, int) or (abs(head_move) > 1)):
         raise ValidationError('Head move must be an integer between -1 and 1.')
 
 def validate_symbol(form, field):
@@ -21,4 +21,4 @@ class MachineInstructionForm(FlaskForm):
     scannedSymbol = StringField('scannedSymbol', validators=[DataRequired(), validate_symbol])
     nextState = StringField('nextState', validators=[DataRequired()])
     printSymbol = StringField('printSymbol', validators=[DataRequired(), validate_symbol])
-    headMove = IntegerField('headMove', validators=[DataRequired(), validate_head_move])
+    headMove = IntegerField('headMove', validators=[validate_head_move])

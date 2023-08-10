@@ -185,7 +185,9 @@ const machineReducer = (state=initialState, action) => {
             newState.byId[machineId] = { ...newState.byId[machineId], instructions: newInstIds };
             return newState;
         case REMOVE_INSTRUCTION:
-            instructionId = action.payload.id;
+            console.log("Hit Remove Instruction in machine reducer");
+            console.log("action.payload: ", action.payload);
+            instructionId = action.payload.instructionId;
             machineId = action.payload.machineId;
             newState.byId = { ...state.byId };
             newState.allIds = [ ...state.allIds ];
