@@ -62,3 +62,16 @@ button.add-instruction {
     color: whitesmoke;
     border: none;
 }
+
+/* delete modals */
+.delete-options {
+    display: flex;
+    flex-direction: column;
+    margin: 2% 10%;
+    align-items: center;
+}
+
+.delete-options button {
+    border: none;
+    margin: 8px;
+}
