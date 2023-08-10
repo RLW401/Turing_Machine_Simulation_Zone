@@ -202,11 +202,23 @@ const MachineForm = ({ machine, formType }) => {
             newErrors.alphabet.push(` The machine alphabet cannot contain whitespace or the symbol you have chosen as the blank (${blankSymbol}). `)
         }
 
-        // handle initial tape errors
-        const tapeGood = initTape.split("").every((char) => valSymb.includes(char));
 
-        if (!tapeGood) {
-            newErrors.initTape.push(` The initial tape may only contain the blank and symbols from the alphabet (${valSymb}). `);
+        // handle initial tape errors
+        const invalidCharacters = [];
+        let blankTape = true;
+        initTape.split("").forEach((char) => {
+            if (!valSymb.includes(char)) {
+                invalidCharacters.push(char);
+            }
+            if (char !== blankSymbol) blankTape = false;
+        });
+
+        if (invalidCharacters.length) {
+            newErrors.initTape.push(` The initial tape may only contain the blank and symbols from the alphabet (${valSymb}). The following symbols are invalid: ${invalidCharacters}.`);
+        }
+
+        if (!blankTape && (initTape[0] === blankSymbol)) {
+            newErrors.initTape.push(` A non-blank initial tape must begin with a non-blank symbol. `);
         }
 
         setOtherErrors(newErrors);
