@@ -1,5 +1,7 @@
 /* root/react-app/src/components/TuringMachinePage/turingMachine.css */
 .machine-page {
+  display: flex;
+  flex-direction: column;
     /* border: solid;
     border-width: 4px;
     border-color: blueviolet; */
@@ -62,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 24px; /* Adjust the margin as needed */
+  margin-top: 24px;
 }
 
 .tape .square {
@@ -132,4 +134,17 @@
 .machine-instructions .active {
   color: green;
   text-decoration: underline;
+}
+
+.missing-instructions {
+  width: 50%;
+  border: solid 8px red;
+  display: flex;
+  align-self: center;
+  margin-top: 24px; /* Adjust the margin as needed */
+}
+
+.missing-instructions p {
+  margin: 2% 5%;
+
 }

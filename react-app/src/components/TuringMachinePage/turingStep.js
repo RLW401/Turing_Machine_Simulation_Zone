@@ -23,19 +23,7 @@ export const turingStep = (machine, instructions) => {
         }
     }
 
-    // if (!machine.currentTape) {
-    //     if (tape) {
-    //         machine.currentTape = tape;
-    //     } else if (machine.initTape) {
-    //         machine.currentTape = machine.initTape;
-    //     } else {
-    //         machine.currentTape = mBlank;
-    //     }
-    // }
-
-    if (!machine.headPos) {
-        machine.headPos = 0;
-    }
+    if (!machine.headPos) machine.headPos = 0;
 
     let mTape = machine.currentTape;
     let mState = machine.currentState;
@@ -56,7 +44,14 @@ export const turingStep = (machine, instructions) => {
         }
     }
     if (!mInst) {
-        throw new Error(`Error: No instruction found for state ${mState} and scanned symbol ${scanSymb}.`);
+        // throw new Error(`Error: No instruction found for state ${mState} and scanned symbol ${scanSymb}.`);
+
+        machine.missingInstruction = {
+            errorMsg: `Your machine was automatically reset because it entered a configuration not covered by any of its instructions: \nNo instruction found for state ${mState} and scanned symbol ${scanSymb}.`,
+            state: mState,
+            symbol: scanSymb,
+    };
+        return machine;
     }
 
     // print symbol

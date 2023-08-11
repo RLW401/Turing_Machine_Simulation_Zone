@@ -46,7 +46,8 @@ const TuringMachinePage = () => {
     const [validTape, setValidTape] = useState(true);
     const [deleteAuth, setDeleteAuth] = useState(false);
     const [editAuth, setEditAuth] = useState(false);
-
+    const [resetTriggered, setResetTriggered] = useState(false);
+    const [missingInstruction, setMissingInstruction] = useState(false);
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -82,6 +83,7 @@ const TuringMachinePage = () => {
             const fInst = (<InstructionDisplay instructions={instructions} machine={setM} buttonDisplay={editAuth} />);
             setFormattedInstructions(fInst);
             setFinishedRun(false);
+            setMissingInstruction(false);
         }
     }, [machines, machineId, instructions, editAuth]);
 
@@ -144,30 +146,11 @@ const TuringMachinePage = () => {
         }
       }, [tapeStr, headPos]);
 
-    //   const handleRunMachine = () => {
-    //     if (!validTape) return;
-
-
-    //     if (!initTape) {
-    //         setStartingTape(currentMachine.blankSymbol);
-    //     } else {
-    //         setStartingTape(initTape);
-    //     }
-
-    //     const mRes = runMachine(currentMachine, instructions, initTape);
-    //     console.log("mRes: ", mRes);
-    //     setCurrentTape(mRes[0]);
-    //     setHaltingTape(mRes[0]);
-    //     setHeadPos(mRes[1]);
-    //     setFinishedRun(true);
-    //     setInitTape(mRes[0]);
-
-    //   };
-
     const handleRunMachine = () => {
         let headMoves = 0;
         if (!validTape) return;
 
+        setMissingInstruction(false);
         setFinishedRun(false);
 
         if (!initTape) {
@@ -178,9 +161,10 @@ const TuringMachinePage = () => {
 
         let machine = { ...currentMachine };
         machine.currentTape = initTape;
+        machine.missingInstruction = false;
 
         turingInterval = setInterval(() => {
-            if ((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) {
+            if (((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) && !machine.missingInstruction) {
                 machine = turingStep(machine, instructions);
                 headMoves++;
                 setCurrentTape(machine.currentTape);
@@ -189,15 +173,21 @@ const TuringMachinePage = () => {
                 setFormattedInstructions(fInst);
             } else {
                 clearInterval(turingInterval);
-                const trimResult = trimBlanks(machine.currentTape, machine.blankSymbol);
-                // machine.headPos -= trimResult.leadingBlanks;
-                // machine = trimResult.newString;
-
-                setHeadPos(machine.headPos - trimResult.leadingBlanks);
-                setCurrentTape(trimResult.newString);
-                setHaltingTape(trimResult.newString);
-                setInitTape(trimResult.newString);
-                setFinishedRun(true);
+                if (machine.missingInstruction) {
+                    setMissingInstruction(
+                        <div className="missing-instructions">
+                            <p className="error">{machine.missingInstruction.errorMsg}</p>
+                        </div>
+                    );
+                    handleResetMachine();
+                } else {
+                    const trimResult = trimBlanks(machine.currentTape, machine.blankSymbol);
+                    setHeadPos(machine.headPos - trimResult.leadingBlanks);
+                    setCurrentTape(trimResult.newString);
+                    setHaltingTape(trimResult.newString);
+                    setInitTape(trimResult.newString);
+                    setFinishedRun(true);
+                }
             }
         }, timeDelay);
 
@@ -244,7 +234,6 @@ const TuringMachinePage = () => {
         </div>
     );
 
-
     if (currentMachine) {
         machinePage = (
             <div className="machine-page">
@@ -254,6 +243,7 @@ const TuringMachinePage = () => {
                 </div>
                 {mChangeButtons}
                 {renderedTape}
+                {missingInstruction}
                 <div className="machine-controls">
                     <button className="run-machine" onClick={handleRunMachine}>Run Machine</button>
                     <button className="reset-machine" onClick={handleResetMachine}>Reset Machine</button>
