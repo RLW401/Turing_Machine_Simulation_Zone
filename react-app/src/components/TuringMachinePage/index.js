@@ -4,10 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useHistory, useParams } from "react-router-dom";
 import { getAuthorizedTMs } from "../../store/turingMachines";
-import renderTape from "./renderTape";
+import renderTape, { genTapeStr } from "./renderTape";
 import InstructionDisplay from "../InstructionDisplay/instructionDisplay";
-import { genTapeStr } from "./renderTape";
-// import { runMachine } from "./runMachine";
 import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
@@ -19,7 +17,7 @@ const TuringMachinePage = () => {
     // const dispatch = useDispatch();
     const history = useHistory();
     const machineId = Number(useParams().machineId);
-    const maxHeadMoves = 9001;
+    const maxHeadMoves = 5;
     const timeDelay = 500;
     let turingInterval;
 
@@ -84,6 +82,7 @@ const TuringMachinePage = () => {
             setFormattedInstructions(fInst);
             setFinishedRun(false);
             setMissingInstruction(false);
+            setHeadPos(0);
         }
     }, [machines, machineId, instructions, editAuth]);
 
@@ -133,6 +132,7 @@ const TuringMachinePage = () => {
       // set tape symbols to be rendered
       useEffect(() => {
         if (currentMachine && blankSymbol) {
+        // if ((currentMachine && blankSymbol) && (headPos < currentTape.length)) {
             setTapeStr(genTapeStr(
                 numSquares, headPos, blankSymbol, currentTape
                 ));
@@ -147,6 +147,7 @@ const TuringMachinePage = () => {
       }, [tapeStr, headPos]);
 
     const handleRunMachine = () => {
+        // TODO allow re-runs of machine even if it halts with headPos > 0
         let headMoves = 0;
         if (!validTape) return;
 
@@ -162,17 +163,20 @@ const TuringMachinePage = () => {
         let machine = { ...currentMachine };
         machine.currentTape = initTape;
         machine.missingInstruction = false;
+        // machine.headPos = headPos;
 
         turingInterval = setInterval(() => {
             if (((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) && !machine.missingInstruction) {
                 machine = turingStep(machine, instructions);
                 headMoves++;
+                // console.log("machine.currentTape: ", machine.currentTape);
                 setCurrentTape(machine.currentTape);
                 setHeadPos(machine.headPos);
                 const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
                 setFormattedInstructions(fInst);
             } else {
                 clearInterval(turingInterval);
+                // turingInterval = null;
                 if (machine.missingInstruction) {
                     setMissingInstruction(
                         <div className="missing-instructions">
@@ -180,13 +184,21 @@ const TuringMachinePage = () => {
                         </div>
                     );
                     handleResetMachine();
+                } else if (headMoves >= maxHeadMoves) {
+                    handleResetMachine();
+                    console.log(`Machine exceeded max number of head moves (${headMoves}).`);
                 } else {
                     const trimResult = trimBlanks(machine.currentTape, machine.blankSymbol);
-                    setHeadPos(machine.headPos - trimResult.leadingBlanks);
+                    const finalHeadPos = (machine.headPos - trimResult.leadingBlanks);
+                    setHeadPos(finalHeadPos);
                     setCurrentTape(trimResult.newString);
                     setHaltingTape(trimResult.newString);
                     setInitTape(trimResult.newString);
                     setFinishedRun(true);
+                    // // if machine didn't halt scanning first non-blank symbol reset the machine
+                    // if (finalHeadPos) {
+                    //     handleResetMachine();
+                    // }
                 }
             }
         }, timeDelay);
@@ -204,9 +216,9 @@ const TuringMachinePage = () => {
             const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} />);
             setFormattedInstructions(fInst);
             setInitTape(resetTape);
+            setHeadPos(0);
             setCurrentTape(resetTape);
             setStartingTape(resetTape);
-            setHeadPos(0);
             setFinishedRun(false);
             setValidTape(stringOnAlphabet(
                 resetTape,
@@ -263,6 +275,7 @@ const TuringMachinePage = () => {
                             id="initialTape"
                             value={initTape}
                             onChange={(e) => {
+                                setHeadPos(0);
                                 const tape = e.target.value;
                                 const machine = { ...currentMachine };
                                 // machine.currentTape = e.target.value;
