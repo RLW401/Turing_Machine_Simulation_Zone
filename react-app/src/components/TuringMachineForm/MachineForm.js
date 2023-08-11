@@ -33,6 +33,7 @@ const MachineForm = ({ machine, formType }) => {
     const [stateNameErrors, setStateNameErrors] = useState({});
     const [errors, setErrors] = useState({});
     const [otherErrors, setOtherErrors] = useState({});
+    const [isFormGood, setIsFormGood] = useState(false);
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
     const loadMachines = useSelector((state) => {
@@ -46,10 +47,12 @@ const MachineForm = ({ machine, formType }) => {
         // if the initial tape is blank, use the blank symbol for the tape
         const iTape = (initTape.length ? initTape : blankSymbol);
 
-        const errTypes = Object.keys(errors);
-        for (let i = 0; i < errTypes.length; i++) {
-            if (errors[errTypes[i]].length) return;
-        }
+        // const errTypes = Object.keys(errors);
+        // for (let i = 0; i < errTypes.length; i++) {
+        //     if (errors[errTypes[i]].length) return;
+        // }
+
+        if (!isFormGood) return;
 
         machine = {
             ...machine, name, notes, blankSymbol, alphabet,
@@ -84,7 +87,14 @@ const MachineForm = ({ machine, formType }) => {
 
     // consolidate errors
     useEffect(()=> {
-        setErrors({ ...stateNameErrors, ...otherErrors });
+        let goodForm = true;
+        const newErrors = { ...stateNameErrors, ...otherErrors };
+        const errTypes = Object.keys(newErrors);
+        for (let i = 0; i < errTypes.length; i++) {
+            if (newErrors[errTypes[i]].length) goodForm = false;
+        }
+        setErrors(newErrors);
+        setIsFormGood(goodForm);
     }, [stateNameErrors, otherErrors]);
 
     // set state names upon change in number of states
@@ -117,7 +127,6 @@ const MachineForm = ({ machine, formType }) => {
                     }
                 }
             }
-
             if (errorsErased) setStateNameErrors(newErrors);
             setStates(newStates);
         }
@@ -276,24 +285,26 @@ const MachineForm = ({ machine, formType }) => {
                 <input type="text" name="states" defaultValue={numStates} onKeyDown={handleKeyDown}
                 onBlur={(e) => {
                     const newNumStates = Number.parseInt(e.target.value)
-                    const newErrors = { ...stateNameErrors }
-                    if (newNumStates >= minNumStates && newNumStates <= maxNumStates) {
-                        delete newErrors.numStates;
-                        setStateNameErrors(newErrors);
+                    const newErrors = { ...otherErrors }
+                    newErrors.numStates = [];
+                    if ((newNumStates >= minNumStates) && (newNumStates <= maxNumStates)) {
                         setNumStates(newNumStates);
                     } else {
-                        newErrors.numStates = [`Number of states must be an integer between ${minNumStates} and ${maxNumStates}, inclusive.`];
-                        setStateNameErrors(newErrors);
+                        newErrors.numStates.push(` Number of states must be an integer between ${minNumStates} and ${maxNumStates}, inclusive.`);
                     }
+                    setOtherErrors(newErrors);
                 }} />
-                {(errors.numStates && errors.numStates.length) && <span className="error-message">{errors.numStates}</span>}
+                {(errors.numStates && !!errors.numStates.length) && <span className="error-message">{errors.numStates}</span>}
 
             </div>
 
             {stateNameInputs}
 
             <div className="form-group">
-                <button type="submit">Submit</button>
+            {(submissionAttempt && !isFormGood) && <p className='error'>
+                    There are problems with the form. Check above for details.
+            </p>}
+                <button type="submit" disabled={submissionAttempt && !isFormGood}>Submit</button>
             </div>
         </form>
     );

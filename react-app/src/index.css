@@ -20,6 +20,12 @@ button {
     margin: auto;
 }
 
+button:disabled {
+    background-color: gray;
+    opacity: 0.5;
+    cursor: default;
+}
+
 button.small {
     width: 24px;
     height: 24px;
@@ -74,4 +80,9 @@ button.add-instruction {
 .delete-options button {
     border: none;
     margin: 8px;
+}
+
+p.error {
+    color: red;
+    font-size: 10pt;
 }

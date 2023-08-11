@@ -205,7 +205,8 @@ const TuringMachinePage = () => {
 
       const handleResetMachine = () => {
         // TODO: the clearInterval here isn't working as intended
-        clearInterval(turingInterval);
+        // clearInterval(turingInterval);
+
         if (renderedTape) {
             const machine = { ...currentMachine };
             const resetTape = machine.initTape;
