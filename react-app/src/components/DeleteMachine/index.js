@@ -7,7 +7,7 @@ import { useModal } from "../../context/Modal";
 import { deleteMachine } from "../../store/turingMachines";
 import "./deleteMachine.css";
 
-const DeleteMachineModal = () => {
+const DeleteMachineModal = ({ machineRunning=false }) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const { closeModal, setModalContent, onModalClose, setOnModalClose } = useModal();
@@ -45,6 +45,7 @@ const DeleteMachineModal = () => {
     const deleteButton = (
         <button
             className="delete"
+            disabled={machineRunning}
             title="Permanently delete this Turing machine"
             onClick={() => {
                 setModalContent(deleteOptions);

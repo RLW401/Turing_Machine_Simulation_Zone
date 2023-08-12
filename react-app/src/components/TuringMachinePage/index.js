@@ -47,6 +47,7 @@ const TuringMachinePage = () => {
     const [missingInstruction, setMissingInstruction] = useState(false);
     const [turingInterval, setTuringInterval] = useState(null);
     const [machineRunning, setMachineRunning] = useState(false);
+    const [cancelInterval, setCancelInterval] = useState(false);
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -61,14 +62,14 @@ const TuringMachinePage = () => {
         return state.machineInstructions;
     });
 
-    // useEffect(() => {
-    //     const fetchTMs = async () => {
-    //         await dispatch(getAuthorizedTMs());
-    //     }
-
-    //     fetchTMs();
-    //     setCurrentUser(loadCurrentUser);
-    // }, [loadCurrentUser, dispatch]);
+    // cancel interval when necessary
+    useEffect(() => {
+        if (cancelInterval && turingInterval) {
+            clearInterval(turingInterval);
+            setTuringInterval(null);
+            setMachineRunning(false);
+        }
+    }, [cancelInterval, turingInterval]);
 
     useEffect(() => {
         setMachines(loadMachines);
@@ -86,10 +87,11 @@ const TuringMachinePage = () => {
             // reset head position when changing machines or instructions
             setHeadPos(0);
             // clear interval if active
-            if (turingInterval) {
-                clearInterval(turingInterval);
-                setTuringInterval(null);
-            }
+            // if (turingInterval) {
+            //     clearInterval(turingInterval);
+            //     setTuringInterval(null);
+            // }
+            setCancelInterval(true);
         }
     }, [machines, machineId, instructions, editAuth]);
 
@@ -161,6 +163,8 @@ const TuringMachinePage = () => {
 
         setMissingInstruction(false);
         setFinishedRun(false);
+        setCancelInterval(false);
+        setMachineRunning(true);
 
         if (!initTape) {
             setStartingTape(currentMachine.blankSymbol);
@@ -185,9 +189,9 @@ const TuringMachinePage = () => {
                 const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
                 setFormattedInstructions(fInst);
             } else {
-                clearInterval(turingInterval);
-                setTuringInterval(null);
-                // turingInterval = null;
+                // clearInterval(turingInterval);
+                // setTuringInterval(null);
+                setCancelInterval(true);
                 if (machine.missingInstruction) {
                     setMissingInstruction(
                         <div className="missing-instructions">
@@ -224,10 +228,11 @@ const TuringMachinePage = () => {
     };
 
       const handleResetMachine = () => {
-        if (turingInterval) {
-            clearInterval(turingInterval);
-            setTuringInterval(null);
-        }
+        // if (turingInterval) {
+        //     clearInterval(turingInterval);
+        //     setTuringInterval(null);
+        // }
+        setCancelInterval(true);
 
         if (renderedTape) {
             const machine = { ...currentMachine };
@@ -250,14 +255,15 @@ const TuringMachinePage = () => {
     // display update machine button iff user is logged in and either owns or is a collaborator on the current machine
     const updateMachineButton = (
         editAuth
-        ? <button className="update" onClick={
+        ? <button className="update" disabled={machineRunning}
+        onClick={
             () => history.push(genMachUpdatePath(machineId))
         } >Update Machine</button>
         : null
     );
 
     // display delete machine button iff user is logged in and owns the current machine
-    const deleteMachineButton = (deleteAuth ? <DeleteMachineModal /> : null);
+    const deleteMachineButton = (deleteAuth && <DeleteMachineModal machineRunning={machineRunning} />);
 
     const mChangeButtons = (
         <div className="m-change">
@@ -277,7 +283,7 @@ const TuringMachinePage = () => {
                 {renderedTape}
                 {missingInstruction}
                 <div className="machine-controls">
-                    <button className="run-machine" onClick={handleRunMachine}>Run Machine</button>
+                    <button className="run-machine" disabled={machineRunning} onClick={handleRunMachine}>Run Machine</button>
                     <button className="reset-machine" onClick={handleResetMachine}>Reset Machine</button>
                 </div>
 
@@ -293,6 +299,7 @@ const TuringMachinePage = () => {
                             <input
                             type="text"
                             id="initialTape"
+                            disabled={machineRunning}
                             value={initTape}
                             onChange={(e) => {
                                 setHeadPos(0);

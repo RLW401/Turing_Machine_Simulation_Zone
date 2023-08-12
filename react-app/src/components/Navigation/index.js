@@ -56,7 +56,10 @@ function Navigation({ isLoaded }){
 	const homeLink = (
 
 		<div className="home-link">
-			<NavLink exact to="/" >
+			<NavLink exact to="/" onClick={() => {
+				history.push("/");
+				window.location.reload(true);
+			}}>
 				<h2 id="zone-heading">Turing Machine Simulation Zone</h2>
 			</NavLink>
 	  	</div>
@@ -66,7 +69,12 @@ function Navigation({ isLoaded }){
 	if (sessionUser) {
 		sessionLinks = (
 			<div className='session-links'>
-			<NavLink className='create-tm' to="/turing-machines/new">Create a new Turing Machine</NavLink>
+			<NavLink className='create-tm' to="/turing-machines/new"
+				onClick={() => {
+					history.push("/turing-machines/new");
+					window.location.reload(true);
+				}}
+			>Create a new Turing Machine</NavLink>
 			<div className='profile-button'>
 				<ProfileButton user={sessionUser} />
 			</div>
@@ -141,7 +149,13 @@ function Navigation({ isLoaded }){
 						<p>{machine.name}</p>
 				</NavLink>
 			))}
-			<NavLink className='create-tm' to="/turing-machines/new">+ Create Machine</NavLink>
+			<NavLink
+			className='create-tm' to="/turing-machines/new"
+			onClick={() => {
+				history.push("/turing-machines/new");
+				window.location.reload(true);
+			}}
+			>+ Create Machine</NavLink>
 		</div>
 	);
 

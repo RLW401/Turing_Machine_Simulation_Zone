@@ -22,6 +22,7 @@ function SignupFormModal({closeModal}) {
 				setErrors(data);
 			} else {
 				closeModal();
+				window.location.reload(true);
 			}
 		} else {
 			setErrors([
