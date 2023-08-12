@@ -248,10 +248,8 @@ const InstructionForm = ({ instruction, formType }) => {
             </form>
             <div className='info'>
                 {!!(Object.keys(machineInstructions).length)
-                && <>
-                    <h3>{currentMachine.name}</h3>
-                    <InstructionDisplay instructions={machineInstructions} machine={currentMachine} selectedInstructionId={selectedInstructionId} />
-                </>}
+                && <InstructionDisplay instructions={machineInstructions} machine={currentMachine} selectedInstructionId={selectedInstructionId} />
+                }
             </div>
         </div>
         : <h2 className='page'>Machine not Found or User not Authorized</h2>

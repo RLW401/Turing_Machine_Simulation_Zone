@@ -74,7 +74,7 @@ const InstructionDisplay = ({ instructions, machine, buttonDisplay=false, select
 
     return (
         <div className="machine-instructions">
-            <h3>Machine Instructions</h3>
+            <h3>{`Machine Instructions for ${machine.name}`}</h3>
             {instList}
             {buttonDisplay && addInstructionButton}
         </div>
