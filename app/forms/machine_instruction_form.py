@@ -2,7 +2,7 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField
-from wtforms.validators import DataRequired, ValidationError
+from wtforms.validators import DataRequired, ValidationError, Length
 
 def validate_head_move(form, field):
     head_move = field.data
@@ -17,8 +17,8 @@ def validate_symbol(form, field):
 
 class MachineInstructionForm(FlaskForm):
     machineId = IntegerField('machineId', validators=[DataRequired()])
-    currentState = StringField('currentState', validators=[DataRequired()])
-    scannedSymbol = StringField('scannedSymbol', validators=[DataRequired(), validate_symbol])
-    nextState = StringField('nextState', validators=[DataRequired()])
-    printSymbol = StringField('printSymbol', validators=[DataRequired(), validate_symbol])
+    currentState = StringField('currentState', validators=[DataRequired(), Length(min = 2)])
+    scannedSymbol = StringField('scannedSymbol', validators=[validate_symbol])
+    nextState = StringField('nextState', validators=[DataRequired(), Length(min = 2)])
+    printSymbol = StringField('printSymbol', validators=[validate_symbol])
     headMove = IntegerField('headMove', validators=[validate_head_move])

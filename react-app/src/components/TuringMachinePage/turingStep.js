@@ -23,6 +23,7 @@ export const turingStep = (machine, instructions) => {
         }
     }
 
+    // if (!machine.headPos || (machine.headPos < 0)) machine.headPos = 0;
     if (!machine.headPos) machine.headPos = 0;
 
     let mTape = machine.currentTape;

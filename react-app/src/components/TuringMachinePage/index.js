@@ -10,14 +10,13 @@ import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
 import DeleteMachineModal from "../DeleteMachine";
-import { genMachUpdatePath, genAddInstPath, genUpdateInstPath } from "../../constants/constants";
+import { genMachUpdatePath, genAddInstPath, genUpdateInstPath, maxHeadMoves } from "../../constants/constants";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
     // const dispatch = useDispatch();
     const history = useHistory();
     const machineId = Number(useParams().machineId);
-    const maxHeadMoves = 5;
     const timeDelay = 500;
     let turingInterval;
 
@@ -82,6 +81,7 @@ const TuringMachinePage = () => {
             setFormattedInstructions(fInst);
             setFinishedRun(false);
             setMissingInstruction(false);
+            // reset head position when changing machines or instructions
             setHeadPos(0);
         }
     }, [machines, machineId, instructions, editAuth]);
@@ -120,7 +120,7 @@ const TuringMachinePage = () => {
                 setCurrentTape(currentMachine.currentTape);
             }
 
-            if (currentMachine.headPos) setHeadPos(currentMachine.headPos);
+            // if (currentMachine.headPos) setHeadPos(currentMachine.headPos);
 
             setBlankSymbol(currentMachine.blankSymbol);
             // console.log("instructions: ", instructions);
@@ -163,13 +163,14 @@ const TuringMachinePage = () => {
         let machine = { ...currentMachine };
         machine.currentTape = initTape;
         machine.missingInstruction = false;
-        // machine.headPos = headPos;
+        machine.headPos = headPos;
 
         turingInterval = setInterval(() => {
             if (((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) && !machine.missingInstruction) {
                 machine = turingStep(machine, instructions);
                 headMoves++;
                 // console.log("machine.currentTape: ", machine.currentTape);
+                // console.log("machine.headPos: ", machine.headPos);
                 setCurrentTape(machine.currentTape);
                 setHeadPos(machine.headPos);
                 const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
@@ -188,7 +189,7 @@ const TuringMachinePage = () => {
                     handleResetMachine();
                     console.log(`Machine exceeded max number of head moves (${headMoves}).`);
                 } else {
-                    const trimResult = trimBlanks(machine.currentTape, machine.blankSymbol);
+                    const trimResult = trimBlanks(machine.currentTape, machine.headPos, machine.blankSymbol);
                     const finalHeadPos = (machine.headPos - trimResult.leadingBlanks);
                     setHeadPos(finalHeadPos);
                     setCurrentTape(trimResult.newString);
