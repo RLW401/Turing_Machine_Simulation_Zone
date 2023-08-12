@@ -18,7 +18,7 @@ const TuringMachinePage = () => {
     const history = useHistory();
     const machineId = Number(useParams().machineId);
     const timeDelay = 500;
-    let turingInterval;
+    // let turingInterval;
 
     const [currentUser, setCurrentUser] = useState({});
     const [machines, setMachines] = useState({});
@@ -45,6 +45,8 @@ const TuringMachinePage = () => {
     const [editAuth, setEditAuth] = useState(false);
     const [resetTriggered, setResetTriggered] = useState(false);
     const [missingInstruction, setMissingInstruction] = useState(false);
+    const [turingInterval, setTuringInterval] = useState(null);
+    const [machineRunning, setMachineRunning] = useState(false);
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -83,6 +85,11 @@ const TuringMachinePage = () => {
             setMissingInstruction(false);
             // reset head position when changing machines or instructions
             setHeadPos(0);
+            // clear interval if active
+            if (turingInterval) {
+                clearInterval(turingInterval);
+                setTuringInterval(null);
+            }
         }
     }, [machines, machineId, instructions, editAuth]);
 
@@ -106,6 +113,7 @@ const TuringMachinePage = () => {
       // set current tape
       useEffect(() => {
         if (currentMachine) {
+            console.log("New currentMachine set");
             if (currentMachine.initTape) {
                 setCurrentTape(currentMachine.initTape);
                 setDefaultInitTape(currentMachine.initTape);
@@ -123,6 +131,7 @@ const TuringMachinePage = () => {
             // if (currentMachine.headPos) setHeadPos(currentMachine.headPos);
 
             setBlankSymbol(currentMachine.blankSymbol);
+            setHeadPos(0);
             // console.log("instructions: ", instructions);
             // console.log("currentMachine: ", currentMachine);
         }
@@ -147,7 +156,6 @@ const TuringMachinePage = () => {
       }, [tapeStr, headPos]);
 
     const handleRunMachine = () => {
-        // TODO allow re-runs of machine even if it halts with headPos > 0
         let headMoves = 0;
         if (!validTape) return;
 
@@ -165,7 +173,8 @@ const TuringMachinePage = () => {
         machine.missingInstruction = false;
         machine.headPos = headPos;
 
-        turingInterval = setInterval(() => {
+        const runMachine = () => {
+            console.log("interval active");
             if (((machine.currentState !== machine.haltingState) && (headMoves <= maxHeadMoves)) && !machine.missingInstruction) {
                 machine = turingStep(machine, instructions);
                 headMoves++;
@@ -177,6 +186,7 @@ const TuringMachinePage = () => {
                 setFormattedInstructions(fInst);
             } else {
                 clearInterval(turingInterval);
+                setTuringInterval(null);
                 // turingInterval = null;
                 if (machine.missingInstruction) {
                     setMissingInstruction(
@@ -202,13 +212,22 @@ const TuringMachinePage = () => {
                     // }
                 }
             }
-        }, timeDelay);
-
-      };
+        };
+        // prevent more than one interval being set
+        if (!turingInterval) {
+            const newInterval = setInterval(runMachine, timeDelay);
+            console.log("newInterval: ", newInterval)
+            setTuringInterval(newInterval);
+        } else {
+            handleResetMachine();
+        }
+    };
 
       const handleResetMachine = () => {
-        // TODO: the clearInterval here isn't working as intended
-        // clearInterval(turingInterval);
+        if (turingInterval) {
+            clearInterval(turingInterval);
+            setTuringInterval(null);
+        }
 
         if (renderedTape) {
             const machine = { ...currentMachine };
