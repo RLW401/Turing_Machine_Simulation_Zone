@@ -136,7 +136,7 @@
   text-decoration: underline;
 }
 
-.missing-instructions {
+.run-error {
   width: 50%;
   border: solid 8px red;
   display: flex;
@@ -144,7 +144,7 @@
   margin-top: 24px; /* Adjust the margin as needed */
 }
 
-.missing-instructions p {
+.run-error p {
   margin: 2% 5%;
 
 }

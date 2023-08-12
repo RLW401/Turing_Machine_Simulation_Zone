@@ -47,11 +47,11 @@ export const turingStep = (machine, instructions) => {
     if (!mInst) {
         // throw new Error(`Error: No instruction found for state ${mState} and scanned symbol ${scanSymb}.`);
 
-        machine.missingInstruction = {
-            errorMsg: `Your machine was automatically reset because it entered a configuration not covered by any of its instructions: \nNo instruction found for state ${mState} and scanned symbol ${scanSymb}.`,
+        machine.runError = {
+            errorMsg: `Your machine was automatically reset because it entered a configuration not covered by any of its instructions: No instruction found for state {${mState}} and scanned symbol {${scanSymb}}.`,
             state: mState,
             symbol: scanSymb,
-    };
+        };
         return machine;
     }
 
