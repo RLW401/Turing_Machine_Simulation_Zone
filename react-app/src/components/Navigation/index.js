@@ -69,15 +69,15 @@ function Navigation({ isLoaded }){
 	if (sessionUser) {
 		sessionLinks = (
 			<div className='session-links'>
-			<NavLink className='create-tm' to="/turing-machines/new"
-				onClick={() => {
-					history.push("/turing-machines/new");
-					window.location.reload(true);
-				}}
-			>Create a new Turing Machine</NavLink>
-			<div className='profile-button'>
-				<ProfileButton user={sessionUser} />
-			</div>
+				<NavLink className='create-tm' to="/turing-machines/new"
+					onClick={() => {
+						history.push("/turing-machines/new");
+						window.location.reload(true);
+					}}
+				>Create a new Turing Machine</NavLink>
+				<div className='profile-button'>
+					<ProfileButton user={sessionUser} />
+				</div>
 			</div>
 		);
 	} else {

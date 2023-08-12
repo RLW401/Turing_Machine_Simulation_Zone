@@ -1,6 +1,5 @@
 // root/react-app/src/components/TuringMachinePage/index.js
 import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
 import { useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import renderTape, { genTapeStr } from "./renderTape";
@@ -79,11 +78,6 @@ const TuringMachinePage = () => {
             setRunError(false);
             // reset head position when changing machines or instructions
             setHeadPos(0);
-            // clear interval if active
-            // if (turingInterval) {
-            //     clearInterval(turingInterval);
-            //     setTuringInterval(null);
-            // }
             setCancelInterval(true);
         }
     }, [machines, machineId, instructions, editAuth]);
@@ -217,12 +211,7 @@ const TuringMachinePage = () => {
     };
 
       const handleResetMachine = () => {
-        // if (turingInterval) {
-        //     clearInterval(turingInterval);
-        //     setTuringInterval(null);
-        // }
         setCancelInterval(true);
-        // setRunError(false);
 
         if (renderedTape) {
             const machine = { ...currentMachine };
@@ -295,7 +284,6 @@ const TuringMachinePage = () => {
                                 setHeadPos(0);
                                 const tape = e.target.value;
                                 const machine = { ...currentMachine };
-                                // machine.currentTape = e.target.value;
                                 machine.currentTape = (tape ? tape : machine.blankSymbol);
                                 const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} />);
                                 setFormattedInstructions(fInst);
@@ -318,7 +306,6 @@ const TuringMachinePage = () => {
                         </div>}
                     </div>
                     {formattedInstructions}
-                    {/* {addInstructionButton} */}
                 </div>
             </div>
         );
