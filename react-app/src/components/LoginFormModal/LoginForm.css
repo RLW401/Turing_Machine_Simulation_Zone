@@ -21,4 +21,9 @@
 .ls-form button.demo-login {
     background-color: green;
     border-color: green;
+    transition: background-color 0.3s;
+}
+
+.ls-form button.demo-login:hover {
+    background-color: darkgreen;
 }
