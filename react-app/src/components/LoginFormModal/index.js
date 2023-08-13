@@ -21,6 +21,7 @@ function LoginFormModal({closeModal}) {
       setErrors(data);
     } else {
         closeModal()
+        window.location.reload(true);
     }
   };
 
@@ -31,6 +32,7 @@ function LoginFormModal({closeModal}) {
       setErrors(data);
     } else {
         closeModal()
+        window.location.reload(true);
     }
   };
 

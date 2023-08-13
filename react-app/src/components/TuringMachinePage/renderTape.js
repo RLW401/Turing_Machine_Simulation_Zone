@@ -24,11 +24,14 @@ export const genTapeStr = (numSquares, headPos, blankSymbol, currentTape) => {
     let tapeStr = "";
     let relIndex = (headPos - Math.floor(numSquares / 2));
     if (((numSquares % 2) === 0) || numSquares < 5) {
-        throw new Error("Error: numSquares must be an odd integer 5 or greater.");
+        throw new Error("numSquares must be an odd integer 5 or greater.");
     }
     if (!currentTape) currentTape = blankSymbol;
-    if ((headPos >= currentTape.length) || (headPos < 0)) {
-        throw new Error("Error: Head position must be non-negative integer less than the length of the tape.")
+    if ((headPos > currentTape.length) || (headPos < 0)) {
+        // console.log("headPos: ", headPos);
+        // console.log("currentTape: ", currentTape);
+        // console.log("currentTape.length: ", currentTape.length);
+        throw new Error("Head position must be non-negative integer less than the length of the tape.")
     }
     for (let i = 0; i < numSquares; i++) {
         let currentSymbol = blankSymbol;

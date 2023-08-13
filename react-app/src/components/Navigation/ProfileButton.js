@@ -39,7 +39,7 @@ function ProfileButton({ user }) {
 
     history.push("/");
     // trigger hard reload after logout to clear redux store
-    window.location.reload();
+    window.location.reload(true);
   };
 
   const ulClassName = "profile-dropdown" + (showMenu ? "" : " hidden");

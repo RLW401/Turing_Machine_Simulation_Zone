@@ -1,8 +1,8 @@
-"""empty message
+"""Initial migration
 
-Revision ID: 70e46222745e
+Revision ID: 91fe4c23ee8d
 Revises:
-Create Date: 2023-07-01 17:46:17.016573
+Create Date: 2023-08-05 17:48:37.494304
 
 """
 from alembic import op
@@ -12,9 +12,8 @@ import os
 environment = os.getenv("FLASK_ENV")
 SCHEMA = os.environ.get("SCHEMA")
 
-
 # revision identifiers, used by Alembic.
-revision = '70e46222745e'
+revision = '91fe4c23ee8d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -50,14 +49,11 @@ def upgrade():
     sa.Column('notes', sa.Text(), nullable=True),
     sa.Column('public', sa.Boolean(), nullable=True),
     sa.Column('init_tape', sa.Text(), nullable=True),
-    sa.Column('current_tape', sa.Text(), nullable=True),
     sa.Column('alphabet', sa.String(length=255), nullable=False),
     sa.Column('blank_symbol', sa.String(length=1), nullable=False),
     sa.Column('states', sa.Text(), nullable=True),
     sa.Column('init_state', sa.String(length=31), nullable=True),
-    sa.Column('current_state', sa.String(length=31), nullable=True),
     sa.Column('halting_state', sa.String(length=31), nullable=True),
-    sa.Column('head_pos', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['collaborator_id'], ['users.id'], ),
     sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')

@@ -1,5 +1,7 @@
 /* root/react-app/src/components/TuringMachinePage/turingMachine.css */
 .machine-page {
+  display: flex;
+  flex-direction: column;
     /* border: solid;
     border-width: 4px;
     border-color: blueviolet; */
@@ -13,12 +15,36 @@
 
   .machine-page .description h2 {
     font-size: 48px;
+    color: black;
     margin: 0;
     text-align: center;
   }
 .machine-page .description p {
   font-size: 16px;
   margin-top: 0px;
+}
+
+/* styling for update and delete machine buttons */
+
+.m-change {
+  display: flex;
+  /* border: solid green; */
+  justify-content: center;
+}
+
+.m-change button {
+  color: whitesmoke;
+  /* margin: 16px; */
+  cursor: pointer;
+  border: none;
+}
+
+.m-change button.delete {
+  background-color: red;
+}
+
+.m-change button.update {
+  background-color: #007bff;
 }
 
 .basics-and-instructions {
@@ -38,7 +64,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 24px; /* Adjust the margin as needed */
+  margin-top: 24px;
 }
 
 .tape .square {
@@ -108,4 +134,21 @@
 .machine-instructions .active {
   color: green;
   text-decoration: underline;
+}
+
+.run-error {
+  width: 50%;
+  border: solid 8px red;
+  display: flex;
+  align-self: center;
+  margin-top: 24px; /* Adjust the margin as needed */
+}
+
+.run-error p {
+  margin: 2% 5%;
+
+}
+
+p.reset-info {
+  align-self: center;
 }

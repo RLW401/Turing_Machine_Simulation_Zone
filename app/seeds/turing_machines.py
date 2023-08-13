@@ -11,14 +11,14 @@ def seed_turing_machines():
         notes = "erases the tape and prints 0. This implementation uses three internal states: erase, print, and the halting state, qh. Can you see how to implement the same function using only two internal states?",
         public = True,
         init_tape = "10001100101001",
-        current_tape = None,
+        # current_tape = None,
         alphabet = "01",
         blank_symbol = '#',
         states = "erase|print|qh",
         init_state = "erase",
-        current_state = None,
+        # current_state = None,
         halting_state = "qh",
-        head_pos = None,
+        # head_pos = None,
     )
     tm_seeds.append(zero_function)
 
@@ -27,14 +27,14 @@ def seed_turing_machines():
         notes = "Starts scanning the most significant digit of a natural number in binary and ends scanning the most significant digit of the subsequent natural number. In other words adds one to the input. Blank tape taken to be zero.",
         public = True,
         init_tape = "10001100101001",
-        current_tape = None,
+        # current_tape = None,
         alphabet = "01",
         blank_symbol = '#',
         states = "scan right|add one|scan left|qh",
         init_state = "scan right",
-        current_state = None,
+        # current_state = None,
         halting_state = "qh",
-        head_pos = None,
+        # head_pos = None,
     )
     tm_seeds.append(successor_function)
 
@@ -43,14 +43,14 @@ def seed_turing_machines():
         notes = "flip all the bits in a binary input string from 0 to 1 and vice versa",
         public = True,
         init_tape = "10001100101001",
-        current_tape = None,
+        # current_tape = None,
         alphabet = "01",
         blank_symbol = '#',
         states = "flip|rewind|qh",
         init_state = "flip",
-        current_state = None,
+        # current_state = None,
         halting_state = "qh",
-        head_pos = None,
+        # head_pos = None,
     )
     tm_seeds.append(binary_inverter)
 
@@ -59,14 +59,14 @@ def seed_turing_machines():
         notes = "begins scanning the leftmost digit of a pair of binary numbers separated by a '+' symbol. Ends scanning the leftmost digit of their binary sum on an otherwise empty tape.",
         public = True,
         init_tape = "10001100101001+10001100101001",
-        current_tape = None,
+        # current_tape = None,
         alphabet = "01",
         blank_symbol = '#',
         states = None,
         init_state = None,
-        current_state = None,
+        # current_state = None,
         halting_state = None,
-        head_pos = None,
+        # head_pos = None,
     )
     tm_seeds.append(binary_adder)
 
@@ -77,14 +77,14 @@ def seed_turing_machines():
         notes = "Scans a binary number from left to right. Halts scanning either a zero or a one on an otherwise blank tape depending on whether the number is even or odd, respectively. If the tape is initially blank the machine will print a zero and halt.",
         public = False,
         init_tape = "10001100101001",
-        current_tape = None,
+        # current_tape = None,
         alphabet = "01",
         blank_symbol = '#',
         states = "LastDig0|LastDig1|qh",
         init_state = "LastDig0",
-        current_state = None,
+        # current_state = None,
         halting_state = "qh",
-        head_pos = None,
+        # head_pos = None,
     )
     tm_seeds.append(mod2)
 
