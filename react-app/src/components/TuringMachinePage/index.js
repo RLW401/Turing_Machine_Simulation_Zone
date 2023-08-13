@@ -271,7 +271,7 @@ const TuringMachinePage = () => {
                 {mChangeButtons}
                 {renderedTape}
                 {runError}
-                {finishedRun && <p className="reset-info">To restore ability to create, update, and delete instructions after a run, click the Reset Machine button.</p>}
+                {(finishedRun && editAuth) && <p className="reset-info">To restore ability to create, update, and delete instructions after a run, click the Reset Machine button.</p>}
                 <div className="machine-controls">
                     <button className="run-machine" disabled={machineRunning} onClick={handleRunMachine}>Run Machine</button>
                     <button className="reset-machine" onClick={handleResetMachine}>Reset Machine</button>

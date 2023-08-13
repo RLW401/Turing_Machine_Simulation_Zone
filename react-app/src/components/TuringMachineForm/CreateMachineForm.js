@@ -6,8 +6,8 @@ import { createTM, defaultStates, stateSeparator, validBlanks } from "../../cons
 const testStates = `start${stateSeparator}first${stateSeparator}second${stateSeparator}third${stateSeparator}halt`
 const stateArr = defaultStates.split(stateSeparator);
 const testStateArr = testStates.split(stateSeparator);
-// const dev = false;
-const dev = true;
+const dev = false;
+// const dev = true;
 
 const devMachine = {
     name: "Test Machine 0",
