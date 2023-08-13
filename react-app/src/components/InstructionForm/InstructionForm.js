@@ -221,6 +221,8 @@ const InstructionForm = ({ instruction, formType }) => {
                                 }}>
                                 <option value={null} disabled={!!currentState}>Select a state</option>
                                 {options?.availableStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                                {((formType === updateInst) && !options?.availableStates.includes(currentState))
+                                && <option key={currentState} value={currentState}>{currentState}</option>}
                             </select>
                             {(submissionAttempt && !!(errors.currentState && errors.currentState.length)) && <span className='error-message'>{errors.currentState}</span>}
                         </div>
@@ -230,6 +232,8 @@ const InstructionForm = ({ instruction, formType }) => {
                             <select name="scannedSymbol" disabled={!currentState} value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
                                 <option value={null} disabled={!!scannedSymbol}>Select a symbol</option>
                                 {scannedSymbolOpt.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
+                                {((formType === updateInst) && !scannedSymbolOpt.includes(scannedSymbol))
+                                && <option key={scannedSymbol} value={scannedSymbol}>{scannedSymbol}</option>}
                             </select>
                             {(submissionAttempt && !!(errors.scannedSymbol && errors.scannedSymbol.length)) && <span className='error-message'>{errors.scannedSymbol}</span>}
                         </div>
