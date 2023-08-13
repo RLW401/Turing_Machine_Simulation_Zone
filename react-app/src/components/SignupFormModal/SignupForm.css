@@ -1,10 +1,60 @@
 /* root/react-app/src/components/LoginFormModal/SignupForm.css */
 .ls-form {
-    margin: 2em;
     display: flex;
     flex-direction: column;
-}
+    align-items: left;
+    padding: 16px;
+    margin-top: 32px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 10vh; /* Adjust the value as needed */
+    transform: translate(-50%, 30%); /* Center horizontally */
+    left: 50%;
+  }
 
-.ls-form button {
-    margin: 1em;
-}
+  .ls-form h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    margin-top: 8px;
+  }
+
+  .ls-form ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    color: red;
+  }
+
+  .ls-form ul li {
+    margin-bottom: 8px;
+  }
+
+  .ls-form label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  .ls-form input {
+    width: 80%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  .ls-form button {
+    background-color: #4A6897;
+    color: white;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .ls-form button:hover {
+    background-color: #324b69;
+  }

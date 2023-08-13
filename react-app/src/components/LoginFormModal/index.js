@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import { login } from "../../store/session";
 import { useDispatch } from "react-redux";
+import { useModal } from "../../context/Modal";
 import "./LoginForm.css";
 
-function LoginFormModal({closeModal}) {
+function LoginFormModal() {
   const dispatch = useDispatch();
+  const { closeModal, setModalContent, onModalClose, setOnModalClose } = useModal();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
@@ -37,7 +39,7 @@ function LoginFormModal({closeModal}) {
   };
 
   const loginForm = (
-    <form className="login-form" onSubmit={handleSubmit}>
+    <form className="ls-form" onSubmit={handleSubmit}>
     <h1>Log In</h1>
     <ul>
       {errors.map((error, idx) => (

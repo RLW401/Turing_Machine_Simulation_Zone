@@ -2,10 +2,12 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { signUp } from "../../store/session";
+import { useModal } from "../../context/Modal";
 import "./SignupForm.css";
 
-function SignupFormModal({closeModal}) {
+function SignupFormModal() {
 	const dispatch = useDispatch();
+	const { closeModal, setModalContent, onModalClose, setOnModalClose } = useModal();
 	const [email, setEmail] = useState("");
 	const [firstName, setFirstName] = useState("");
 	const [lastName, setLastName] = useState("");
@@ -36,7 +38,7 @@ function SignupFormModal({closeModal}) {
 		<h1>Sign Up</h1>
 		<ul>
 			{errors.map((error, idx) => (
-				<li key={idx}>{error}</li>
+				<li className="error" key={idx}>{error}</li>
 			))}
 		</ul>
 		<label>
