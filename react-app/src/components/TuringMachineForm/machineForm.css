@@ -35,12 +35,34 @@
     margin-right: 10px;
   }
 
+  .machine-form .buttons {
+    display: flex;
+    /* gap: 10px; */
+    width: 66%;
+    /* align-self: center; */
+    align-items: center;
+    justify-content: space-between;
+    /* border: solid 4px green; */
+    margin-top: 20px;
+    padding-bottom: 16px;
+  }
+
   .machine-form button {
     background-color: #007bff;
     color: #fff;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
+    &:hover {
+      background-color: #324b69;
+    }
+  }
+
+  .machine-form button.cancel {
+    background-color: darkgray;
+    &:hover {
+      background-color: gray;
+    }
   }
 
   .error-message {

@@ -101,20 +101,17 @@
 
 .machine-controls .run-machine {
   background-color: green;
+  &:hover {
+    background-color: darkgreen;
+  }
 }
 
 .machine-controls .reset-machine {
   background-color: darkgray;
+  &:hover {
+    background-color: gray;
+  }
 }
-
-.machine-controls .run-machine:hover {
-  background-color: darkgreen;
-}
-
-.machine-controls .reset-machine:hover {
-  background-color: gray;
-}
-
 
 .machine-page .machine-controls {
   display: flex;

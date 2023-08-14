@@ -7,6 +7,7 @@ import ProfileButton from './ProfileButton';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import { getAuthorizedTMs } from "../../store/turingMachines";
+import { genMachinePath } from "../../constants/constants";
 import './Navigation.css';
 
 function Navigation({ isLoaded }){
@@ -18,13 +19,14 @@ function Navigation({ isLoaded }){
 	// const [currentUser, setCurrentUser] = useState(null);
 	const [machines, setMachines] = useState({});
 	const [instructions, setInstructions] = useState({});
-	// const [publicMachines, setPublicMachines] = useState([]);
-	// const [userMachines, setUserMachines] = useState([]);
-	// const [collabMachines, setCollabMachines] = useState([]);
+	// const [numUserMachines, setNumUserMachines] = useState(-1);
+	const [publicMachines, setPublicMachines] = useState([]);
+	const [userMachines, setUserMachines] = useState([]);
+	const [collabMachines, setCollabMachines] = useState([]);
 
-	let publicMachines = [];
-	let userMachines = [];
-	let collabMachines = [];
+	// let publicMachines = [];
+	// let userMachines = [];
+	// let collabMachines = [];
 
 	const loadMachines = useSelector((state) => {
 		return state.turingMachines;
@@ -52,6 +54,12 @@ function Navigation({ isLoaded }){
 		setInstructions(loadInstructions);
 	}, [loadMachines, loadInstructions]);
 
+	// useEffect(() => {
+	// 	if (userMachines) {
+	// 		setNumUserMachines(userMachines.length);
+	// 	}
+	// }, [userMachines]);
+
 
 	const homeLink = (
 
@@ -69,14 +77,14 @@ function Navigation({ isLoaded }){
 	if (sessionUser) {
 		sessionLinks = (
 			<div className='session-links'>
-				<NavLink className='create-tm' to="/turing-machines/new"
+				<NavLink className='create-tm' to={genMachinePath("new")}
 					onClick={() => {
-						history.push("/turing-machines/new");
+						history.push(genMachinePath("new"));
 						window.location.reload(true);
 					}}
 				>Create a new Turing Machine</NavLink>
 				<div className='profile-button'>
-					<ProfileButton user={sessionUser} />
+					<ProfileButton user={sessionUser} numMachines={userMachines.length} />
 				</div>
 			</div>
 		);
@@ -86,12 +94,12 @@ function Navigation({ isLoaded }){
 
 		<button className="login" onClick={(e) => {
 			if (onModalClose) setOnModalClose(onModalClose)
-			setModalContent(<LoginFormModal closeModal={closeModal}/>)}}
+			setModalContent(<LoginFormModal />)}}
 		>Log In</button>
 
 		<button className="signup" onClick={(e) => {
 			if (onModalClose) setOnModalClose(onModalClose)
-			setModalContent(<SignupFormModal closeModal={closeModal}/>)}}
+			setModalContent(<SignupFormModal />)}}
 		>Sign Up</button>
 			</div>
 		);
@@ -104,36 +112,42 @@ function Navigation({ isLoaded }){
 		</div>
 	);
 
+	useEffect(() => {
+		if (machines.allIds && machines.allIds.length) {
+			const newPublicMachines = [];
+			const newUserMachines = [];
+			const newCollabMachines = [];
 
-	if (machines.allIds && machines.allIds.length) {
-		publicMachines = [];
-		userMachines = [];
-		collabMachines = [];
+			machines.allIds.forEach((mId) => {
+				const currentMachine = machines.byId[mId]
+				if (currentMachine.public) {
+					// publicMachines.push(currentMachine);
+					// TODO: add working instructions to all public machines
+					if (currentMachine.name === "Successor Function") {
+						newPublicMachines.push(currentMachine);
+					}
+				} else if (sessionUser) {
+					if (currentMachine.ownerId === sessionUser.id) {
+						newUserMachines.push(currentMachine);
+					} else if (currentMachine.collaboratorId === sessionUser.id) {
+						newCollabMachines.push(currentMachine);
+					}
+				}
+			});
+			setPublicMachines(newPublicMachines);
+			setUserMachines(newUserMachines);
+			setCollabMachines(newCollabMachines);
+		}
+	}, [machines, sessionUser]);
 
-		machines.allIds.forEach((mId) => {
-			const currentMachine = machines.byId[mId]
-			if (currentMachine.public) {
-				// publicMachines.push(currentMachine);
-				// TODO: add working instructions to all public machines
-				if (currentMachine.name === "Successor Function") {
-					publicMachines.push(currentMachine);
-				}
-			} else if (sessionUser) {
-				if (currentMachine.ownerId === sessionUser.id) {
-					userMachines.push(currentMachine);
-				} else if (currentMachine.collaboratorId === sessionUser.id) {
-					collabMachines.push(currentMachine);
-				}
-			}
-		});
-	}
+
 
 	const sampleMachines = (
 		<div className="sample-machines">
 			<p>Sample Machines</p>
 			{publicMachines.map((machine) => (
 				<NavLink className="m-link public" key={machine.id}
-					to={`/machines/${machine.id}`}>
+					to={genMachinePath(machine.id)}>
 						<p>{machine.name}</p>
 				</NavLink>
 			))}
@@ -145,14 +159,14 @@ function Navigation({ isLoaded }){
 			<p>My Machines</p>
 			{userMachines.map((machine) => (
 				<NavLink className="m-link user" key={machine.id}
-					to={`/machines/${machine.id}`}>
+					to={genMachinePath(machine.id)}>
 						<p>{machine.name}</p>
 				</NavLink>
 			))}
 			<NavLink
-			className='create-tm' to="/turing-machines/new"
+			className='create-tm' to={genMachinePath("new")}
 			onClick={() => {
-				history.push("/turing-machines/new");
+				history.push(genMachinePath("new"));
 				window.location.reload(true);
 			}}
 			>+ Create Machine</NavLink>
@@ -164,7 +178,7 @@ function Navigation({ isLoaded }){
 			<p>collaborator Machines</p>
 			{collabMachines.map((machine) => (
 				<NavLink className="m-link collaborator" key={machine.id}
-					to={`/machines/${machine.id}`}>
+					to={genMachinePath(machine.id)}>
 						<p>{machine.name}</p>
 				</NavLink>
 			))}

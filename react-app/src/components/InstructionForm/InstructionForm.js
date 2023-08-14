@@ -1,12 +1,12 @@
 // root/react-app/src/components/InstructionForm/InstructionForm.js
 
 import { useState, useEffect, Fragment } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createOrEditInstruction } from '../../store/machineInstructions';
 
-import { createInst, updateInst, stateSeparator, headMoves, instExConDesc, currentStateDescription, scannedSymbolDescription, machOpDesc, nextStateDescription, printSymbolDescription, headMoveDescription } from '../../constants/constants';
+import { createInst, updateInst, stateSeparator, headMoves, instExConDesc, currentStateDescription, scannedSymbolDescription, machOpDesc, nextStateDescription, printSymbolDescription, headMoveDescription, genMachinePath } from '../../constants/constants';
 import InstructionDisplay from '../InstructionDisplay/instructionDisplay';
 
 import genSSP, {availablePairs, availableStates, availableSymbols, allSSOptions} from "../../utils/stateSymbolPairs.js";
@@ -85,7 +85,7 @@ const InstructionForm = ({ instruction, formType }) => {
             const cId = currentMachine.collaboratorId;
             setUserAuth((uId === oId) || (uId === cId));
         }
-    }, [currentUser, machineInstructions]);
+    }, [currentUser, machineInstructions, currentMachine]);
 
     useEffect(() => {
         if (states && symbols) {
@@ -163,12 +163,9 @@ const InstructionForm = ({ instruction, formType }) => {
             validationErrors.notLoaded = [`not loaded`];
         }
         setErrors(validationErrors);
-    }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states]);
+    }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states, formType, symbols, instruction]);
 
-    // // head move debugging
-    // useEffect(() => {
-    //     console.log("headMove: ", headMove);
-    // }, [headMove]);
+    const backLink = <NavLink className="back-link" to={genMachinePath(machineId)}>&lt;{`-- back to ${currentMachine?.name}`}</NavLink>
 
 
     const handleSubmit = async (e) => {
@@ -190,11 +187,11 @@ const InstructionForm = ({ instruction, formType }) => {
         if (formType === createInst) {
             const newInstruction = await dispatch(createOrEditInstruction(instruction));
             console.log("newInstruction: ", newInstruction);
-            history.push(`/machines/${newInstruction.machineId}`);
+            history.push(genMachinePath(newInstruction.machineId));
         } else if (formType === updateInst) {
             // console.log("instruction data from update form: ", instruction);
             const updatedInstruction = await dispatch(createOrEditInstruction(instruction, "edit"));
-            history.push(`/machines/${updatedInstruction.machineId}`);
+            history.push(genMachinePath(updatedInstruction.machineId));
         }
         return;
     };
@@ -202,6 +199,7 @@ const InstructionForm = ({ instruction, formType }) => {
     return (
         (((options) && (currentMachine && machineInstructions)) && userAuth) ? <div className='page'>
             <form className='instruction-form' onSubmit={handleSubmit}>
+                {backLink}
                 {formHeader}
                 <div className='body'>
                     <div className='execution-conditions'>
@@ -281,7 +279,7 @@ const InstructionForm = ({ instruction, formType }) => {
                                         />
                                         {move}
                                     </label>
-                                }
+                                } else return null;
                             })}
                             {(submissionAttempt && !!(errors.headMove && errors.headMove.length)) && <span className='error-message'>{errors.headMove}</span>}
                         </div>

@@ -1,15 +1,25 @@
 /* root/react-app/src/components/Navigation/Navigation.css */
 
-/* .profile-dropdown {
+.profile-dropdown {
   position: absolute;
+  /* background-color: #BAB3B3; */
+  background-color: rgba(150, 150, 150, 0.7);
+  border-radius: 4px;
+  padding: 8px;
+  list-style-type: none;
+  margin: 0;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  z-index: 2;
 }
 
-.hidden {
-  display: none;
-} */
+.profile-dropdown button {
+  background-color: #333;
+  border: 2px solid #4A6897;
+}
+
 
 .fa-user-circle {
-  color: darkblue;
+  color: #4A6897;
   font-size: 64px;
 }
 
@@ -70,6 +80,13 @@
 
 .top-bar .session-links > * {
   margin: 16px;
+}
+
+.top-bar .session-links button {
+  background-color: #333;
+  border: none;
+  color: whitesmoke;
+  padding: 8px 16px;
 }
 
 /* Left sidebar */
