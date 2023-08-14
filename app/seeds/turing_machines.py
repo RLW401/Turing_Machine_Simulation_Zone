@@ -8,7 +8,7 @@ def seed_turing_machines():
         owner_id = None,
         collaborator_id = None,
         name = "Zero Function",
-        notes = "erases the tape and prints 0. This implementation uses three internal states: erase, print, and the halting state, qh. Can you see how to implement the same function using only two internal states?",
+        notes = "erases the tape and prints 0. This implementation uses two operational states: erase and print, plus the halting state, qh. Can you see how to implement the same function using only one operational state?",
         public = True,
         init_tape = "10001100101001",
         # current_tape = None,
@@ -39,9 +39,10 @@ def seed_turing_machines():
     tm_seeds.append(successor_function)
 
     binary_inverter = Turing_Machine(
+        owner_id = 1,
         name = "Binary Inverter",
         notes = "flip all the bits in a binary input string from 0 to 1 and vice versa",
-        public = True,
+        public = False,
         init_tape = "10001100101001",
         # current_tape = None,
         alphabet = "01",
@@ -60,12 +61,12 @@ def seed_turing_machines():
         public = True,
         init_tape = "10001100101001+10001100101001",
         # current_tape = None,
-        alphabet = "01",
+        alphabet = "+01AB",
         blank_symbol = '#',
-        states = None,
-        init_state = None,
+        states = "Scan Right||Qh",
+        init_state = "Scan Right",
         # current_state = None,
-        halting_state = None,
+        halting_state = "Qh",
         # head_pos = None,
     )
     tm_seeds.append(binary_adder)
