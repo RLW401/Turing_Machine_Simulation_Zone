@@ -36,7 +36,7 @@ def seed_machine_instructions():
         machine_id = 1,
         current_state = "print",
         scanned_symbol = "#",
-        next_state = "qh",
+        next_state = "Qh",
         print_symbol = "0",
         head_move = 0,
         )
@@ -80,7 +80,7 @@ def seed_machine_instructions():
         machine_id = 5,
         current_state = "LastDig0",
         scanned_symbol = "#",
-        next_state = "qh",
+        next_state = "Qh",
         print_symbol = "0",
         head_move = 0,
         )
@@ -88,7 +88,7 @@ def seed_machine_instructions():
         machine_id = 5,
         current_state = "LastDig1",
         scanned_symbol = "#",
-        next_state = "qh",
+        next_state = "Qh",
         print_symbol = "1",
         head_move = 0,
         )
@@ -139,7 +139,7 @@ def seed_machine_instructions():
         machine_id = 2,
         current_state = "add one",
         scanned_symbol = "#",
-        next_state = "qh",
+        next_state = "Qh",
         print_symbol = "1",
         head_move = 0,
         )
@@ -163,7 +163,7 @@ def seed_machine_instructions():
         machine_id = 2,
         current_state = "scan left",
         scanned_symbol = "#",
-        next_state = "qh",
+        next_state = "Qh",
         print_symbol = "#",
         head_move = 1,
         )
@@ -202,7 +202,7 @@ def seed_machine_instructions():
         machine_id = 3,
         current_state = "rewind",
         scanned_symbol = "#",
-        next_state = "qh",
+        next_state = "Qh",
         print_symbol = "#",
         head_move = 1,
         )
