@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import DeleteInstructionModal from "../DeleteInstruction";
 import { genAddInstPath, genUpdateInstPath, headMoves } from "../../constants/constants";
 
-const InstructionDisplay = ({ instructions, machine, buttonDisplay=false, selectedInstructionId=null }) => {
+const InstructionDisplay = ({ instructions, machine, buttonDisplay=false, selectedInstructionId=null, fullInstructions=false }) => {
     const history = useHistory();
     machine = { ...machine };
     machine.instructions = [ ...machine.instructions ];
@@ -20,7 +20,9 @@ const InstructionDisplay = ({ instructions, machine, buttonDisplay=false, select
 
     // button for adding lines of instructions
     const addInstructionButton = (
-        <button className="add-instruction" onClick={
+        <button className="add-instruction" disabled={fullInstructions}
+        title={fullInstructions ? "Your machine already has a line of instructions for every possible state-symbol pair. To change your machine's behavior, edit its existing instructions, or edit your machine to add additional symbols or states." : "Add new instructions to your machine."}
+        onClick={
             () => history.push(genAddInstPath(machine.id))
         }>+ Add Instruction</button>
     );

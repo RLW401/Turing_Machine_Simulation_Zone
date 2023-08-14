@@ -8,7 +8,7 @@ import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
 import DeleteMachineModal from "../DeleteMachine";
-import { genMachUpdatePath, maxHeadMoves } from "../../constants/constants";
+import { genMachUpdatePath, maxHeadMoves, stateSeparator } from "../../constants/constants";
 import "./turingMachine.css"
 
 const TuringMachinePage = () => {
@@ -40,6 +40,7 @@ const TuringMachinePage = () => {
     const [turingInterval, setTuringInterval] = useState(null);
     const [machineRunning, setMachineRunning] = useState(false);
     const [cancelInterval, setCancelInterval] = useState(false);
+    const [fullInstructions, setFullInstructions] = useState(false);
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -72,7 +73,7 @@ const TuringMachinePage = () => {
         if (machines.allIds && (machines.allIds.includes(machineId))) {
             const setM = machines.byId[machineId];
             setCurrentMachine(setM);
-            const fInst = (<InstructionDisplay instructions={instructions} machine={setM} buttonDisplay={editAuth} />);
+            const fInst = (<InstructionDisplay instructions={instructions} machine={setM} buttonDisplay={editAuth} fullInstructions={fullInstructions} />);
             setFormattedInstructions(fInst);
             setFinishedRun(false);
             setRunError(false);
@@ -80,7 +81,7 @@ const TuringMachinePage = () => {
             setHeadPos(0);
             setCancelInterval(true);
         }
-    }, [machines, machineId, instructions, editAuth]);
+    }, [machines, machineId, instructions, editAuth, fullInstructions]);
 
     useEffect(() => {
         const loggedAndLoaded = (loadCurrentUser && (loadCurrentUser.id && currentMachine));
@@ -89,6 +90,7 @@ const TuringMachinePage = () => {
 
         setDeleteAuth(owner);
         setEditAuth(owner || collaborator);
+
     }, [loadCurrentUser, currentMachine]);
 
     let machinePage = (
@@ -99,7 +101,7 @@ const TuringMachinePage = () => {
 
 
 
-    // set current tape
+    // set current tape and check to see if there is room for additional instructions
     useEffect(() => {
         if (currentMachine) {
             if (currentMachine.initTape) {
@@ -122,6 +124,14 @@ const TuringMachinePage = () => {
             setHeadPos(0);
             // console.log("instructions: ", instructions);
             // console.log("currentMachine: ", currentMachine);
+
+            const numInstructions = currentMachine.instructions.length;
+            // count symbols including blank
+            const numSymbols = (currentMachine.alphabet.length + 1);
+            // count states excluding halting state
+            const numActiveStates = (currentMachine.states.split(stateSeparator).length - 1);
+            const maxInstructions = (numSymbols * numActiveStates);
+            setFullInstructions(numInstructions === maxInstructions);
         }
     }, [currentMachine]);
 
@@ -171,7 +181,7 @@ const TuringMachinePage = () => {
                 // console.log("machine.headPos: ", machine.headPos);
                 setCurrentTape(machine.currentTape);
                 setHeadPos(machine.headPos);
-                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} />);
+                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} fullInstructions={fullInstructions} />);
                 setFormattedInstructions(fInst);
             } else {
                 setCancelInterval(true);
@@ -217,7 +227,7 @@ const TuringMachinePage = () => {
             const machine = { ...currentMachine };
             const resetTape = machine.initTape;
             machine.currentTape = resetTape;
-            const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} />);
+            const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} fullInstructions={fullInstructions} />);
             setFormattedInstructions(fInst);
             setInitTape(resetTape);
             setHeadPos(0);
@@ -261,7 +271,7 @@ const TuringMachinePage = () => {
                 {mChangeButtons}
                 {renderedTape}
                 {runError}
-                {finishedRun && <p className="reset-info">To restore ability to create, update, and delete instructions after a run, click the Reset Machine button.</p>}
+                {(finishedRun && editAuth) && <p className="reset-info">To restore ability to create, update, and delete instructions after a run, click the Reset Machine button.</p>}
                 <div className="machine-controls">
                     <button className="run-machine" disabled={machineRunning} onClick={handleRunMachine}>Run Machine</button>
                     <button className="reset-machine" onClick={handleResetMachine}>Reset Machine</button>
@@ -286,7 +296,7 @@ const TuringMachinePage = () => {
                                 const tape = e.target.value;
                                 const machine = { ...currentMachine };
                                 machine.currentTape = (tape ? tape : machine.blankSymbol);
-                                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} />);
+                                const fInst = (<InstructionDisplay instructions={instructions} machine={machine} buttonDisplay={editAuth} fullInstructions={fullInstructions} />);
                                 setFormattedInstructions(fInst);
                                 setInitTape(tape);
                                 setCurrentTape(tape);

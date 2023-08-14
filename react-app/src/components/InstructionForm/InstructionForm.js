@@ -9,7 +9,10 @@ import { createOrEditInstruction } from '../../store/machineInstructions';
 import { createInst, updateInst, stateSeparator, headMoves, instExConDesc, currentStateDescription, scannedSymbolDescription, machOpDesc, nextStateDescription, printSymbolDescription, headMoveDescription } from '../../constants/constants';
 import InstructionDisplay from '../InstructionDisplay/instructionDisplay';
 
+import genSSP, {availablePairs, availableStates, availableSymbols, allSSOptions} from "../../utils/stateSymbolPairs.js";
+
 import "./instructionForm.css";
+
 
 const InstructionForm = ({ instruction, formType }) => {
     const machineId = Number(useParams().machineId);
@@ -26,6 +29,11 @@ const InstructionForm = ({ instruction, formType }) => {
     const [symbols, setSymbols] = useState(null);
     const [states, setStates] = useState(null);
     const [userAuth, setUserAuth] = useState(false);
+    const [stateSymbolPairs, setStateSymbolPairs] = useState(null);
+    const [unusedPairs, setUnusedPairs] = useState(null);
+    const [currentStateOpt, setCurrentStateOpt] = useState(null);
+    const [scannedSymbolOpt, setScannedSymbolOpt] = useState(null);
+    const [options, setOptions] = useState(null);
     const [errors, setErrors] = useState({});
     const [submissionAttempt, setSubmissionAttempt] = useState(false);
 
@@ -64,6 +72,7 @@ const InstructionForm = ({ instruction, formType }) => {
             setMachineInstructions(mInst);
             setSymbols((currentMachine.blankSymbol + currentMachine.alphabet).split(""));
             setStates(currentMachine.states.split(stateSeparator));
+
         }
     }, [allInstructions, currentMachine]);
 
@@ -77,6 +86,35 @@ const InstructionForm = ({ instruction, formType }) => {
             setUserAuth((uId === oId) || (uId === cId));
         }
     }, [currentUser, machineInstructions]);
+
+    useEffect(() => {
+        if (states && symbols) {
+            setStateSymbolPairs(genSSP(states.slice(0, (states.length - 1)), symbols));
+            setCurrentStateOpt(states.slice(0, (states.length - 1)));
+            setScannedSymbolOpt(symbols);
+        }
+    }, [states, symbols]);
+
+    useEffect(() => {
+        if (stateSymbolPairs && machineInstructions) {
+            // console.log("stateSymbolPairs: ", stateSymbolPairs);
+            const ap = availablePairs(stateSymbolPairs, machineInstructions);
+            // setUnusedPairs(ap);
+            const opt = allSSOptions(ap);
+            // console.log(opt);
+            setOptions(opt);
+            // console.log("unusedPairs: ", ap);
+        }
+    }, [stateSymbolPairs, machineInstructions]);
+
+    // useState(() => {
+    //     console.log("unusedPairs ", unusedPairs);
+    //     if (unusedPairs) {
+    //         const opt = allSSOptions(unusedPairs);
+    //         console.log(opt);
+    //         setOptions(opt);
+    //     }
+    // }, [unusedPairs]);
 
     // error handling
     useEffect(() => {
@@ -162,7 +200,7 @@ const InstructionForm = ({ instruction, formType }) => {
     };
 
     return (
-        (((symbols && states) && (currentMachine && machineInstructions)) && userAuth) ? <div className='page'>
+        (((options) && (currentMachine && machineInstructions)) && userAuth) ? <div className='page'>
             <form className='instruction-form' onSubmit={handleSubmit}>
                 {formHeader}
                 <div className='body'>
@@ -172,23 +210,30 @@ const InstructionForm = ({ instruction, formType }) => {
                         <div className='form-group'>
                             <h4 className='heading'>Current State</h4>
                             <p className='description'>{currentStateDescription}</p>
-                            <select name="currentState" value={currentState} onChange={(e) => setCurrentState(e.target.value)}>
-                                <option value={null} disabled={!!currentState}>Select a state</option>
-                                {states.map((state) => {
-                                    // do not include halting state
-                                    if (state !== states[states.length - 1]) {
-                                        return <option key={state} value={state}>{state}</option>
+                            <select name="currentState" value={currentState} onChange={(e) => {
+                                    const state = e.target.value;
+                                    const symbolOptions = options.symbolOptions[state]
+                                    setCurrentState(state);
+                                    setScannedSymbolOpt(symbolOptions);
+                                    if (!symbolOptions.includes(scannedSymbol)) {
+                                        setScannedSymbol("");
                                     }
-                                })}
+                                }}>
+                                <option value={null} disabled={!!currentState}>Select a state</option>
+                                {options?.availableStates.map((state) => <option key={state} value={state}>{state}</option>)}
+                                {((formType === updateInst) && !options?.availableStates.includes(currentState))
+                                && <option key={currentState} value={currentState}>{currentState}</option>}
                             </select>
                             {(submissionAttempt && !!(errors.currentState && errors.currentState.length)) && <span className='error-message'>{errors.currentState}</span>}
                         </div>
                         <div className='form-group'>
                             <h4 className='heading'>Scanned Symbol</h4>
                             <p className='description'>{scannedSymbolDescription}</p>
-                            <select name="scannedSymbol" value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
+                            <select name="scannedSymbol" disabled={!currentState} value={scannedSymbol} onChange={(e) => setScannedSymbol(e.target.value)}>
                                 <option value={null} disabled={!!scannedSymbol}>Select a symbol</option>
-                                {symbols.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
+                                {scannedSymbolOpt.map((symbol) => <option key={symbol} value={symbol}>&lsquo;{symbol}&rsquo;</option>)}
+                                {((formType === updateInst) && !scannedSymbolOpt.includes(scannedSymbol))
+                                && <option key={scannedSymbol} value={scannedSymbol}>{scannedSymbol}</option>}
                             </select>
                             {(submissionAttempt && !!(errors.scannedSymbol && errors.scannedSymbol.length)) && <span className='error-message'>{errors.scannedSymbol}</span>}
                         </div>

@@ -32,7 +32,7 @@ export const genUpdateInstPath = (machineId = ":machineId", instructionId = ":in
 // long descriptions
 
 export const instExConDesc = "First, specify the conditions in which the machine will execute this line of instructions. The execution conditions at each step of the computation are jointly determined by two factors: the internal state of the machine and the symbol on the tape being scanned at that step. ";
-export const currentStateDescription = "In which state should this line of instructions be triggered (assuming the symbol specified in the next step is also being scanned)?"
+export const currentStateDescription = "In which state should this line of instructions be triggered (assuming the symbol specified in the next step is also being scanned). Note that Current State must be selected before Scanned Symbol."
 export const scannedSymbolDescription = "Which tape symbol should trigger these instructions upon being scanned (assuming that the machine is also in the state specified in the previous step)?";
 
 export const machOpDesc = "Specify the behavior of the machine when the instruction execution conditions are met.";

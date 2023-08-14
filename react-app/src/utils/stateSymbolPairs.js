@@ -12,12 +12,6 @@ const stateSymbolPairs = (states, symbols) => {
     return pairs;
 };
 
-export const extractStateSymbolPairs = (machine) => {
-    const states = machine.states.split('|');
-    const symbols = (machine.blankSymbol + machine.alphabet).split("");
-    return stateSymbolPairs(states, symbols);
-};
-
 export const availablePairs = (sSPairs, instructions) => {
     const takenPairs = [];
     const result = [];
@@ -25,7 +19,7 @@ export const availablePairs = (sSPairs, instructions) => {
         const inst = instructions[instructionId];
         const scannedSymbol = inst.scannedSymbol;
         const currentState = inst.currentState;
-        takenPairs.push([scannedSymbol, currentState]);
+        takenPairs.push([currentState, scannedSymbol]);
     });
     sSPairs.forEach((pair) => {
         let taken = false;
@@ -57,3 +51,36 @@ export const availableSymbols = (availablePairs, state) => {
     });
     return result;
 };
+
+export const allSSOptions = (availablePairs) => {
+    const result = {
+        stateOptions: {},
+        symbolOptions: {},
+    };
+    const stateSet = new Set();
+    const symbolSet = new Set();
+
+    availablePairs.forEach((pair) => {
+        const state = pair[0];
+        const symbol = pair[1];
+        stateSet.add(state);
+        symbolSet.add(symbol);
+        // check to see if this state has already been found
+        if (!result.stateOptions[symbol]) {
+            result.stateOptions[symbol] = [];
+        }
+        // add the symbol as an option for the state
+        result.stateOptions[symbol].push(state);
+        // check to see if this symbol has already been found
+        if (!result.symbolOptions[state]) {
+            result.symbolOptions[state] = [];
+        }
+        // add the symbol as an option for the state
+        result.symbolOptions[state].push(symbol);
+    });
+    result.availableStates = Array.from(stateSet);
+    result.availableSymbols = Array.from(symbolSet);
+    return result;
+};
+
+export default stateSymbolPairs;
