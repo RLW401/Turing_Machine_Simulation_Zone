@@ -121,11 +121,11 @@ function Navigation({ isLoaded }){
 			machines.allIds.forEach((mId) => {
 				const currentMachine = machines.byId[mId]
 				if (currentMachine.public) {
-					// publicMachines.push(currentMachine);
 					// TODO: add working instructions to all public machines
-					if (currentMachine.name === "Successor Function") {
-						newPublicMachines.push(currentMachine);
-					}
+					// if (currentMachine.name !== "Binary Adder") {
+					// 	newPublicMachines.push(currentMachine);
+					// }
+					newPublicMachines.push(currentMachine);
 				} else if (sessionUser) {
 					if (currentMachine.ownerId === sessionUser.id) {
 						newUserMachines.push(currentMachine);

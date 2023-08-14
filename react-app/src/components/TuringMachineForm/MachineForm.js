@@ -124,7 +124,7 @@ const MachineForm = ({ machine, formType }) => {
                             newStates.push(states[i]);
                     } else {
                             // if numStates has been increased, fill in remaining state names before the halting state with default values.
-                            newStates.push(`q${i}`);
+                            newStates.push(`Q${i}`);
                     }
                 }
             }
