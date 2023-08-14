@@ -54,6 +54,7 @@ function ProfileButton({ user, numMachines }) {
         {user ? (
           <>
             <li>{user.username}</li>
+            <li>{`${user.firstName} ${user.lastName}`}</li>
             <li>{`(${numMachines} machine` + (numMachines !== 1 ? "s)" : ")")}</li>
             <li>{user.email}</li>
             <li>

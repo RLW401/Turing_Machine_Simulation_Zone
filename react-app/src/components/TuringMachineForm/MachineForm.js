@@ -71,11 +71,11 @@ const MachineForm = ({ machine, formType }) => {
         if (formType === createTM) {
             const newMachine = await dispatch(createMachine(machine));
             // console.log("newMachine: ", newMachine);
-            history.push(`/machines/${newMachine.id}`);
+            history.push(genMachinePath(newMachine.id));
         } else if (formType === updateTM) {
             const updatedMachine = await dispatch(editMachine(machine));
             // console.log("updatedMachine: ", updatedMachine);
-            history.push(`/machines/${updatedMachine.id}`);
+            history.push(genMachinePath(updatedMachine.id));
         }
     };
 
@@ -150,7 +150,7 @@ const MachineForm = ({ machine, formType }) => {
             for (let i = 0; i < numStates; i++) {
                 const errKey = `stateName${i}`;
                 let errType = `The name of internal state ${i}`;
-                let description = <p className="description">{`Pick a name for internal state ${i} of your machine.`}</p>
+                let description = <p className="description">{`Pick a name for operational state ${i} of your machine.`}</p>
                 let defaultValue = states[i];
                 if (i === 0) {
                     description = <p className="description">Pick a name for your machine's initial state.</p>

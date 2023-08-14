@@ -85,7 +85,7 @@ const InstructionForm = ({ instruction, formType }) => {
             const cId = currentMachine.collaboratorId;
             setUserAuth((uId === oId) || (uId === cId));
         }
-    }, [currentUser, machineInstructions]);
+    }, [currentUser, machineInstructions, currentMachine]);
 
     useEffect(() => {
         if (states && symbols) {
@@ -163,7 +163,7 @@ const InstructionForm = ({ instruction, formType }) => {
             validationErrors.notLoaded = [`not loaded`];
         }
         setErrors(validationErrors);
-    }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states]);
+    }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states, formType, symbols, instruction]);
 
     const backLink = <NavLink className="back-link" to={genMachinePath(machineId)}>&lt;{`-- back to ${currentMachine?.name}`}</NavLink>
 
@@ -187,11 +187,11 @@ const InstructionForm = ({ instruction, formType }) => {
         if (formType === createInst) {
             const newInstruction = await dispatch(createOrEditInstruction(instruction));
             console.log("newInstruction: ", newInstruction);
-            history.push(`/machines/${newInstruction.machineId}`);
+            history.push(genMachinePath(newInstruction.machineId));
         } else if (formType === updateInst) {
             // console.log("instruction data from update form: ", instruction);
             const updatedInstruction = await dispatch(createOrEditInstruction(instruction, "edit"));
-            history.push(`/machines/${updatedInstruction.machineId}`);
+            history.push(genMachinePath(updatedInstruction.machineId));
         }
         return;
     };
@@ -279,7 +279,7 @@ const InstructionForm = ({ instruction, formType }) => {
                                         />
                                         {move}
                                     </label>
-                                }
+                                } else return null;
                             })}
                             {(submissionAttempt && !!(errors.headMove && errors.headMove.length)) && <span className='error-message'>{errors.headMove}</span>}
                         </div>
