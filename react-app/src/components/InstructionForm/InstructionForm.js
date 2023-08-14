@@ -1,12 +1,12 @@
 // root/react-app/src/components/InstructionForm/InstructionForm.js
 
 import { useState, useEffect, Fragment } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createOrEditInstruction } from '../../store/machineInstructions';
 
-import { createInst, updateInst, stateSeparator, headMoves, instExConDesc, currentStateDescription, scannedSymbolDescription, machOpDesc, nextStateDescription, printSymbolDescription, headMoveDescription } from '../../constants/constants';
+import { createInst, updateInst, stateSeparator, headMoves, instExConDesc, currentStateDescription, scannedSymbolDescription, machOpDesc, nextStateDescription, printSymbolDescription, headMoveDescription, genMachinePath } from '../../constants/constants';
 import InstructionDisplay from '../InstructionDisplay/instructionDisplay';
 
 import genSSP, {availablePairs, availableStates, availableSymbols, allSSOptions} from "../../utils/stateSymbolPairs.js";
@@ -165,10 +165,7 @@ const InstructionForm = ({ instruction, formType }) => {
         setErrors(validationErrors);
     }, [currentState, scannedSymbol, nextState, printSymbol, headMove, machineInstructions, currentMachine, states]);
 
-    // // head move debugging
-    // useEffect(() => {
-    //     console.log("headMove: ", headMove);
-    // }, [headMove]);
+    const backLink = <NavLink className="back-link" to={genMachinePath(machineId)}>&lt;{`-- back to ${currentMachine?.name}`}</NavLink>
 
 
     const handleSubmit = async (e) => {
@@ -202,6 +199,7 @@ const InstructionForm = ({ instruction, formType }) => {
     return (
         (((options) && (currentMachine && machineInstructions)) && userAuth) ? <div className='page'>
             <form className='instruction-form' onSubmit={handleSubmit}>
+                {backLink}
                 {formHeader}
                 <div className='body'>
                     <div className='execution-conditions'>

@@ -15,7 +15,6 @@ export const createInst = "Create a new line of instructions";
 export const updateInst = "Update a line of instructions";
 
 // url segments
-// export const machineUpdatePath = "/turing-machines/:machineId/update";
 export const genMachUpdatePath = (machineId = ":machineId") => (
     `/turing-machines/${machineId}/update`
 );
@@ -26,6 +25,10 @@ export const genAddInstPath = (machineId = ":machineId") => (
 
 export const genUpdateInstPath = (machineId = ":machineId", instructionId = ":instructionId") => (
     `/turing-machines/${machineId}/instructions/${instructionId}/update`
+);
+
+export const genMachinePath = (machineId = ":machineId") => (
+    `/turing-machines/${machineId}`
 );
 
 

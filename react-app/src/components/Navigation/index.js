@@ -7,6 +7,7 @@ import ProfileButton from './ProfileButton';
 import LoginFormModal from '../LoginFormModal';
 import SignupFormModal from '../SignupFormModal';
 import { getAuthorizedTMs } from "../../store/turingMachines";
+import { genMachinePath } from "../../constants/constants";
 import './Navigation.css';
 
 function Navigation({ isLoaded }){
@@ -76,9 +77,9 @@ function Navigation({ isLoaded }){
 	if (sessionUser) {
 		sessionLinks = (
 			<div className='session-links'>
-				<NavLink className='create-tm' to="/turing-machines/new"
+				<NavLink className='create-tm' to={genMachinePath("new")}
 					onClick={() => {
-						history.push("/turing-machines/new");
+						history.push(genMachinePath("new"));
 						window.location.reload(true);
 					}}
 				>Create a new Turing Machine</NavLink>
@@ -146,7 +147,7 @@ function Navigation({ isLoaded }){
 			<p>Sample Machines</p>
 			{publicMachines.map((machine) => (
 				<NavLink className="m-link public" key={machine.id}
-					to={`/machines/${machine.id}`}>
+					to={genMachinePath(machine.id)}>
 						<p>{machine.name}</p>
 				</NavLink>
 			))}
@@ -158,14 +159,14 @@ function Navigation({ isLoaded }){
 			<p>My Machines</p>
 			{userMachines.map((machine) => (
 				<NavLink className="m-link user" key={machine.id}
-					to={`/machines/${machine.id}`}>
+					to={genMachinePath(machine.id)}>
 						<p>{machine.name}</p>
 				</NavLink>
 			))}
 			<NavLink
-			className='create-tm' to="/turing-machines/new"
+			className='create-tm' to={genMachinePath("new")}
 			onClick={() => {
-				history.push("/turing-machines/new");
+				history.push(genMachinePath("new"));
 				window.location.reload(true);
 			}}
 			>+ Create Machine</NavLink>
@@ -177,7 +178,7 @@ function Navigation({ isLoaded }){
 			<p>collaborator Machines</p>
 			{collabMachines.map((machine) => (
 				<NavLink className="m-link collaborator" key={machine.id}
-					to={`/machines/${machine.id}`}>
+					to={genMachinePath(machine.id)}>
 						<p>{machine.name}</p>
 				</NavLink>
 			))}
