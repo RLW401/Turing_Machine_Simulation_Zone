@@ -40,7 +40,7 @@ function LoginFormModal() {
 
   const loginForm = (
     <form className="ls-form" onSubmit={handleSubmit}>
-    <h1>Log In</h1>
+    <h2 className="form-heading">Log In</h2>
     <ul>
       {errors.map((error, idx) => (
         <li key={idx}>{error}</li>
