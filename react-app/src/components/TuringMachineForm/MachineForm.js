@@ -1,12 +1,12 @@
 // root/react-app/src/components/TuringMachineForm/MachineForm.js
 
 import { useState, useEffect, Fragment } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, NavLink } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { createMachine, editMachine } from '../../store/turingMachines';
 import { findErr } from '../../utils/errorHandling';
-import { createTM, stateSeparator, updateTM, validBlanks } from '../../constants/constants';
+import { createTM, genMachinePath, stateSeparator, updateTM, validBlanks } from '../../constants/constants';
 import "./machineForm.css";
 
 
@@ -22,6 +22,7 @@ const MachineForm = ({ machine, formType }) => {
     const maxNameLen = 255;
     const minAlphaLen = 1;
     const maxAlphaLen = 127;
+    const backPath = (formType === updateTM ? genMachinePath(machine.id) : '/');
     const [name, setName] = useState(machine.name);
     const [notes, setNotes] = useState(machine.notes);
     const [blankSymbol, setBlankSymbol] = useState(machine.blankSymbol);
@@ -235,9 +236,15 @@ const MachineForm = ({ machine, formType }) => {
         setOtherErrors(newErrors);
     }, [blankSymbol, name, alphabet, initTape, loadMachines, formType, machine.id]);
 
+    const backLink = <NavLink className="back-link" to={backPath}>&lt;{`-- back`}</NavLink>
+
+    const cancelButton = (
+        <button className='cancel' onClick={() => history.push(backPath)}>Cancel</button>
+    );
 
     return (
         <form className="machine-form" onSubmit={handleSubmit}>
+            {backLink}
             <h2>{formType}</h2>
             <div className="form-group">
                 <h4 className="heading">Name</h4>
@@ -301,10 +308,13 @@ const MachineForm = ({ machine, formType }) => {
             {stateNameInputs}
 
             <div className="form-group">
-            {(submissionAttempt && !isFormGood) && <p className='error'>
-                    There are problems with the form. Check above for details.
-            </p>}
-                <button type="submit" disabled={submissionAttempt && !isFormGood}>Submit</button>
+                {(submissionAttempt && !isFormGood) && <p className='error'>
+                        There are problems with the form. Check above for details.
+                </p>}
+                <div className='buttons'>
+                    {cancelButton}
+                    <button type="submit" disabled={submissionAttempt && !isFormGood}>Submit</button>
+                </div>
             </div>
         </form>
     );

@@ -12,7 +12,7 @@ import UpdateMachineForm from "./components/TuringMachineForm/UpdateMachineForm"
 import CreateInstructionForm from "./components/InstructionForm/CreateInstructionForm";
 import UpdateInstructionForm from "./components/InstructionForm/UpdateInstructionForm";
 
-import { genMachUpdatePath, genAddInstPath, genUpdateInstPath } from "./constants/constants";
+import { genMachUpdatePath, genAddInstPath, genUpdateInstPath, genMachinePath } from "./constants/constants";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,10 +35,10 @@ function App() {
           <Route exact path="/">
             <LandingPage />
           </Route>
-          <Route path="/turing-machines/new">
+          <Route path={genMachinePath("new")}>
             <CreateMachineForm />
           </Route>
-          <Route exact path="/machines/:machineId">
+          <Route exact path={genMachinePath()}>
             <TuringMachinePage />
           </Route>
           <Route path={genMachUpdatePath()}>
