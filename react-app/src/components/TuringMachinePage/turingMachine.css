@@ -24,12 +24,28 @@
   margin-top: 0px;
 }
 
+/* styling for computation speed slider */
+.machine-page .slider-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: aliceblue;
+}
+
+.machine-page .slider-container .speed-slider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* styling for update and delete machine buttons */
 
 .m-change {
   display: flex;
   /* border: solid green; */
   justify-content: center;
+  margin-top: 16px;
 }
 
 .m-change button {

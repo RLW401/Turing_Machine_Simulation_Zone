@@ -14,7 +14,7 @@ import "./turingMachine.css"
 const TuringMachinePage = () => {
     const history = useHistory();
     const machineId = Number(useParams().machineId);
-    const timeDelay = 500;
+    // const timeDelay = 500;
     // const [currentUser, setCurrentUser] = useState({});
     const [machines, setMachines] = useState({});
     const [instructions, setInstructions] = useState({});
@@ -41,6 +41,7 @@ const TuringMachinePage = () => {
     const [machineRunning, setMachineRunning] = useState(false);
     const [cancelInterval, setCancelInterval] = useState(false);
     const [fullInstructions, setFullInstructions] = useState(false);
+    const [timeDelay, setTimeDelay] = useState(500);
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -261,6 +262,28 @@ const TuringMachinePage = () => {
         </div>
     );
 
+    const handleSpeedChange = (e) => setTimeDelay(Number(e.target.value));
+
+    const speedSlider = (
+        <div className="slider-container">
+            <div className="speed-slider">
+                <label>Time between steps:</label>
+                <input
+                type="range"
+                name="Computation Speed"
+                min={125}
+                max={1000}
+                step={125}
+                disabled={machineRunning}
+                value={timeDelay}
+                onChange={handleSpeedChange}
+                />
+            </div>
+            <p>One step every {timeDelay === 1000 ? "second" : `${timeDelay} milliseconds`}</p>
+        </div>
+
+    );
+
     if (currentMachine) {
         machinePage = (
             <div className="machine-page">
@@ -268,6 +291,7 @@ const TuringMachinePage = () => {
                     <h2>{currentMachine.name}</h2>
                     <p>{currentMachine.notes}</p>
                 </div>
+                {speedSlider}
                 {mChangeButtons}
                 {renderedTape}
                 {runError}
