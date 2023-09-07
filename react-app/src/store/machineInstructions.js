@@ -1,4 +1,5 @@
 // root/react-app/src/store/machineInstructions.js
+import sameValue from "../utils/sameValue";
 
 import { LOAD_MACHINES } from "./turingMachines";
 import { REMOVE_MACHINE } from "./turingMachines";
@@ -81,7 +82,7 @@ export const deleteInstruction = (idData) => async (dispatch) => {
 
         if (response.ok) {
             const deleteMessage = await response.json();
-            dispatch(removeInstruction(idData));
+            await dispatch(removeInstruction(idData));
             return deleteMessage;
         } else {
             const error = await response.text();
@@ -96,6 +97,48 @@ export const deleteInstruction = (idData) => async (dispatch) => {
             throw new Error(`${errorJSON.title}: ${errorJSON.message}`);
         }
 
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const batchCreateInstructions = (instructionBatch) => async (dispatch) => {
+    try {
+        if (instructionBatch?.machineInstructions?.length) {
+            const sameMId = sameValue(instructionBatch.machineInstructions, "machineId");
+            const machineId = (sameMId ? sameMId["machineInstructions"] : null);
+
+            if (!machineId) {
+                throw new Error("Not every instruction in batch has the same machineId");
+            }
+
+            const fetchURL = `/api/turing-machines/${machineId}/machine-instructions/batch-create/`
+            const response = await fetch(fetchURL, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(instructionBatch)
+            });
+
+            if (response.ok) {
+                instructionBatch = await response.json();
+                await dispatch(batchAddInstructions(instructionBatch));
+                return instructionBatch;
+            } else {
+                const error = await response.text();
+                let errorJSON;
+                try {
+                    // check to see if error is JSON
+                    errorJSON = JSON.parse(error);
+                } catch {
+                    // error was not from server
+                    throw new Error(error);
+                }
+                throw new Error(`${errorJSON.title}: ${errorJSON.message}`);
+            }
+
+        } else {
+            throw new Error("No instructions in this batch.")
+        }
     } catch (error) {
         throw error;
     }
