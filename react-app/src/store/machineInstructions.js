@@ -7,6 +7,7 @@ const prefix = "machineInstructions/";
 export const ADD_INSTRUCTION = (prefix + "ADD_INSTRUCTION");
 const UPDATE_INSTRUCTION = (prefix + "UPDATE_INSTRUCTION");
 export const REMOVE_INSTRUCTION = (prefix + "REMOVE_INSTRUCTION");
+export const BATCH_ADD_INSTRUCTIONS = (prefix + "BATCH_ADD_INSTRUCTIONS");
 
 const addInstruction = (machineInstruction) => ({
     type: ADD_INSTRUCTION,
@@ -21,6 +22,11 @@ const updateInstruction = (machineInstruction) => ({
 const removeInstruction = (idData) => ({
     type: REMOVE_INSTRUCTION,
     payload: idData
+});
+
+const batchAddInstructions = (instructionBatch) => ({
+    type: BATCH_ADD_INSTRUCTIONS,
+    payload: instructionBatch
 });
 
 export const createOrEditInstruction = (instructionData, edit=false) => async (dispatch) => {
