@@ -1,4 +1,5 @@
 // root/react-app/src/store/machineInstructions.js
+import { normalizeAll } from "../utils/normalization";
 import sameValue from "../utils/sameValue";
 
 import { LOAD_MACHINES } from "./turingMachines";
@@ -204,6 +205,17 @@ const instructionReducer = (state=initialState, action) => {
             newState.allIds = state.allIds.filter((instId) => instId !== instructionId);
             newState.byId = { ...state.byId };
             delete newState.byId[instructionId];
+            return newState;
+        case BATCH_ADD_INSTRUCTIONS:
+            newState.allIds = [ ...state.allIds ];
+            const normalizedInstructions = normalizeAll(action.payload);
+            normalizedInstructions.allIds.forEach((instructionId) => {
+                if (newState.allIds.includes(instructionId)) {
+                    throw new Error(`Error: Duplicate instruction id (${instructionId})`);
+                }
+                newState.allIds.push(instructionId);
+            });
+            newState.byId = [ ...state.byId, ...normalizedInstructions.byId ];
             return newState;
         default:
             return state;
