@@ -8,7 +8,6 @@ import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
 import DeleteMachineModal from "../DeleteMachine";
-import TextAreaWithNumberedLines from "./textareaWithNumberedLines";
 import { genMachUpdatePath, maxHeadMoves, stateSeparator } from "../../constants/constants";
 import "./turingMachine.css"
 
@@ -57,11 +56,6 @@ const TuringMachinePage = () => {
     const loadInstructions = useSelector((state) => {
         return state.machineInstructions;
     });
-
-    useEffect(() => {
-        console.log(batchInst)
-        console.log("numInst: ", batchInst.split("\n").length);
-    }, [batchInst]);
 
     // cancel interval when necessary
     useEffect(() => {
@@ -348,7 +342,6 @@ const TuringMachinePage = () => {
                         </div>}
                     </div>
                     {formattedInstructions}
-                    {<TextAreaWithNumberedLines text={batchInst} setText={setBatchInst} />}
                 </div>
             </div>
         );
