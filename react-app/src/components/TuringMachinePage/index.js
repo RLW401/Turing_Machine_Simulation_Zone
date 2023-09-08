@@ -8,6 +8,7 @@ import { stringOnAlphabet } from "../../utils/stringOnAlphabet";
 import { turingStep } from "./turingStep";
 import { trimBlanks } from "../../utils/trimBlanks";
 import DeleteMachineModal from "../DeleteMachine";
+import BatchCreateInstructions from "./instructionBatchCreate";
 import { genMachUpdatePath, maxHeadMoves, stateSeparator } from "../../constants/constants";
 import "./turingMachine.css"
 
@@ -42,7 +43,7 @@ const TuringMachinePage = () => {
     const [cancelInterval, setCancelInterval] = useState(false);
     const [fullInstructions, setFullInstructions] = useState(false);
     const [timeDelay, setTimeDelay] = useState(500);
-    const [batchInst, setBatchInst] = useState("");
+    // const [batchInst, setBatchInst] = useState("");
 
 
     const loadCurrentUser = useSelector((state) => {
@@ -342,6 +343,8 @@ const TuringMachinePage = () => {
                         </div>}
                     </div>
                     {formattedInstructions}
+                    {/* {!fullInstructions && <BatchCreateInstructions text={batchInst} setText={setBatchInst} />} */}
+                    {!fullInstructions && <BatchCreateInstructions />}
                 </div>
             </div>
         );
