@@ -1,6 +1,6 @@
 // root/react-app/src/store/turingMachines.js
 import { normalizeAll } from "../utils/normalization";
-import { ADD_INSTRUCTION, REMOVE_INSTRUCTION } from "./machineInstructions";
+import { ADD_INSTRUCTION, BATCH_ADD_INSTRUCTIONS , REMOVE_INSTRUCTION } from "./machineInstructions";
 
 const prefix = "turingMachines/"
 export const LOAD_MACHINES = (prefix + "LOAD_MACHINES");
@@ -185,8 +185,8 @@ const machineReducer = (state=initialState, action) => {
             newState.byId[machineId] = { ...newState.byId[machineId], instructions: newInstIds };
             return newState;
         case REMOVE_INSTRUCTION:
-            console.log("Hit Remove Instruction in machine reducer");
-            console.log("action.payload: ", action.payload);
+            // console.log("Hit Remove Instruction in machine reducer");
+            // console.log("action.payload: ", action.payload);
             instructionId = action.payload.instructionId;
             machineId = action.payload.machineId;
             newState.byId = { ...state.byId };
@@ -195,6 +195,24 @@ const machineReducer = (state=initialState, action) => {
                 return (instId !== instructionId);
             });
             newState.byId[machineId] = { ...newState.byId[machineId], instructions: newInstIds };
+            return newState;
+        case BATCH_ADD_INSTRUCTIONS:
+            console.log("Hit BATCH_ADD_INSTRUCTIONS in machine reducer");
+            console.log("action.payload: ", action.payload);
+            newState.allIds = [ ...state.allIds ];
+            const normalizedInstructions = action.payload;
+            machineId = normalizedInstructions.machineId;
+            const machineForInstructions = { ...state.byId[machineId] };
+            const instructions = [ ...machineForInstructions.instructions ];
+            normalizedInstructions.allIds.forEach((instructionId) => {
+                if (instructions.includes(instructionId)) {
+                    throw new Error(`Error: Attempted to add duplicate instruction id (${instructionId}) to machine ${machineForInstructions.name}.`);
+                }
+                instructions.push(instructionId);
+            });
+            machineForInstructions.instructions = instructions;
+
+            newState.byId = { ...state.byId, [machineId]: machineForInstructions };
             return newState;
         default:
             return state;

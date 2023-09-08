@@ -14,7 +14,7 @@ const sameValue = (objList, key) => {
     const value = firstObj[key]
 
     for (let i = 1; i < objList.length; i++) {
-        currentObj = objList[i]
+        const currentObj = objList[i]
         if (!currentObj.hasOwnProperty(key) || currentObj[key] !== value) {
             return false;
         }

@@ -122,6 +122,8 @@ export const batchCreateInstructions = (instructionBatch) => async (dispatch) =>
 
             if (response.ok) {
                 instructionBatch = await response.json();
+                instructionBatch = normalizeAll(instructionBatch);
+                instructionBatch.machineId = machineId;
                 await dispatch(batchAddInstructions(instructionBatch));
                 return instructionBatch;
             } else {
@@ -208,14 +210,14 @@ const instructionReducer = (state=initialState, action) => {
             return newState;
         case BATCH_ADD_INSTRUCTIONS:
             newState.allIds = [ ...state.allIds ];
-            const normalizedInstructions = normalizeAll(action.payload);
+            const normalizedInstructions = action.payload;
             normalizedInstructions.allIds.forEach((instructionId) => {
                 if (newState.allIds.includes(instructionId)) {
                     throw new Error(`Error: Duplicate instruction id (${instructionId})`);
                 }
                 newState.allIds.push(instructionId);
             });
-            newState.byId = [ ...state.byId, ...normalizedInstructions.byId ];
+            newState.byId = { ...state.byId, ...normalizedInstructions.byId };
             return newState;
         default:
             return state;
