@@ -528,7 +528,7 @@ def seed_machine_instructions():
     ]
 
     # ba_set = []
-    mi_sets.append(ba_set)
+    # mi_sets.append(ba_set)
 
     for m_set in mi_sets:
         for m_inst in m_set:
