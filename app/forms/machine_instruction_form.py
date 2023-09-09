@@ -1,7 +1,7 @@
 # root/app/forms/machine_instruction_form.py
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, FieldList, FormField
+from wtforms import StringField, IntegerField
 from wtforms.validators import DataRequired, ValidationError, Length
 
 def validate_head_move(form, field):
@@ -11,7 +11,7 @@ def validate_head_move(form, field):
 
 def validate_symbol(form, field):
         symbol = field.data
-        if len(symbol) != 1:
+        if symbol is None or len(symbol) != 1:
             raise ValidationError('Symbol must be exactly one character.')
 
 
@@ -22,6 +22,3 @@ class MachineInstructionForm(FlaskForm):
     nextState = StringField('nextState', validators=[DataRequired(), Length(min = 2)])
     printSymbol = StringField('printSymbol', validators=[validate_symbol])
     headMove = IntegerField('headMove', validators=[validate_head_move])
-
-class BatchInstructionForm(FlaskForm):
-     Machine_Instructions = FieldList(FormField(MachineInstructionForm), min_entries=1)

@@ -197,8 +197,8 @@ const machineReducer = (state=initialState, action) => {
             newState.byId[machineId] = { ...newState.byId[machineId], instructions: newInstIds };
             return newState;
         case BATCH_ADD_INSTRUCTIONS:
-            console.log("Hit BATCH_ADD_INSTRUCTIONS in machine reducer");
-            console.log("action.payload: ", action.payload);
+            // console.log("Hit BATCH_ADD_INSTRUCTIONS in machine reducer");
+            // console.log("action.payload: ", action.payload);
             newState.allIds = [ ...state.allIds ];
             const normalizedInstructions = action.payload;
             machineId = normalizedInstructions.machineId;

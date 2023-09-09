@@ -4,7 +4,6 @@ from flask_login import current_user, login_required
 from sqlalchemy import or_, tuple_
 from app.models import Turing_Machine, Machine_Instruction, User, db
 from app.forms import TuringMachineForm, MachineInstructionForm
-from app.forms.machine_instruction_form import BatchInstructionForm
 from .auth_routes import validation_errors_to_error_messages
 
 turing_machine_routes = Blueprint('turing-machines', __name__)
@@ -72,13 +71,28 @@ def batch_create_machine_instruction(machine_id):
     if machine.owner_id != current_user.id:
         return jsonify({'error': 'Unauthorized'}), 403
 
-    form = BatchInstructionForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(request.json)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    instruction_list = request.json["machineInstructions"]
+
+    # validate every instruction
+    for instruction in instruction_list:
+        form = MachineInstructionForm(data=instruction)
+        form['csrf_token'].data = request.cookies['csrf_token']
+
+        if not form.validate_on_submit():
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(form.errors)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            return jsonify(errors=validation_errors_to_error_messages(form.errors)), 400
+
 
     # Check to make sure execution conditions are not duplicated in batch data
     new_execution_conditions = set()
 
-    for instruction in form.data["Machine_Instructions"]:
+    for instruction in instruction_list:
         exe_con = (instruction["currentState"], instruction["scannedSymbol"])
         if exe_con in new_execution_conditions:
             return jsonify({'error': f"Multiple lines of instructions in batch upload for {machine.name} have the same execution conditions: currentState: {exe_con[0]}, scannedSymbol: {exe_con[1]}. Please ensure that instruction execution conditions are not duplicated."}), 409
@@ -98,30 +112,27 @@ def batch_create_machine_instruction(machine_id):
             return jsonify({'error': f"{machine.name} already has a line of instructions with the following execution conditions: currentState: {exe_con[0]}, scannedSymbol: {exe_con[1]}. Please ensure that instruction execution conditions are not duplicated."}), 409
 
     added_instructions = []
-    if form.validate_on_submit():
-        try:
-            for instruction in form.data["Machine_Instructions"]:
-                machine_instruction = Machine_Instruction(
-                    machine_id=machine_id,
-                    current_state=instruction["currentState"],
-                    scanned_symbol=instruction["scannedSymbol"],
-                    next_state=instruction["nextState"],
-                    print_symbol=instruction["printSymbol"],
-                    head_move=instruction["headMove"]
-                )
-                db.session.add(machine_instruction)
-                added_instructions.append(machine_instruction)
-            db.session.commit()
+    try:
+        for instruction in instruction_list:
+            machine_instruction = Machine_Instruction(
+                machine_id=machine_id,
+                current_state=instruction["currentState"],
+                scanned_symbol=instruction["scannedSymbol"],
+                next_state=instruction["nextState"],
+                print_symbol=instruction["printSymbol"],
+                head_move=instruction["headMove"]
+            )
+            db.session.add(machine_instruction)
+            added_instructions.append(machine_instruction)
+        db.session.commit()
 
-        except Exception as e:
-            # If there is an error with any of the insertions,
-            # rollback the db to prevent partial batch addition.
-            db.session.rollback()
-            return jsonify({"error": f"Failed to add instructions due to the following error: {e}."}), 500
+    except Exception as e:
+        # If there is an error with any of the insertions,
+        # rollback the db to prevent partial batch addition.
+        db.session.rollback()
+        return jsonify({"error": f"Failed to add instructions due to the following error: {e}."}), 500
 
-        return jsonify({ "machineInstructions": [instruction.to_dict() for instruction in added_instructions] }), 201
-    else:
-        return jsonify(errors=validation_errors_to_error_messages(form.errors)), 400
+    return jsonify({ "machineInstructions": [instruction.to_dict() for instruction in added_instructions] }), 201
 
 # Add instructions to a machine
 @turing_machine_routes.route('/<int:machine_id>/machine-instructions/', methods=['POST'])

@@ -18,7 +18,6 @@ const BatchCreateInstructions = ({ showBatchInput, setShowBatchInput }) => {
         // console.log("instructionBatch: ", instructionBatch);
         if (instructionBatch.machineInstructions.length) {
             const addedInstructions = await dispatch(batchCreateInstructions(instructionBatch));
-            console.log("addedInstructions: ", addedInstructions);
         }
     };
     const batchCreateInstSubmit = (
