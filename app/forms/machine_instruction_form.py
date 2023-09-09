@@ -11,7 +11,7 @@ def validate_head_move(form, field):
 
 def validate_symbol(form, field):
         symbol = field.data
-        if len(symbol) != 1:
+        if symbol is None or len(symbol) != 1:
             raise ValidationError('Symbol must be exactly one character.')
 
 

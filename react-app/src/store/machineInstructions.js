@@ -1,4 +1,6 @@
 // root/react-app/src/store/machineInstructions.js
+import { normalizeAll } from "../utils/normalization";
+import sameValue from "../utils/sameValue";
 
 import { LOAD_MACHINES } from "./turingMachines";
 import { REMOVE_MACHINE } from "./turingMachines";
@@ -7,6 +9,7 @@ const prefix = "machineInstructions/";
 export const ADD_INSTRUCTION = (prefix + "ADD_INSTRUCTION");
 const UPDATE_INSTRUCTION = (prefix + "UPDATE_INSTRUCTION");
 export const REMOVE_INSTRUCTION = (prefix + "REMOVE_INSTRUCTION");
+export const BATCH_ADD_INSTRUCTIONS = (prefix + "BATCH_ADD_INSTRUCTIONS");
 
 const addInstruction = (machineInstruction) => ({
     type: ADD_INSTRUCTION,
@@ -21,6 +24,11 @@ const updateInstruction = (machineInstruction) => ({
 const removeInstruction = (idData) => ({
     type: REMOVE_INSTRUCTION,
     payload: idData
+});
+
+const batchAddInstructions = (instructionBatch) => ({
+    type: BATCH_ADD_INSTRUCTIONS,
+    payload: instructionBatch
 });
 
 export const createOrEditInstruction = (instructionData, edit=false) => async (dispatch) => {
@@ -75,7 +83,7 @@ export const deleteInstruction = (idData) => async (dispatch) => {
 
         if (response.ok) {
             const deleteMessage = await response.json();
-            dispatch(removeInstruction(idData));
+            await dispatch(removeInstruction(idData));
             return deleteMessage;
         } else {
             const error = await response.text();
@@ -90,6 +98,50 @@ export const deleteInstruction = (idData) => async (dispatch) => {
             throw new Error(`${errorJSON.title}: ${errorJSON.message}`);
         }
 
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const batchCreateInstructions = (instructionBatch) => async (dispatch) => {
+    try {
+        if (instructionBatch?.machineInstructions?.length) {
+            const sameMId = sameValue(instructionBatch.machineInstructions, "machineId");
+            const machineId = (sameMId ? sameMId["machineId"] : null);
+
+            if (!machineId) {
+                throw new Error("Not every instruction in batch has the same machineId");
+            }
+
+            const fetchURL = `/api/turing-machines/${machineId}/machine-instructions/batch-create/`
+            const response = await fetch(fetchURL, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(instructionBatch)
+            });
+
+            if (response.ok) {
+                instructionBatch = await response.json();
+                instructionBatch = normalizeAll(instructionBatch);
+                instructionBatch.machineId = machineId;
+                await dispatch(batchAddInstructions(instructionBatch));
+                return instructionBatch;
+            } else {
+                const error = await response.text();
+                let errorJSON;
+                try {
+                    // check to see if error is JSON
+                    errorJSON = JSON.parse(error);
+                } catch {
+                    // error was not from server
+                    throw new Error(error);
+                }
+                throw new Error(`${errorJSON.title}: ${errorJSON.message}`);
+            }
+
+        } else {
+            throw new Error("No instructions in this batch.")
+        }
     } catch (error) {
         throw error;
     }
@@ -155,6 +207,17 @@ const instructionReducer = (state=initialState, action) => {
             newState.allIds = state.allIds.filter((instId) => instId !== instructionId);
             newState.byId = { ...state.byId };
             delete newState.byId[instructionId];
+            return newState;
+        case BATCH_ADD_INSTRUCTIONS:
+            newState.allIds = [ ...state.allIds ];
+            const normalizedInstructions = action.payload;
+            normalizedInstructions.allIds.forEach((instructionId) => {
+                if (newState.allIds.includes(instructionId)) {
+                    throw new Error(`Error: Duplicate instruction id (${instructionId})`);
+                }
+                newState.allIds.push(instructionId);
+            });
+            newState.byId = { ...state.byId, ...normalizedInstructions.byId };
             return newState;
         default:
             return state;

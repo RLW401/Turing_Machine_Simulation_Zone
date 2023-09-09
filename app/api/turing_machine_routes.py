@@ -1,7 +1,7 @@
 # root/app/api/turing_machine_routes.py
 from flask import Blueprint, jsonify, request
 from flask_login import current_user, login_required
-from sqlalchemy import or_
+from sqlalchemy import or_, tuple_
 from app.models import Turing_Machine, Machine_Instruction, User, db
 from app.forms import TuringMachineForm, MachineInstructionForm
 from .auth_routes import validation_errors_to_error_messages
@@ -59,6 +59,80 @@ def edit_or_delete_instruction(machine_id, instruction_id):
 
         return jsonify({'message': f'Machine instruction with ID {instruction_id} deleted successfully from {machine.name}.'})
 
+# Batch Add instructions to a machine
+@turing_machine_routes.route('/<int:machine_id>/machine-instructions/batch-create/', methods=['POST'])
+@login_required
+def batch_create_machine_instruction(machine_id):
+    machine = Turing_Machine.query.get(machine_id)
+
+    if not machine:
+        return jsonify({'error': 'Turing machine not found'}), 404
+
+    if machine.owner_id != current_user.id:
+        return jsonify({'error': 'Unauthorized'}), 403
+
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+    print(request.json)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+
+    instruction_list = request.json["machineInstructions"]
+
+    # validate every instruction
+    for instruction in instruction_list:
+        form = MachineInstructionForm(data=instruction)
+        form['csrf_token'].data = request.cookies['csrf_token']
+
+        if not form.validate_on_submit():
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(form.errors)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            return jsonify(errors=validation_errors_to_error_messages(form.errors)), 400
+
+
+    # Check to make sure execution conditions are not duplicated in batch data
+    new_execution_conditions = set()
+
+    for instruction in instruction_list:
+        exe_con = (instruction["currentState"], instruction["scannedSymbol"])
+        if exe_con in new_execution_conditions:
+            return jsonify({'error': f"Multiple lines of instructions in batch upload for {machine.name} have the same execution conditions: currentState: {exe_con[0]}, scannedSymbol: {exe_con[1]}. Please ensure that instruction execution conditions are not duplicated."}), 409
+        new_execution_conditions.add(exe_con)
+
+    # get all existing instructions for machine
+    existing_instructions = [
+        instruction.to_dict() for instruction in Machine_Instruction.query.filter(
+            Machine_Instruction.machine_id == machine_id
+        ).all()
+    ]
+
+    # make sure no incoming instruction execution conditions duplicate execution conditions of existing instructions
+    for instruction in existing_instructions:
+        exe_con = (instruction["currentState"], instruction["scannedSymbol"])
+        if exe_con in new_execution_conditions:
+            return jsonify({'error': f"{machine.name} already has a line of instructions with the following execution conditions: currentState: {exe_con[0]}, scannedSymbol: {exe_con[1]}. Please ensure that instruction execution conditions are not duplicated."}), 409
+
+    added_instructions = []
+    try:
+        for instruction in instruction_list:
+            machine_instruction = Machine_Instruction(
+                machine_id=machine_id,
+                current_state=instruction["currentState"],
+                scanned_symbol=instruction["scannedSymbol"],
+                next_state=instruction["nextState"],
+                print_symbol=instruction["printSymbol"],
+                head_move=instruction["headMove"]
+            )
+            db.session.add(machine_instruction)
+            added_instructions.append(machine_instruction)
+        db.session.commit()
+
+    except Exception as e:
+        # If there is an error with any of the insertions,
+        # rollback the db to prevent partial batch addition.
+        db.session.rollback()
+        return jsonify({"error": f"Failed to add instructions due to the following error: {e}."}), 500
+
+    return jsonify({ "machineInstructions": [instruction.to_dict() for instruction in added_instructions] }), 201
 
 # Add instructions to a machine
 @turing_machine_routes.route('/<int:machine_id>/machine-instructions/', methods=['POST'])
@@ -100,7 +174,7 @@ def create_machine_instruction(machine_id):
 
         return jsonify(machine_instruction.to_dict()), 201
     else:
-        return jsonify(errors=validation_errors_to_error_messages(form.errors)), 401
+        return jsonify(errors=validation_errors_to_error_messages(form.errors)), 400
 
 
 ## returns all Turing machines with a public property of True

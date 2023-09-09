@@ -1,3 +1,5 @@
+// root/react-app/src/components/TuringMachinePage/renderTape.js
+
 const renderTape = ({tapeStr}) => {
     const centralSquareIndex = Math.floor(tapeStr.length / 2);
     const squares = [];

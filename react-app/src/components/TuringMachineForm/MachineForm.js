@@ -124,7 +124,7 @@ const MachineForm = ({ machine, formType }) => {
                             newStates.push(states[i]);
                     } else {
                             // if numStates has been increased, fill in remaining state names before the halting state with default values.
-                            newStates.push(`Q${i}`);
+                            newStates.push(`Q${i + 1}`);
                     }
                 }
             }
@@ -137,7 +137,6 @@ const MachineForm = ({ machine, formType }) => {
     // set state name inputs in response to change in states or number of states
     useEffect(() => {
         // TODO: refactor state name errors to check for duplicate state names.
-        // TODO: add radio buttons to set any state as the initial or halting state.
         const invalidStateNameChars = [',', '|', '<', '>', '{', '}'];
         let badCharStr = "";
         const newInputs = [];
@@ -150,7 +149,7 @@ const MachineForm = ({ machine, formType }) => {
             for (let i = 0; i < numStates; i++) {
                 const errKey = `stateName${i}`;
                 let errType = `The name of internal state ${i}`;
-                let description = <p className="description">{`Pick a name for operational state ${i} of your machine.`}</p>
+                let description = <p className="description">{`Pick a name for operational state ${i + 1} of your machine.`}</p>
                 let defaultValue = states[i];
                 if (i === 0) {
                     description = <p className="description">Pick a name for your machine's initial state.</p>

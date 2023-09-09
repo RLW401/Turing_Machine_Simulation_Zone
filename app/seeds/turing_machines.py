@@ -48,12 +48,12 @@ def seed_turing_machines():
 
     binary_adder = Turing_Machine(
         name = "Binary Adder",
-        notes = "begins scanning the leftmost digit of a pair of binary numbers separated by a '+' symbol. Ends scanning the leftmost digit of their binary sum on an otherwise empty tape.",
+        notes = "Begins scanning the leftmost digit of a pair of binary numbers separated by a ‘+’ symbol. Ends scanning the leftmost digit of their binary sum on an otherwise empty tape.",
         public = True,
         init_tape = "10001100101001+10001100101001",
         alphabet = "+01AB",
         blank_symbol = '#',
-        states = "Scan Right||Qh",
+        states = "Scan Right|Find Digit|Found Zero|Found One|Add Zero|Add One|Carry One|Format Result|Qh",
         init_state = "Scan Right",
         halting_state = "Qh",
     )

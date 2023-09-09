@@ -3,8 +3,9 @@
 export const validBlanks = ["#", " ", "0"];
 export const headMoves = ["Left", "Stop", "Right"];
 export const stateSeparator = '|'
-export const defaultStates = `Q0${stateSeparator}Qh`;
+export const defaultStates = `Q1${stateSeparator}Qh`;
 export const maxHeadMoves = 9001;
+export const instructionProperties = ["currentState", "scannedSymbol", "nextState", "printSymbol", "headMove"];
 
 // formTypes for TuringMachineForm
 export const createTM = "Add a new machine";

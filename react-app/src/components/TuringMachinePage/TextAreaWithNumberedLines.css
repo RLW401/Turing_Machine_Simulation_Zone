@@ -1,0 +1,32 @@
+/* root/react-app/src/components/TuringMachinePage/TextAreaWithNumberedLines.css */
+
+.textarea-with-lines {
+    position: relative;
+    display: flex;
+    border: 1px solid #ccc;
+}
+
+.content-textarea, .line-numbers {
+    /* font-family: monospace; */
+    font-size: 14px;
+    padding: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.line-numbers {
+    width: 48px;
+    color: #aaa;
+    text-align: right;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+    resize: none;
+    background-color: #f7f7f7;
+    white-space: pre-line;
+}
+
+.content-textarea {
+    width: 100%;
+    overflow-y: auto;
+    resize: none;
+}
