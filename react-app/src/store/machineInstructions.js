@@ -106,6 +106,7 @@ export const deleteInstruction = (idData) => async (dispatch) => {
 export const batchCreateInstructions = (instructionBatch) => async (dispatch) => {
     try {
         if (instructionBatch?.machineInstructions?.length) {
+
             const sameMId = sameValue(instructionBatch.machineInstructions, "machineId");
             const machineId = (sameMId ? sameMId["machineInstructions"] : null);
 

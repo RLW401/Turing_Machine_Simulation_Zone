@@ -15,8 +15,6 @@ import "./turingMachine.css"
 const TuringMachinePage = () => {
     const history = useHistory();
     const machineId = Number(useParams().machineId);
-    // const timeDelay = 500;
-    // const [currentUser, setCurrentUser] = useState({});
     const [machines, setMachines] = useState({});
     const [instructions, setInstructions] = useState({});
     const [formattedInstructions, setFormattedInstructions] = useState(null);
@@ -29,22 +27,19 @@ const TuringMachinePage = () => {
     const [blankSymbol, setBlankSymbol] = useState('');
     const [headPos, setHeadPos] = useState(0);
     const [numSquares, setNumSquares] = useState(11); // Number of squares of tape to be displayed
-    // const [centralSquareIndex, setCentralSquareIndex] = useState(Math.floor(numSquares / 2));
     const [tapeStr, setTapeStr] = useState(null);
     const [renderedTape, setRenderedTape] = useState(null);
     const [finishedRun, setFinishedRun] = useState(false);
     const [validTape, setValidTape] = useState(true);
     const [deleteAuth, setDeleteAuth] = useState(false);
     const [editAuth, setEditAuth] = useState(false);
-    // const [resetTriggered, setResetTriggered] = useState(false);
     const [runError, setRunError] = useState(false);
     const [turingInterval, setTuringInterval] = useState(null);
     const [machineRunning, setMachineRunning] = useState(false);
     const [cancelInterval, setCancelInterval] = useState(false);
     const [fullInstructions, setFullInstructions] = useState(false);
     const [timeDelay, setTimeDelay] = useState(500);
-    // const [batchInst, setBatchInst] = useState("");
-
+    const [showBatchInput, setShowBatchInput] = useState(false);
 
     const loadCurrentUser = useSelector((state) => {
         return state.session.user;
@@ -83,6 +78,7 @@ const TuringMachinePage = () => {
             // reset head position when changing machines or instructions
             setHeadPos(0);
             setCancelInterval(true);
+            setShowBatchInput(false);
         }
     }, [machines, machineId, instructions, editAuth, fullInstructions]);
 
@@ -286,6 +282,12 @@ const TuringMachinePage = () => {
 
     );
 
+    const batchCreateInstBtn = (
+        <button className="show batch-create"
+        onClick={() => setShowBatchInput(true)}
+        >Batch Create Instructions</button>
+    );
+
     if (currentMachine) {
         machinePage = (
             <div className="machine-page">
@@ -343,8 +345,8 @@ const TuringMachinePage = () => {
                         </div>}
                     </div>
                     {formattedInstructions}
-                    {/* {!fullInstructions && <BatchCreateInstructions text={batchInst} setText={setBatchInst} />} */}
-                    {!fullInstructions && <BatchCreateInstructions />}
+                    {(!fullInstructions && editAuth && !showBatchInput) && batchCreateInstBtn}
+                    {(showBatchInput) && <BatchCreateInstructions showBatchInput={showBatchInput} setShowBatchInput={setShowBatchInput}/>}
                 </div>
             </div>
         );

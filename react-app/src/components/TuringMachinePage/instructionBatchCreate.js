@@ -1,32 +1,50 @@
 // root/react-app/src/components/TuringMachinePage/instructionBatchCreate.js
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from "react-router-dom";
+import { batchCreateInstructions } from "../../store/machineInstructions";
 import TextAreaWithNumberedLines from "./textareaWithNumberedLines";
+import parseInstructions from "../../utils/parseInstructions";
 
-// const BatchCreateInstructions = ({ text, setText }) => {
-const BatchCreateInstructions = () => {
+const BatchCreateInstructions = ({ showBatchInput, setShowBatchInput }) => {
+    const dispatch = useDispatch();
     const [text, setText] = useState("");
     const [errors, setErrors] = useState({});
-    const submitBatch = () => {
-        console.log("Array from batchCreateInstructions: \n", text.split("\n"));
+    const machineId = Number.parseInt(useParams().machineId);
+    const submitBatch = async (e) => {
+        e.preventDefault()
+        const instructions = parseInstructions(text, machineId);
+        const instructionBatch = { machineInstructions: instructions.instructions };
+        // console.log("instructionBatch: ", instructionBatch);
+        if (instructionBatch.machineInstructions.length) {
+            const addedInstructions = await dispatch(batchCreateInstructions(instructionBatch));
+            console.log("addedInstructions: ", addedInstructions);
+        }
     };
     const batchCreateInstSubmit = (
         <button className="submit batch-create"
         onClick={submitBatch}
         >Create Instructions</button>
     );
+    const batchCreateInstCancel = (
+        <button className="cancel batch-create"
+        onClick={() => setShowBatchInput(false)}
+        >Cancel</button>
+    );
+    const submitAndCancelBtns = (
+        <div className="batch-create submit-and-cancel">
+            {batchCreateInstSubmit}
+            {batchCreateInstCancel}
+        </div>
+    );
+
+
     return (
         <>
             <TextAreaWithNumberedLines text={text} setText={setText} />
-            {batchCreateInstSubmit}
+            {submitAndCancelBtns}
         </>
     );
 };
-
-// const batchCreateInstBtn = (
-//     <button className="batch-create"
-//     onClick={batchCreateInstructions}
-//     >Batch Create Instructions</button>
-// );
 
 export default BatchCreateInstructions;

@@ -11,11 +11,11 @@ const parseInstructions = (text, machineId) => {
     const instructions = lineArr.map((line) => {
         const inst = { machineId }
         const start = line.indexOf("<") + 1;
+        line = line.slice(start);
         const end = line.indexOf(">")
         if (start === 0 || end === -1) return null;
 
-        const line = line.slice(start, end).replaceAll(", ", ",");
-        const instructionLine = line.split(",");
+        const instructionLine = line.slice(0, end).replaceAll(", ", ",").split(",");
         if (instructionLine.length !== instructionProperties.length) return null;
 
         instructionProperties.forEach((property, i) => {
@@ -45,7 +45,7 @@ const parseInstructions = (text, machineId) => {
         if (inst) {
             goodInstructions.push(inst);
         } else {
-            badLines.push(i);
+            badLines.push(i + 1);
         }
     });
 
