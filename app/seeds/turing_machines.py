@@ -7,7 +7,7 @@ def seed_turing_machines():
     zero_function = Turing_Machine(
         owner_id = None,
         collaborator_id = None,
-        name = "Zero Function",
+        name = "Zero Tape",
         notes = "erases the tape and prints 0. This implementation uses two operational states: erase and print, plus the halting state, Qh. Can you see how to implement the same function using only one operational state?",
         public = True,
         init_tape = "10001100101001",
@@ -20,7 +20,7 @@ def seed_turing_machines():
     tm_seeds.append(zero_function)
 
     successor_function = Turing_Machine(
-        name = "Successor Function",
+        name = "Add One",
         notes = "Starts scanning the most significant digit of a natural number in binary and ends scanning the most significant digit of the subsequent natural number. In other words adds one to the input. Blank tape taken to be zero.",
         public = True,
         init_tape = "10001100101001",
@@ -33,10 +33,10 @@ def seed_turing_machines():
     tm_seeds.append(successor_function)
 
     binary_inverter = Turing_Machine(
-        owner_id = 1,
+        # owner_id = 1,
         name = "Binary Inverter",
         notes = "flip all the bits in a binary input string from 0 to 1 and vice versa",
-        public = False,
+        public = True,
         init_tape = "10001100101001",
         alphabet = "01",
         blank_symbol = '#',
@@ -47,9 +47,10 @@ def seed_turing_machines():
     tm_seeds.append(binary_inverter)
 
     binary_adder = Turing_Machine(
+        owner_id = 1,
         name = "Binary Adder",
         notes = "Begins scanning the leftmost digit of a pair of binary numbers separated by a ‘+’ symbol. Ends scanning the leftmost digit of their binary sum on an otherwise empty tape.",
-        public = True,
+        public = False,
         init_tape = "10001100101001+10001100101001",
         alphabet = "+01AB",
         blank_symbol = '#',
