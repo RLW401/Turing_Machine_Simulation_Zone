@@ -1,5 +1,6 @@
 // root/react-app/src/utils/extractInstructions.js
 
-export const extractInstructions = (turingMachines) => {
+// extracts machine instruction objects from instruction batch text input
+export const extractInstructions = (instructionBatch) => {
 
 };
