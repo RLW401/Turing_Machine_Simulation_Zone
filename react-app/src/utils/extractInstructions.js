@@ -5,7 +5,7 @@ export const extractInstructions = (instructionBatch) => {
     const instructionArr = instructionBatch.split("/n");
     const errors = []
 
-    instructionArr.forEach(element => {
+    instructionArr.forEach((line) => {
 
     });
 };
